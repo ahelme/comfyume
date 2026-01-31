@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+
+# Docker
+.env
+*.log
+
+# Data directories (user files, outputs, models)
+data/user_data/
+data/inputs/
+data/outputs/
+data/models/
+
+# Credentials
+USER_CREDENTIALS.txt
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+temp/
