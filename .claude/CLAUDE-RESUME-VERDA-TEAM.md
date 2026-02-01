@@ -82,16 +82,13 @@ THEN: we delete Verda GPU instance END OF DAY to save highest cost GPU instance 
 
 ## SESSION PROGRESS
 
-**For detailed session notes, see:** `.claude/progress-verda-dev.md`
+**Detailed session notes, see:** `.claude/progress-verda-dev.md`
 
 ## CURRENT PENDING WORK
 
-**Assignment:** Issue #22 Phase 3 Cleanup - Update scripts/docs for .env v0.3.2
-**Branch:** `verda-track-2` → merge to `main`
-**Coordination:** Issue #7
-**Note:** Fresh .env v0.3.2 already in project (includes COMFYUI_MODE)
+**READ TASKS DASHBOARD in: `.claude/progress-verda-dev.md`
 
-**Critical Constraints:**
+## **Critical Constraints:**
 - Preserve setup-verda-solo-script.sh compatibility
 - Never rewrite existing code from scratch
 
@@ -104,10 +101,13 @@ THEN: we delete Verda GPU instance END OF DAY to save highest cost GPU instance 
  - read IN FULL:
     - `./README.md` - open source project (deployment agnostic)
     - `./CLAUDE.md` - OUR custom deployment on Hetzner / Verda GPU Cloud
-    - [Admin Guide](.docs/admin-guide.md) - Admin docs index
+    - `.claude/ARCHITECTURE-ASCII.md` - CRITICAL CONTEXT
 
   - read top ~250 lines:
-    - `./progress-verda-dev.md` - progress log
+    - `./progress-verda-dev.md` - CURRENT TASKS & RECENT progress log
+
+  - read top 70 lines:
+    - [Admin Guide](.docs/admin-guide.md) - Admin docs index
 
   - perform git status & check commit history
     - REPORT: any pending commits/pushes ?
@@ -118,8 +118,8 @@ THEN: we delete Verda GPU instance END OF DAY to save highest cost GPU instance 
     - CURRENT PHASE: **Phase 11** Test Single GPU Instance (Restore & Verify)
     - NOTE: context within overall plan
 
-   - Check comfyume Issue #7 for Mello Team updates
+   - Check comfyume Issue #7 last 2x comments - for Mello Team updates
 
-   - Read and discuss with user before proceeding on next task:
-    - Phase 3 (see last comment) issue #22 in comfyume repo
+   - Read and print out CURRENT PENDING TASKS from Task Management section:
+    - [.claude/progress-verda-dev.md](.claude/progress-verda-dev.md) - See "CURRENT TASKS DASHBOARD"
 
