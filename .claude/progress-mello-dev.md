@@ -181,12 +181,12 @@ These are archived - comfy-multi is legacy, comfyume is the future!
 ---
 
 ## Progress Report 26 - 2026-02-01 - (Issue #17 COMPLETE! Workflow Validation Success!)
-**Status:** ✅ Issue #17 COMPLETE - All 5 workflows validated and updated!
+**Status:** ✅ Issue #17 COMPLETE - PR #37 MERGED TO MAIN!
 **Started:** 2026-02-01 16:06 UTC | **Completed:** 2026-02-01 16:11 UTC | **Duration:** 5 minutes
 **Repository:** comfyume (v0.11.0)
 
 ### Summary
-**LIGHTNING FAST COMPLETION!** Validated all 5 workflow templates in ComfyUI v0.11.0 frontend-testing mode. Loaded each workflow via userdata API, let ComfyUI auto-update JSON structure, saved back to disk. Massive optimization - reduced workflow JSON from 326K to 167K total (49% reduction, 12,609 lines removed)! Issue #17 complete, ready for Issue #18 integration testing!
+**LIGHTNING FAST COMPLETION!** Validated all 5 workflow templates in ComfyUI v0.11.0 frontend-testing mode. Loaded each workflow via userdata API, let ComfyUI auto-update JSON structure, saved back to disk. Massive optimization - reduced workflow JSON from 326K to 167K total (49% reduction, 12,609 lines removed)! PR #37 merged to main! Ready for Issue #18 integration testing!
 
 ### Implementation Phase
 **Repository:** comfyume (https://github.com/ahelme/comfyume)
@@ -227,9 +227,11 @@ These are archived - comfy-multi is legacy, comfyume is the future!
 - `data/workflows/ltx2_text_to_video_distilled.json`
 - `data/workflows/example_workflow.json`
 
-### Commit Messages
+### Commit Messages & PR
 ```
 67afebe - feat: validate and update 5 workflow templates for ComfyUI v0.11.0 (Issue #17)
+f50a800 - docs: Session 26 progress report - Issue #17 complete (workflow validation)
+PR #37 - Merged to main (bbce801)
 ```
 
 ### Key Decisions
