@@ -82,16 +82,36 @@
 
 ### TASKS SCRATCHPAD - ADD REGULARLY e.g. on breaks, after commits
 
-**New Tasks (Session 23)**
-- comfyume #21 - Container Orchestration & Flag Nomenclature (CREATED)
-- Architecture documentation: orchestration-commands-scenarios.md (CREATED)
-- Flag system clarification needed before workflow testing
+**New Tasks (Session 27)**
+- comfyume #39 - Infrastructure load test (CREATED) - independent testing without workers
+- comfyume #19 - Infrastructure complete, ready for end-to-end with workers
 
 ### CURRENT TASKS DASHBOARD - (UPDATED, PRIORITISED, REFERENCED) - UPDATE END SESSION
 
     **ALWAYS CHECK WITH USER BEFORE UPDATING**
 
-**NOTE:** Session 22 completed Foundation + Phase 1 Frontend! Moving to comfyume repo for all new work.
+**NOTE:** Session 27 completed Issue #19 infrastructure! Created Issue #39 for independent testing.
+
+🟢 **(ACTIVE) - comfyume #39 - Infrastructure load test (independent)**
+    - Created: 2026-02-01 (Session 27)
+    - Repository: comfyume (v0.11.0)
+    - Key GH Issue: `Phase 3a: Infrastructure load test (20 containers, no workers) #39`
+    - Split from #19 to enable independent testing
+    - Can test NOW without workers
+    - Tests: Container startup, queue management, user isolation
+    - Scripts ready: load-test.sh, monitor-queue.sh, validate-load-test.sh
+    - Documentation: docs/testing-guide.md
+
+✅ **(COMPLETE) - comfyume #19 Infrastructure - Multi-user load test setup**
+    - Created: 2026-01-31 | Infrastructure Complete: 2026-02-01 (Session 27)
+    - Repository: comfyume (v0.11.0)
+    - Key GH Issue: `Phase 3: Multi-user load test (20 users concurrent) #19`
+    - Infrastructure complete: 20 containers, testing scripts, docs ✅
+    - User directories initialized ✅
+    - docker-compose.users.yml generated ✅
+    - Testing framework ready ✅
+    - Full end-to-end test needs Issue #18 (workers)
+    - Commits: 17cea21, 9625030
 
 ✅ **(COMPLETE) - comfyume #17 - Update workflow templates for v0.11.0**
     - Created: 2026-01-31 | Completed: 2026-02-01 (Session 26)
@@ -101,26 +121,28 @@
     - Massive optimization: 326K → 167K (49% reduction, 12,609 lines)
     - Commit: 67afebe (pushed to mello-track-2)
 
-🟢 **(ACTIVE) - comfyume #21 - Container Orchestration & Flags**
-    - Created: 2026-02-01 | Updated: 2026-02-01
+🟡 **(NEXT) - comfyume #18 - End-to-end job submission test (coordinated)**
+    - Created: 2026-01-31 | Updated: 2026-02-01 (Session 27)
+    - Repository: comfyume (v0.11.0 rebuild)
+    - Key GH Issue: `Phase 3: End-to-end job submission test #18`
+    - Needs coordination with Verda team via Issue #7
+    - Requires worker integration (Verda team)
+    - Will run AFTER Issue #39 (infrastructure test)
+    - Tests: Full frontend → queue-manager → worker flow
+
+🔵 **(LOWER PRIORITY) - comfyume #21 - Container Orchestration & Flags**
+    - Created: 2026-02-01 | Phase 1 Complete: 2026-02-01
     - Repository: comfyume (v0.11.0 rebuild)
     - Key GH Issue: `Container Orchestration & Flag Nomenclature System #21`
+    - Phase 1 complete: COMFYUI_MODE environment variable ✅
     - Research complete: architecture/orchestration-commands-scenarios.md
-    - Proposes clear flag system (replace misleading --cpu)
-    - Documents single-server + dual-server deployment modes
-    - Critical: Verda team has worker on verda-track branch! ✅
-    - Related: comfy-multi #25 (original flag issue)
+    - Phase 2: Full flag system (deferred)
 
-🟡 **(NEXT) - comfyume #18-20 - Integration Testing (both teams)**
-    - Created: 2026-01-31 | Updated 2026-02-01
+🔵 **(LOWER PRIORITY) - comfyume #20 - Workshop readiness**
+    - Created: 2026-01-31
     - Repository: comfyume (v0.11.0 rebuild)
-    - Key GH Issues:
-        - `Phase 3: End-to-end job submission test #18`
-        - `Phase 3: Multi-user load test (20 users) #19`
-        - `Phase 3: Workshop readiness checklist #20`
-    - Coordinate with Verda team via Issue #7
-    - Test complete frontend → queue-manager → worker flow
-    - Multi-user concurrent testing
+    - Key GH Issue: `Phase 3: Workshop readiness checklist #20`
+    - Depends on: #39, #18, #19
     - Final validation before workshop
 
 ---
@@ -142,32 +164,32 @@ These are archived - comfy-multi is legacy, comfyume is the future!
 
 ## Next Session Goals
 
-**Immediate (Session 23):**
-1. **Issue #17** - Update 5 workflow templates for v0.11.0
-   - Validate JSON structure
-   - Test with v0.11.0 node requirements
-   - Ensure Flux2 Klein + LTX-2 templates work
-2. **Update comfymulti-scripts repo** with path changes
-   - Create issue in private repo
-   - Branch: mello-track
-   - Update setup-verda-solo-script.sh (2 lines: REPO_URL + PROJECT_DIR)
-   - Create PR
-3. **Issue #18** - End-to-end job submission test
-   - Coordinate with Verda team
-   - Test frontend → queue-manager → worker flow
-   - Verify WebSocket updates
+**Immediate (Session 28 - NOW!):**
+1. **Issue #39** - Infrastructure load test (independent testing) 🎯
+   - Start 20 frontend containers
+   - Run load-test.sh (100 jobs - will queue without processing)
+   - Monitor with monitor-queue.sh
+   - Validate with validate-load-test.sh
+   - Document results and close issue
+
+2. **Issue #18** - End-to-end job submission test (after #39)
+   - Coordinate with Verda team via Issue #7
+   - Set up worker connection
+   - Run full end-to-end test
+   - Verify job processing
 
 **Medium-term:**
-- Issue #19: Multi-user load test (20 users concurrent)
+- Update comfymulti-scripts repo with path changes (comfy-multi → comfyume)
+- Issue #19: Complete full load test (infrastructure + workers)
 - Issue #20: Workshop readiness checklist
-- Update handover docs in comfy-multi repo
 
-**Context:**
-- Foundation + Phase 1 Frontend ✅ COMPLETE (8/12 issues done!)
-- Docker image built: comfyume-frontend:v0.11.0 (1.85GB)
-- 3 commits pushed to mello-track
-- Verda team coordinated via Issue #7
-- WAY ahead of schedule! 🚀
+**Context (Session 27):**
+- ✅ Issue #17 complete (workflows validated)
+- ✅ Issue #19 infrastructure complete (20 containers, testing framework)
+- ✅ Issue #39 created (independent testing split out)
+- ✅ All testing scripts ready
+- ✅ Documentation complete
+- 🎯 Ready to test infrastructure NOW!
 
 ### Pending (UNSCHEDULED - comfy-multi legacy)
 - **#30** - Clean up untracked files (gitignore user_data, track custom_nodes)
