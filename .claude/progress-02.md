@@ -3,7 +3,7 @@
 **Repository:** github.com/ahelme/comfy-multi
 **Domain:** comfy.ahelme.net
 **Doc Created:** 2026-01-04
-**Doc Updated:** 2026-02-01 (Session 24 - .env Consolidation & Git Merge)
+**Doc Updated:** 2026-02-01 (Session 25 - COMFYUI_MODE Implementation & Issue #17 Start)
 
 ---
 
@@ -179,6 +179,117 @@ These are archived - comfy-multi is legacy, comfyume is the future!
 ---
 
 # Progress Reports
+
+---
+
+## Progress Report 25 - 2026-02-01 - (COMFYUI_MODE Implementation Complete!)
+**Status:** ✅ Issue #21 Phase 1 COMPLETE - Ready for Issue #17
+**Started:** 2026-02-01 | **Duration:** ~1 hour
+**Repository:** comfyume (v0.11.0) + comfymulti-scripts
+
+### Summary
+**Quick pragmatic win!** Implemented COMFYUI_MODE environment variable to resolve flag nomenclature confusion from Session 23/24. Added clear deployment mode indicator (frontend-testing vs worker), updated all documentation, pushed to both repos, created PR. Issue #21 Phase 1 complete - now ready to proceed with Issue #17 (workflow validation)!
+
+### Implementation Phase
+**Repository:** comfyume (https://github.com/ahelme/comfyume)
+**Branch:** mello-track-2
+**Phase:** Issue #21 Phase 1 (Flag Nomenclature) ✅ COMPLETE
+
+### GitHub Issues & PRs
+**Updated:**
+- Issue #21: Container Orchestration & Flag Nomenclature (Phase 1 complete)
+
+**Created:**
+- PR #31: docs: consolidate project documentation and context files
+
+### Activities
+
+#### Part 1: Resume & Documentation Sync
+- ✅ Completed resume checklist (date, docs, git status)
+- ✅ Read CLAUDE-CONTEXT-ABOUT-US.md, CLAUDE-RESUME-VERDA-INSTANCE.md
+- ✅ Read README.md, CLAUDE.md, docs/admin-backup-restore.md, progress-02.md
+- ✅ Committed 108 documentation files (61,262 lines)
+- ✅ Created PR #31 for documentation consolidation
+
+#### Part 2: COMFYUI_MODE Implementation (Issue #21 Phase 1)
+**Decision:** Implement environment variable for deployment clarity
+
+**Updated .env files (v0.3.1 → v0.3.2):**
+- comfymulti-scripts/.env (master secrets repo)
+- comfyume/.env.example (template for users)
+- Added COMFYUI_MODE variable with clear comments
+
+```bash
+# ComfyUI deployment mode (clarifies architecture intent)
+# - frontend-testing: UI only, no inference (uses --cpu flag internally)
+# - worker: Full inference capability with GPU (no --cpu flag)
+COMFYUI_MODE=frontend-testing
+```
+
+**Updated comfyui-frontend/Dockerfile:**
+- Added `ENV COMFYUI_MODE=frontend-testing`
+- Updated comments: "frontend-testing mode" (clearer than "CPU mode")
+- Clarified `--cpu` flag purpose (disables GPU, not CPU hardware)
+
+**Updated Documentation:**
+- README.md: Added COMFYUI_MODE to Key Improvements
+- CLAUDE.md: Added to env vars section, updated architecture diagram, services section
+- CLAUDE.md: Version updates (v0.9.2 → v0.11.0)
+
+#### Part 3: Analysis of Issue #17 vs #21
+- ✅ Analyzed dependency: Can do #17 without fully completing #21
+- ✅ Determined COMFYUI_MODE provides sufficient clarity for #17
+- ✅ User decision: Fix flag now, then proceed to #17
+
+### Files Created/Modified (comfyume)
+**Commits to mello-track-2 branch (4 commits total):**
+
+**Commit 1 (1623f81) - Documentation consolidation:**
+- 108 files changed, 61,262 insertions
+- .claude/.claude/ context files (16 files)
+- .claude/commands/ (4 files)
+- docs/admin-backup-restore.md
+- docs/old-comfy-multi-docs/ (88 files)
+- implementation-backup-restore.md, implementation-serverless-options.md
+- progress-02.md
+
+**Commit 2 (f082267) - COMFYUI_MODE implementation:**
+- .env.example (v0.3.2)
+- comfyui-frontend/Dockerfile (added ENV, updated comments)
+
+**Commit 3 (e8e5fa6) - Documentation updates:**
+- README.md (COMFYUI_MODE in Key Improvements)
+- CLAUDE.md (env vars, architecture, services sections)
+
+**Commit 4 (comfymulti-scripts 6e4dfaa) - Master .env update:**
+- .env (v0.3.2 with COMFYUI_MODE)
+
+### Commit Messages
+```
+1623f81 - docs: consolidate project documentation and context files
+f082267 - feat: add COMFYUI_MODE environment variable for deployment clarity (Issue #21)
+e8e5fa6 - docs: update COMFYUI_MODE references in README and CLAUDE (Issue #21)
+6e4dfaa - feat: add COMFYUI_MODE environment variable (v0.3.2)
+```
+
+### Key Decisions
+1. **Pragmatic approach** - Fix immediate confusion, defer complex orchestration
+2. **Environment variable pattern** - COMFYUI_MODE clarifies deployment intent
+3. **Documentation-first** - Updated all references immediately
+4. **Version bump** - .env v0.3.1 → v0.3.2
+5. **Ready for #17** - Sufficient clarity to proceed with workflow validation
+
+### Blockers
+**None!** 🎉
+- Issue #21 Phase 1 complete
+- Ready to proceed with Issue #17
+
+### Next Session Goals (Immediate - Session 25 continued)
+1. **Issue #17** - Update 5 workflow templates for v0.11.0 ⚡ STARTING NOW!
+   - Load workflows in v0.11.0 frontend (COMFYUI_MODE=frontend-testing)
+   - Let ComfyUI auto-populate new parameters
+   - Save updated workflows
+2. **Issue #18** - Integration testing (after #17 complete)
 
 ---
 
