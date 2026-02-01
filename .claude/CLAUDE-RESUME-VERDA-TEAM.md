@@ -8,30 +8,11 @@ CLAUDE RESUME - COMFY-MULTI (ASSUMES WELCOME HAS BEEN COMPLETED)
   on our web app ComfyMulti - designed to economically run ComfyUI 
   for a workshop of ~20 professional filmmakers in generating video with AI.            
                                                                               
-## NEXT STEPS
-                                                                              
-  Please now:                                                                 
-                                                                              
- - CHECK today's date     
-  
- - read IN FULL:                                                             
-    - `./README.md` - open source project (deployment agnostic)
-    - `./CLAUDE.md` - OUR custom deployment on Hetzner / Verda GPU Cloud
-    - [Admin Guide](.docs/admin-guide.md) - Admin docs index
-    - [Admin Backup & Restore Guide](./docs/admin-backup-restore.md) 
-        - NOTE setup-verda-solo-script.sh now in use (refactored from 2x setup scripts) 
-                                                                 
-  - read top ~250 lines:
-    - `./progress-verda-dev.md` - progress log
+  We are using a split server setup (though app can be run single-server): 
+  frontend-app: APP SERVER / inference worker: INFERENCE SERVER
 
-  - perform git status & check commit history
-    - REPORT: any pending commits/pushes ?
-    - REPORT: was progress-verda-dev.md up to date?
-
-  - read list of implementation phases (phased dev plan)
-    - **READ lines: 21-35 ONLY**: `./implementation-backup-restore.md`
-    - CURRENT PHASE: **Phase 11** Test Single GPU Instance (Restore & Verify)
-    - NOTE: context within overall plan
+  APP-SERVER= 'mello'
+  INFERENCE-SERVER= 'verda'
 
 ## CORE KNOWLEDGE: DEPLOYMENT WORKFLOWS
 
@@ -99,34 +80,45 @@ THEN: we delete Verda GPU instance END OF DAY to save highest cost GPU instance 
   - and keep it running during Workshop periods (less backup/restore)
   - IN WHICH CASE we could explore slightly different Verda disk configurations
 
-## CURRENT PENDING WORK (Updated 2026-01-31)
+## SESSION PROGRESS
 
-**Context:** We are Verda Team working on comfyume repo (new clean v0.11.0 rebuild)
-**Branch:** verda-track (comfy-multi) + verda-track (comfyume)
-**Coordination:** Issue #7 in comfyume repo (check regularly like email)
+**For detailed session notes, see:** `.claude/progress-02.md`
 
-**Completed Today (Session Verda 01-02):**
-- ✅ Architecture planning (Translation Layer concept - Adapter/Facade pattern)
-- ✅ Created master issue #1 in comfyume repo (complete task breakdown)
-- ✅ Created detailed Verda Team issues #2-6 with full implementation details
-- ✅ Set up context management automation (SessionStart/PreCompact hooks)
-- ✅ Established collaboration protocol with Mello Team
+## CURRENT PENDING WORK
 
-**Ready to Start Implementation:**
-- **Issue #4** (comfyume): VRAM monitoring script - NO dependencies, can start NOW
-- **Issue #3** (comfyume): Integrate worker.py with VRAM hooks - depends on #4
-- **Issue #2** (comfyume): Build worker Dockerfile (v0.11.0 base) - depends on #3
-- **Issue #5** (comfyume): Configure timeouts (900s/1800s) - depends on #2
-- **Issue #6** (comfyume): Test on Verda H100 instance - depends on all previous
+**Assignment:** Issue #22 Phase 3 - Update scripts/docs for .env v0.3.1
+**Branch:** `verda-track-2` → merge to `main`
+**Coordination:** Issue #7
 
-**Key Constraints (CRITICAL!):**
-- setup-verda-solo-script.sh compatibility MUST be preserved
-- Project structure: ~/comfyume/ MUST match ~/comfy-multi/ exactly
-- Docker command unchanged: `cd ~/comfyume/comfyui-worker/ && docker compose up -d worker-1`
-- Backup & copy existing code - NEVER rewrite from scratch!
+**Critical Constraints:**
+- Preserve setup-verda-solo-script.sh compatibility
+- Never rewrite existing code from scratch
 
-**NEXT SESSION:**
-1. Read progress-verda-dev.md (top ~250 lines for context)
-2. Check comfyume Issue #7 for Mello Team updates
-3. Begin implementation on Issue #4 (VRAM monitoring) or discuss approach
+## NEXT STEPS
+
+  Please now:
+
+ - CHECK today's date
+
+ - read IN FULL:
+    - `./README.md` - open source project (deployment agnostic)
+    - `./CLAUDE.md` - OUR custom deployment on Hetzner / Verda GPU Cloud
+    - [Admin Guide](.docs/admin-guide.md) - Admin docs index
+
+  - read top ~250 lines:
+    - `./progress-verda-dev.md` - progress log
+
+  - perform git status & check commit history
+    - REPORT: any pending commits/pushes ?
+    - REPORT: was progress-verda-dev.md up to date?
+
+  - read list of implementation phases (phased dev plan)
+    - **READ lines: 21-35 ONLY**: `./implementation-backup-restore.md`
+    - CURRENT PHASE: **Phase 11** Test Single GPU Instance (Restore & Verify)
+    - NOTE: context within overall plan
+
+   - Check comfyume Issue #7 for Mello Team updates
+
+   - Read and discuss with user before proceeding on next task:
+    - Phase 3 (see last comment) issue #22 in comfyume repo
 
