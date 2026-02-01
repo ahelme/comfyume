@@ -44,7 +44,7 @@
 ---
 
 ## Session 26 - 2026-02-01
-✅ Issue #14 (comfymulti-scripts): Added PROJECT_NAME param to backup scripts | ✅ Updated R2 bucket names (comfyume-*) in all backup scripts | ✅ Issue #22 Phase 3: Completed .env v0.3.2 migration across all docs/scripts | ✅ Updated active docs (admin-backup-restore.md, implementation-backup-restore.md) | ✅ 3 commits pushed to verda-track-2 (comfyume) + 1 commit to verda-track-2 (comfymulti-scripts)
+✅ Issue #14 (comfymulti-scripts): Added PROJECT_NAME param, fixed backup-cron.sh path bug | ✅ Updated R2 bucket names (comfyume-*) in all backup scripts | ✅ Issue #22 Phase 3: Completed .env v0.3.2 migration across all docs/scripts | ✅ Updated active docs + fixed CLAUDE.md path references | ✅ 4 commits to comfyume + 2 commits to comfymulti-scripts (all on verda-track-2)
 
 ---
 
@@ -184,27 +184,37 @@ Completed .env v0.3.2 migration across both repositories (comfyume + comfymulti-
   - `backup-mello.sh`: Added PROJECT_NAME env var, updated PROJECT_DIR logic
   - `backup-verda.sh`: Updated R2 bucket names
   - `setup-verda-solo-script.sh`: Updated R2 bucket comments (3 → 4 buckets), repo refs
+- Fixed critical path bug in `backup-cron.sh`:
+  - Mello backup trigger used wrong path: `~/projects/comfymulti-scripts/` → `~/comfymulti-scripts/`
+  - This prevented hourly cron from triggering mello backups
 - All scripts now use consistent PROJECT_NAME=comfyume (overridable via env)
+- Also fixed CLAUDE.md in comfyume repo with correct script repo path
 
 ---
 
 ### Files Modified
 
-**comfyume repo (3 commits):**
+**comfyume repo (4 commits):**
 1. Commit 7639369: WIP updates to scripts (4 files)
 2. Commit 4a62f06: Final documentation updates (2 files)
+3. Commit bf6286b: Progress log update
+4. Commit 8c5c24b: Fixed CLAUDE.md path references (1 file)
    - README.md
    - comfyui-worker/README.md
    - scripts/create-gpu-quick-deploy.sh
    - scripts/verda-startup-script.sh
    - docs/admin-backup-restore.md
    - implementation-backup-restore.md
+   - CLAUDE.md
+   - .claude/progress-verda-dev.md
 
-**comfymulti-scripts repo (1 commit):**
+**comfymulti-scripts repo (2 commits):**
 - Commit 8cf1ba1: PROJECT_NAME parameter + R2 bucket updates (3 files)
   - backup-mello.sh
   - backup-verda.sh
   - setup-verda-solo-script.sh
+- Commit 476aff5: Fixed backup-cron.sh path bug (1 file)
+  - backup-cron.sh (corrected mello backup trigger path)
 
 ---
 
