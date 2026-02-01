@@ -22,11 +22,11 @@ CLAUDE RESUME - COMFY-MULTI (ASSUMES WELCOME HAS BEEN COMPLETED)
         - NOTE setup-verda-solo-script.sh now in use (refactored from 2x setup scripts) 
                                                                  
   - read top ~450 lines:
-    - `./progress-02.md` - progress log
+    - `.claude/progress-mello-dev.md` - progress log
 
   - perform git status & check commit history
     - REPORT: any pending commits/pushes ?
-    - REPORT: was progress-02.md up to date?
+    - REPORT: was progress-mello-dev.md up to date?
 
   - read list of implementation phases (phased dev plan)
     - **READ lines: 21-35 ONLY**: `./implementation-backup-restore.md`
