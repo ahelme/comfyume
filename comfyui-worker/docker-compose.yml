@@ -12,7 +12,7 @@ services:
     container_name: comfyume-worker-1
     environment:
       - WORKER_ID=worker-1
-      - REDIS_HOST=${REDIS_HOST:-100.99.216.71}  # Mello VPS via Tailscale
+      - REDIS_HOST=${INFERENCE_SERVER_REDIS_HOST:-100.99.216.71}  # Mello VPS via Tailscale
       - REDIS_PORT=${REDIS_PORT:-6379}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - QUEUE_MANAGER_URL=${QUEUE_MANAGER_URL:-http://100.99.216.71:3000}

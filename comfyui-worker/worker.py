@@ -55,7 +55,7 @@ logger = logging.getLogger(__name__)
 
 # Configuration from environment
 WORKER_ID = os.getenv("WORKER_ID", "worker-1")
-REDIS_HOST = os.getenv("REDIS_HOST", "redis")
+REDIS_HOST = os.getenv("REDIS_HOST", "redis")  # Uses INFERENCE_SERVER_REDIS_HOST from .env
 REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
 REDIS_PASSWORD = os.getenv("REDIS_PASSWORD", "")
 QUEUE_MANAGER_URL = os.getenv("QUEUE_MANAGER_URL", "http://queue-manager:3000")
