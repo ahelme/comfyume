@@ -43,6 +43,11 @@
 
 ---
 
+## Session 25 - 2026-02-01
+✅ File org: renamed resume, created handover-verda, deleted old files | ✅ CLAUDE.md cleanup: fixed refs, R2 buckets (7 total), removed redundancy | ✅ .env: added COMFYUI_MODE | ✅ PR #32 merged
+
+---
+
 ## 0. UPDATE INSTRUCTIONS
 
  - update Progress Report OFTEN e.g. after RESEARCH, COMMITS, DECISIONS
