@@ -268,7 +268,7 @@ Ensure these details are listed the top of ALL .md documentation files:
   │  - Redis (job queue)                    │
   │  - Queue Manager (FastAPI)              │
   │  - Admin Dashboard                      │
-  │  - User Frontends x20 (CPU only)        │
+  │  - User Frontends x20 (UI only)         │
   └──────────────┬──────────────────────────┘
                  │ Network
                  │ (Redis connection)
@@ -363,8 +363,8 @@ test: add integration tests for worker
 
 ### Services
 - **Queue Manager:** Python 3.11+ with FastAPI + WebSocket
-- **Workers:** ComfyUI v0.9.2 with GPU support
-- **Frontends:** ComfyUI v0.9.2 web UI (CPU-only mode)
+- **Workers:** ComfyUI v0.11.0 with GPU support
+- **Frontends:** ComfyUI v0.11.0 web UI (COMFYUI_MODE=frontend-testing)
 - **Admin:** HTML/JS dashboard
 
 ### Deployment
@@ -403,6 +403,11 @@ test: add integration tests for worker
 DOMAIN=ahelme.net
 SSL_CERT_PATH=/path/to/fullchain.pem
 SSL_KEY_PATH=/path/to/privkey.pem
+
+# ComfyUI deployment mode (Issue #21)
+# - frontend-testing: UI only, no inference (--cpu flag used internally)
+# - worker: Full inference capability with GPU
+COMFYUI_MODE=frontend-testing
 
 # Inference Provider (verda, runpod, modal, local)
 INFERENCE_PROVIDER=verda
