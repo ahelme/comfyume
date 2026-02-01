@@ -116,30 +116,33 @@ CLAUDE RESUME - COMFY-MULTI (ASSUMES WELCOME HAS BEEN COMPLETED)
   • IN WHICH CASE we could explore slightly different Verda disk              
   configurations                                               
 
-## NEXT TASKS (Session 24+):
+## NEXT TASKS (Session 26+):
 
-**Status:** ⚠️ PAUSED Issue #17 - Architecture Research Complete (Session 23)
+**Status:** ✅ Issue #21 Phase 1 Complete - Ready for Issue #17! (Session 25)
 
 **Repository:** comfyume (https://github.com/ahelme/comfyume)
 **Branches:**
-- **mello-track**: Frontend, queue-manager, admin (Mello team)
+- **main**: Unified (mello-track + verda-track merged)
+- **mello-track-2**: Active development branch (Mello team)
 - **verda-track**: Worker v0.11.0 (Verda team) ✅ READY!
-- **Next:** mello-track-2 (Session 24 - pull from main + push)
 
-### Session 24 Completed (2026-02-01):
+### Session 25 Completed (2026-02-01):
 
-**Git Operations:**
-- ✅ Merged mello-track + verda-track → main (both teams unified!)
-- ✅ Created mello-track-2 branch
-- ✅ Consolidated .env v0.3.0 in comfymulti-scripts
+**Documentation & Environment:**
+- ✅ Documentation consolidation (108 files, 61,262 lines)
+- ✅ PR #31 created (docs consolidation)
+- ✅ .env v0.3.1 → v0.3.2 (COMFYUI_MODE added)
 
-**Issues:**
-- ✅ #22 Created & implemented (Phases 1 & 2)
-- ✅ PR #23 created (awaiting merge)
+**Issue #21 Phase 1 Complete:**
+- ✅ Added COMFYUI_MODE environment variable
+- ✅ Frontend Dockerfile: ENV COMFYUI_MODE=frontend-testing
+- ✅ Documentation updated (README.md, CLAUDE.md)
+- ✅ 5 commits pushed (both repos)
 
-**Variable Updates:**
-- REDIS_HOST → APP_SERVER_REDIS_HOST / INFERENCE_SERVER_REDIS_HOST
-- R2 buckets: comfy-multi → comfyume
+**Git Status:**
+- Branch: mello-track-2
+- Latest commit: a9d644d (Session 25 progress report)
+- All changes committed and pushed
 
 ### Session 22 Completed (2026-01-31):
 
@@ -172,34 +175,48 @@ CLAUDE RESUME - COMFY-MULTI (ASSUMES WELCOME HAS BEEN COMPLETED)
 | **Worker v0.11.0** | **verda-track** | **Verda** | ✅ **Ready!** |
 | Queue Manager | mello-track | Mello | ✅ Copied |
 
-### Session 25 MUST DO FIRST:
+### Session 26 - NEXT STEPS:
 
-**Git Operations:**
-```bash
-cd /home/dev/projects/comfyume
-git checkout main
-git pull origin main
-# Merge PR #23 if approved
-git checkout -b mello-track-3  # New branch for Issue #17
-```
+**Current Branch:** mello-track-2 (already checked out and synced)
 
-### Remaining Work (4/12 issues):
+**Immediate Work:**
+
+1. **Issue #17** - Validate 5 workflow templates ⚡ STARTING NEXT!
+   - Build/start frontend container (COMFYUI_MODE=frontend-testing)
+   - Load workflows in browser
+   - Let ComfyUI v0.11.0 validate and update JSON
+   - Save updated workflows
+   - Close Issue #17
+
+2. **Issue #18** - Integration testing (after #17)
+   - Coordinate with Verda team via Issue #7
+   - Test frontend → queue-manager → worker flow
+   - Full end-to-end validation
+
+**Workflow Files to Validate (Issue #17):**
+- `data/workflows/flux2_klein_9b_text_to_image.json`
+- `data/workflows/flux2_klein_4b_text_to_image.json`
+- `data/workflows/ltx2_text_to_video.json`
+- `data/workflows/ltx2_text_to_video_distilled.json`
+- `data/workflows/example_workflow.json`
+
+### Remaining Work (3/12 issues):
 
 **Phase 1:**
-- Issue #17: Workflow templates (PAUSED - resume with --frontend-testing flag)
-- Issue #21: Flag nomenclature (NEW - awaiting approval)
+- 🔄 Issue #17: Workflow templates (ready to start!)
+- ✅ Issue #21: Flag nomenclature Phase 1 (complete!)
 
-**Phase 3 - Integration Testing (Issues #18-20):**
+**Phase 3 - Integration Testing:**
 - Issue #18: End-to-end job submission test
 - Issue #19: Multi-user load test (20 users)
 - Issue #20: Workshop readiness checklist
 
-### Team Coordination (ACTIVE)
+### Team Coordination
 
 **Channel:** https://github.com/ahelme/comfyume/issues/7
-- ✅ Confirmed Verda has worker on verda-track
-- ❓ Awaiting Verda feedback: CPU/GPU support, merge timeline
-- Ready for integration when Verda ready
+- ✅ Mello team: Session 25 update posted
+- ✅ Frontend ready with COMFYUI_MODE=frontend-testing
+- 📋 Next: Coordinate for Issue #18 integration testing
 
-**ASK QUESTIONS IF ANYTHING UNCLEAR!**
+**Ready to proceed with Issue #17!** 🚀
 

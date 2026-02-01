@@ -3,7 +3,7 @@
 **Repository:** github.com/ahelme/comfy-multi
 **Domain:** comfy.ahelme.net
 **Doc Created:** 2026-01-02
-**Doc Updated:** 2026-01-30 (Session 18: ComfyUI v0.9.2 workflow path fix)
+**Doc Updated:** 2026-02-01 (Session 25: COMFYUI_MODE implementation, ready for Issue #17)
 
 ---
 
@@ -28,21 +28,22 @@
 
 **📋 [Resume Instructions](.claude/CLAUDE-RESUME-VERDA-INSTANCE.md)** | **[Build Report](.claude/build_reports/2026-01-01_build_report.md)**
 
-**Status:** ✅ Teams Merged - Ready for Issue #17 (Session 24 Complete)
+**Status:** ✅ Issue #21 Phase 1 Complete - Starting Issue #17! (Session 25)
 **Repository:** `comfyume` (https://github.com/ahelme/comfyume) - v0.11.0 clean rebuild
 **Branches:** `main` (unified), `mello-track-2` (active)
 
-**Session 24 Complete (2026-02-01):**
-- ✅ Merged mello-track + verda-track → main (teams unified!)
-- ✅ Consolidated .env v0.3.0 (comfymulti-scripts repo)
-- ✅ Issue #22: Updated code for new .env variables
-- ✅ PR #23 created (REDIS_HOST → APP_SERVER/INFERENCE_SERVER split)
-- ⚠️ Phase 3 cleanup assigned to Verda team
+**Session 25 Complete (2026-02-01):**
+- ✅ Documentation consolidation (108 files, PR #31)
+- ✅ COMFYUI_MODE env var implemented (.env v0.3.2)
+- ✅ Frontend Dockerfile updated with ENV COMFYUI_MODE=frontend-testing
+- ✅ README.md & CLAUDE.md documentation updated
+- ✅ Issue #21 Phase 1 complete (flag nomenclature)
+- 🔄 Issue #17 ready to start (workflow validation)
 
-**⚡ NEXT (Session 25):**
-1. Merge PR #23
-2. Resume Issue #17 (workflow validation)
-3. Begin integration testing (Issue #18)
+**⚡ NEXT:**
+1. Issue #17 - Validate 5 workflow templates in v0.11.0 frontend
+2. Issue #18 - Integration testing (coordinate with Verda team)
+3. Issue #21 Phase 2 - Worker integration (merge verda-track)
 
 ---
 
