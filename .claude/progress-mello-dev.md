@@ -245,9 +245,10 @@ COMFYUI_MODE=frontend-testing
 - ✅ Consolidated progress: progress-02.md → .claude/progress-mello-dev.md
 - ✅ Renamed resume: CLAUDE-RESUME-MELLO.md → .claude/CLAUDE-RESUME-MELLO-TEAM.md
 - ✅ Renamed handover: CLAUDE-HANDOVER.md → .claude/commands/CLAUDE-HANDOVER-MELLO.md
+- ✅ Renamed command: resume-context.md → .claude/commands/resume-context-mello.md
 - ✅ Removed nested .claude/.claude/ directory (moved 10 files up)
 - ✅ Updated all command/progress references
-- ✅ 6 additional cleanup commits (0fdf45a, 76a08e8, 34adddf, 3da5796, af2e8b2, 158b7d2)
+- ✅ 7 additional cleanup commits (0fdf45a, 76a08e8, 34adddf, 3da5796, af2e8b2, 158b7d2, ad5b410)
 
 ### Files Created/Modified (comfyume)
 **Commits to mello-track-2 branch (4 commits total):**
@@ -288,6 +289,8 @@ af2e8b2 - docs: update Dockerfile header comment
 76a08e8 - refactor: rename resume file to CLAUDE-RESUME-MELLO.md
 34adddf - refactor: rename files with MELLO-TEAM suffix
 158b7d2 - refactor: remove nested .claude/.claude/ directory
+4153acd - docs: update Session 25 progress with file cleanup summary
+ad5b410 - refactor: rename resume-context.md to resume-context-mello.md
 ```
 
 ### Key Decisions
