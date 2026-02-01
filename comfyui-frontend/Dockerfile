@@ -1,5 +1,5 @@
 # ComfyUI Frontend Container - v0.11.0
-# Multi-user workshop platform - CPU-only frontends
+# Multi-user workshop platform - COMFYUI_MODE=frontend-testing (UI only, no GPU inference)
 # ComfyUI treated as immutable upstream dependency
 
 FROM python:3.11-slim
@@ -50,13 +50,18 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 # 7. Expose ComfyUI port
 EXPOSE 8188
 
-# 8. Set entrypoint and default command
+# 8. Set deployment mode (for clarity in orchestration)
+# COMFYUI_MODE=frontend-testing indicates this container is UI-only
+ENV COMFYUI_MODE=frontend-testing
+
+# 9. Set entrypoint and default command
 # Entrypoint handles:
 # - Restoring custom nodes backup (volume mount fix)
 # - Installing our extensions
 # - Version-aware workflow setup (v0.11.0 paths)
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
-# Run ComfyUI in CPU mode (--cpu flag)
-# Each frontend container runs CPU-only - GPU work happens on workers
+# Run ComfyUI in frontend-testing mode
+# Uses --cpu flag (ComfyUI built-in) to disable GPU inference
+# Each frontend container shows UI only - GPU inference happens on workers
 CMD ["python", "/comfyui/main.py", "--listen", "0.0.0.0", "--port", "8188", "--cpu"]

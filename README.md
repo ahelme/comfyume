@@ -20,6 +20,7 @@
 - ✅ URL-encoded userdata API (workflows%2Ffile.json)
 - ✅ Health checks with /system_stats endpoint
 - ✅ requests in requirements.txt (no manual install!)
+- ✅ COMFYUI_MODE env var (clear deployment intent: frontend-testing vs worker)
 
 ---
 
