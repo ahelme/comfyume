@@ -1,9 +1,9 @@
 **Project:** ComfyUI Multi-User Workshop Platform
 **Project Started:** 2026-01-02
-**Repository:** github.com/ahelme/comfy-multi
+**Repository:** github.com/ahelme/comfyume
 **Domain:** comfy.ahelme.net
 **Doc Created:** 2026-01-02
-**Doc Updated:** 2026-02-01 (Session 25: COMFYUI_MODE implementation, ready for Issue #17)
+**Doc Updated:** 2026-02-01 (v0.11.0 clean rebuild - comfyume repo)
 
 ---
 
@@ -24,44 +24,29 @@
 
 ---
 
-## 🔥 **ACTIVE SESSION CONTEXT** (MUST READ!)
-
-**📋 [Resume Instructions](.claude/CLAUDE-RESUME-VERDA-INSTANCE.md)** | **[Build Report](.claude/build_reports/2026-01-01_build_report.md)**
-
-**Status:** ✅ Issue #21 Phase 1 Complete - Starting Issue #17! (Session 25)
-**Repository:** `comfyume` (https://github.com/ahelme/comfyume) - v0.11.0 clean rebuild
-**Branches:** `main` (unified), `mello-track-2` (active)
-
-**Session 25 Complete (2026-02-01):**
-- ✅ Documentation consolidation (108 files, PR #31)
-- ✅ COMFYUI_MODE env var implemented (.env v0.3.2)
-- ✅ Frontend Dockerfile updated with ENV COMFYUI_MODE=frontend-testing
-- ✅ README.md & CLAUDE.md documentation updated
-- ✅ Issue #21 Phase 1 complete (flag nomenclature)
-- 🔄 Issue #17 ready to start (workflow validation)
-
-**⚡ NEXT:**
-1. Issue #17 - Validate 5 workflow templates in v0.11.0 frontend
-2. Issue #18 - Integration testing (coordinate with Verda team)
-3. Issue #21 Phase 2 - Worker integration (merge verda-track)
-
----
-
 ## 📬 **TEAM COORDINATION** (CHECK REGULARLY!)
 
 **Two Teams Working in Parallel:**
 - **Mello Team** (this Claude) - Frontend, extensions, workflows
 - **Verda Team** (other Claude) - Worker, GPU, VRAM monitoring
 
-**📧 COORDINATION CHANNEL:** https://github.com/ahelme/comfyume/issues/7
-- **CHECK THIS LIKE EMAIL** - Regularly throughout session!
-- Post questions, clarifications, decisions here
-- Both teams communicate through this issue
-- Don't proceed with conflicting work without coordination
+**Repository:** `comfyume` (https://github.com/ahelme/comfyume) - v0.11.0 clean rebuild
+**Main Branch:** `main` (unified codebase)
 
-**New Repo:** `comfyume` (https://github.com/ahelme/comfyume)
+**GitHub Issues:**
 - Master task list: Issue #1
-- Team dialogue: Issue #7 ⚠️ CHECK REGULARLY!
+- **Team Coordination: Issue #7** ⚠️ CHECK LIKE EMAIL!
+  - Post questions, clarifications, decisions
+  - Both teams communicate here
+  - Don't proceed with conflicting work without coordination
+
+**Team Resume Files (current status/tasks):**
+- Verda Team: [.claude/CLAUDE-RESUME-VERDA-TEAM.md](.claude/CLAUDE-RESUME-VERDA-TEAM.md)
+- Mello Team: [.claude/CLAUDE-RESUME-MELLO-TEAM.md](.claude/CLAUDE-RESUME-MELLO-TEAM.md)
+
+**Progress Tracking:**
+- [Mello Progress](.claude/progress-mello-dev.md)
+- [Verda Progress](.claude/progress-verda-dev.md)
 
 ---
 
@@ -99,7 +84,7 @@
 ## 📁 Project Structure
 
 ```
-/home/dev/projects/comfyui/
+/home/dev/comfyume/
 ├── implementation-deployment-verda.md  # Implementation plan for deployment phases
 ├── progress-**.md                      # Recent session logs (UPDATE ON COMMITS)
 ├── CLAUDE.md                           # This file - project guide
@@ -166,18 +151,19 @@
 ## Project Management
 
 ### 📋 Progress Tracking
-- [Current Progress Log](./progress-02.md) - Session log
+- [MELLO TEAM's Progress Log](.claude/progress-mello-dev.md) - Mello's Session log
+- [VERDA TEAM's Progress Log](.claude/progress-verda-dev.md) - Verda's Session log
     - ==MUST UPDATE ON COMMIT OF CODE CHANGES==
 
 ### 📋 Issue Tracking
-- **ComfyMulti Project**: https://github.com/ahelme/comfy-multi/issues
+- **ComfyuME Project**: https://github.com/ahelme/comfyume/issues
 - **Private Scripts Repo**: https://github.com/ahelme/comfymulti-scripts/issues
 
 ### 📋 Task Management
 - **ALWAYS reference GitHub issue numbers** (e.g., #15, #22, #13)
 - **DO NOT use internal task numbers** (no Task #1, Task #2, etc.)
 - **If no GitHub issue exists**, create one first before tracking work
-- See [progress-02.md](./progress-02.md) top section for comprehensive task formatting instructions
+- See top section of [.claude/progress-mello-dev.md](.claude/progress-mello-dev.md) / [.claude/progress-verda-dev.md](.claude/progress-verda-dev.md) for comprehensive task formatting instructions
 
 ### 📋 Implementation Plan (Phases)
 
@@ -211,13 +197,13 @@ Ensure these details are listed the top of ALL .md documentation files:
 
 [example]
 
-**Project Name:** ComfyMulti 
+**Project Name:** ComfyuME
 **Project Desc:** ComfyUI Multi-User Workshop Platform
 **Project Started:** 2026-01-02
-**Repository:** github.com/ahelme/comfy-multi
+**Repository:** github.com/ahelme/comfyume
 **Domain:** comfy.ahelme.net
 **Doc Created:** 2026-01-02
-**Doc Updated:** 2026-01-18
+**Doc Updated:** 2026-02-01
 
 ==IMPORTANT: Docs MUST be comprehensive yet NO FLUFF== 
 
@@ -227,7 +213,7 @@ Ensure these details are listed the top of ALL .md documentation files:
 
 ## 🔄 Update Progress on Commit: Instructions
 
-### At EVERY GIT COMMIT update `progress-**.md`(progress files numbered - only latest kept):
+### At EVERY GIT COMMIT update `.claude/progress-mello-dev.md` OR `.claude/progress-verda-dev.md`:
 
 ```markdown
 ### Session N - YYYY-MM-DD
@@ -247,7 +233,7 @@ Ensure these details are listed the top of ALL .md documentation files:
 
 **Commit logs**
 - List for both repos:
-  - comfy-multi
+  - comfyume
   - comfymulti-scripts (private repo inc. secrets)
 
 **Blockers:**
@@ -306,19 +292,11 @@ Code Architecture:
 
 ### Repository
 - **Platform:** GitHub
-- **URL:** https://github.com/ahelme/comfy-multi
+- **URL:** https://github.com/ahelme/comfyume
 - **Branch Strategy:**
   - `main` - production-ready code
-  - `dev` - active development
-  - Feature branches as needed
+  - Feature branches as needed (mello-track-2, verda-track-2)
 - **Scripts Repo** (PRIVATE!) https://github.com/ahelme/comfymulti-scripts
-
-### Git Configuration (IMPORTANT)
-**GitHub noreply email (keeps email private):**
-```bash
-git config user.email "ahelme@users.noreply.github.com"
-git config user.name "ahelme"
-```
 
 ### Commit Guidelines
 ```bash
@@ -334,23 +312,20 @@ test: add integration tests for worker
 - Before trying risky changes
 - End of each session
 - When tests pass
-- ==REMEMBER: UPDATE `progress-**.md` after commits!==
+- ==REMEMBER: UPDATE `.claude/progress-mello-dev.md` OR `.claude/progress-verda-dev.md` after commits!==
 ---
 
 ## 🛠️ Technology Stack
 
-### Development Machines
-- **dev machine (THIS MACHINE!)**: 'mello' Hetzner VPS CAX31 - Ubuntu
+### Development & Production Servers
+- **'mello' (dev & app server)**: Hetzner VPS CAX31 - Ubuntu
   - Ampere® 8 vCPU, 16GB RAM, 80GB SSD
   - €12.49/month
-  - Storage kept at 80GB for downscaling flexibility (Volumes & object storage available for extra space)
-- **user's machine**: MBP M4 Pro 48GB RAM
-
-### Production Servers & Storage
-- **main app & user frontends**: 'mello' Hetzner VPS CAX31 - Ubuntu
-  - Ampere® 8 vCPU, 16GB RAM, 80GB SSD
-  - €12.49/month
-- **AI inference**: 'verda' GPU cloud (renewable energy & EU policy): rented instance / serverless
+  - Runs: app frontends, queue-manager, Redis, nginx
+- **'verda' (inference server)**: GPU cloud (renewable energy & EU policy)
+  - Rented GPU instance OR serverless containers
+  - Runs: ComfyUI workers with GPU
+- **Local dev machine**: MBP M4 Pro 48GB RAM
 
 ### Backups
 - **cloud storage**: Cloudflare R2 ( .eu ) - 3x buckets (v. cheap)
@@ -428,7 +403,7 @@ REDIS_PASSWORD=changeme
 ## 📋 Critical Files and Locations                                          
 
  mello: File/Directory                              │ Purpose
-  ──────────────────────────────────────────────────┼───────────────────────────────────────────
+  ──────────────────────────────────────────────────┼───────────────────────────────────────
   .env                                              │ Configuration (passwords, domain, etc.)
   docker-compose.yml                                │ Container orchestration
   /etc/ssl/certs/fullchain.pem                      │ SSL public certificate
@@ -445,11 +420,11 @@ REDIS_PASSWORD=changeme
 
   docs/admin-backup-restore.md                      │ Full docs for deploy/backup/restore
 
- verda: File/Directory                              │ Purpose
+ verda: Storage                                     │ Purpose
   ──────────────────────────────────────────────────┼────────────────────────────────────────
-  data/models/shared/   (SFS network drive)         │ Shared model files
-  data/outputs/         (block storage: scratch)    │ User output files (isolated per user)
-  data/inputs/          (block storage: scratch)    │ User uploads (isolated per user)
+  BlockStorage (OS)                                 │ Instance operating system & worker
+  BlockStorage (scratch)                            │ Ephemeral: user inputs/outputs
+  SFS (network drive)                               │ Persistent: models, cache, backups
 ---
 
 ## ✅ Success Criteria
@@ -488,7 +463,7 @@ sudo ufw status
 ### User Authentication
 - **Method:** HTTP Basic Auth (nginx)
 - **Users:** 20 users (user001-user020)
-- **Credentials File:** `/home/dev/projects/comfyui/USER_CREDENTIALS.txt`
+- **Credentials:** Stored in `.env` (USER_CREDENTIALS_USER001-020)
 - **htpasswd File:** `/etc/nginx/comfyui-users.htpasswd`
 - **Encryption:** bcrypt (cost 10)
 
@@ -506,26 +481,22 @@ sudo ufw status
 - **Expiry:** 2026-04-10
 - **Protocols:** TLSv1.2, TLSv1.3
 
-### Cloudflare R2 (Three Buckets)
+### Cloudflare R2 Buckets
 - **Provider:** Cloudflare R2 (S3-compatible)
 - **Endpoint:** `https://f1d627b48ef7a4f687d6ac469c8f1dea.r2.cloudflarestorage.com`
 - **Cost:** ~$3/month total (no egress fees)
 - **Access:** Via AWS CLI with R2 API credentials
 
-**Models Bucket:** `comfy-multi-model-vault-backup`
-- Location: Oceania
-- Contents: `checkpoints/*.safetensors`, `text_encoders/*.safetensors`
-- Purpose: Model files only (~45GB)
+**Current Buckets (comfyume v0.11.0):**
+- `comfyume-model-vault-backups` - Models (~45GB, Oceania)
+- `comfyume-cache-backups` - Container + configs (~3GB, EU)
+- `comfyume-user-files-backups` - User data from mello (~1GB, EU)
+- `comfyume-worker-container-backups` - Worker images (~2.5GB, EU)
 
-**Cache Bucket:** `comfy-multi-cache`
-- Location: Eastern Europe (closer to Verda/Finland)
-- Contents: `worker-image.tar.gz` (~2.5GB), `verda-config-backup.tar.gz` (~14MB)
-- Purpose: Container image and config backup
-
-**User Files Bucket:** `comfy-multi-user-files`
-- Location: Eastern Europe (same as mello VPS)
-- Contents: `user_data/userXXX/`, `outputs/userXXX/`, `inputs/`
-- Purpose: User workflows, settings, outputs, uploads from mello
+**Legacy Archive Buckets (KEEP - comfy-multi v0.9.2):**
+- `comfy-multi-model-vault-backup` - Models archive
+- `comfy-multi-cache` - Cache archive
+- `comfy-multi-user-files` - User files archive
 
 ### Restore Scripts (Private GitHub Repo)
 - **Repo:** `ahelme/comfymulti-scripts` (private)
@@ -554,9 +525,9 @@ This stops all ComfyUI containers to prevent resource exhaustion on startup.
 ### Docker Image Architecture (IMPORTANT!)
 
 **Single Shared Image for All Users:**
-- All 20 users use `comfy-multi-frontend:latest` (NOT per-user images)
+- All 20 users use `comfyume-frontend:v0.11.0` (NOT per-user images)
 - `docker-compose.users.yml` uses `image:` not `build:` (regenerated by `scripts/generate-user-compose.sh`)
-- Old per-user images (`comfyui-user001:latest` etc.) are stale - delete if found
+- Old per-user images from v0.9.2 are stale - delete if found
 - **If containers use wrong image:** Stop containers, delete old images, recreate
 
 **Custom Nodes Volume Mount Gotcha:**
@@ -570,7 +541,7 @@ This stops all ComfyUI containers to prevent resource exhaustion on startup.
 **Dockerfile must include:**
 - `curl` - Health check uses `CMD ["curl", "-f", "http://localhost:8188/"]`
 - `libgomp1` - Required for torchaudio (audio nodes), prevents libgomp.so.1 errors
-- `requests` (Python) - Missing from ComfyUI v0.9.2 requirements.txt but needed by frontend
+- `requests` (Python) - Required by frontend (added to requirements.txt in v0.11.0)
 
 **Symptoms if missing:**
 - No curl: Health checks timeout after 60s, containers marked unhealthy
@@ -589,33 +560,20 @@ This stops all ComfyUI containers to prevent resource exhaustion on startup.
 - Start: `docker compose up -d` (includes docker-compose.users.yml automatically)
 - Regenerate: `./scripts/generate-user-compose.sh` (updates docker-compose.users.yml)
 
-### ComfyUI v0.9.2 Workflow Storage (CRITICAL!)
+### ComfyUI v0.11.0 Workflow Storage (CRITICAL!)
 
 **Workflow Location:**
 - Workflows MUST be in: `/comfyui/user/default/workflows/`
-- NOT in: `/comfyui/input/` or `/comfyui/input/templates/`
 - Served via ComfyUI's userdata API: `/api/userdata?dir=workflows`
 
 **How It Works:**
-- ComfyUI v0.9.2 uses a userdata API for workflow management
-- Browser requests: `GET /api/userdata?dir=workflows`
-- ComfyUI reads from: `/comfyui/user/default/workflows/*.json`
-- Load menu automatically discovers workflows in this location
-
-**Deployment:**
 - docker-entrypoint.sh copies workflows from `/workflows` volume to `/comfyui/user/default/workflows/`
 - Runs on every container startup
-- All 5 template workflows appear in Load menu automatically
-
-**Don't Need:**
-- ❌ Nginx static file serving for workflows (v0.9.2 has built-in API)
-- ❌ Custom JavaScript extensions that try to fetch workflows manually
-- ❌ Symlinking workflows to other locations
+- All 5 template workflows (Flux2 Klein, LTX-2) appear in Load menu automatically
 
 **Symptoms if wrong:**
 - Workflows folder empty in ComfyUI Load menu
 - Browser console errors: `404 /api/userdata?dir=workflows`
-- Default workflow loads SD v1.5 instead of Flux2 Klein
 
 ### Cloudflare R2 EU location
 - don't forget the '.eu' domain!
@@ -737,19 +695,19 @@ This preserves the expected IP: **100.89.38.43**
 
 Before starting, verify:
 - [ ] mello VPS is running (comfy.ahelme.net)
-- [ ] R2: **Models bucket** (`comfy-multi-model-vault-backup`) contains:
+- [ ] R2: **Models bucket** (`comfyume-model-vault-backups`) contains:
   - [ ] `checkpoints/*.safetensors` (~25-50 GB)
   - [ ] `text_encoders/*.safetensors` (~20 GB)
-- [ ] R2: **Cache bucket** (`comfy-multi-cache`) contains:
+- [ ] R2: **Cache bucket** (`comfyume-cache-backups`) contains:
   - [ ] `worker-image.tar.gz` (~2.5 GB)
   - [ ] `verda-config-backup.tar.gz` (~14 MB)
+- [ ] R2: **Worker container bucket** (`comfyume-worker-container-backups`)
+- [ ] R2: **User files bucket** (`comfyume-user-files-backups`) - available to receive backups
 - [ ] GitHub: **Private Scripts Repo** (`ahelme/comfymulti-scripts`) contains:
   - [ ] `setup-verda-solo-script.sh`
 - [ ] User's Mac: **SSH Keys and Setup Script** added to Verda console during provisioning
   - [ ] `dev@vps-for-verda` (Mello's key) & `developer@annahelme.com` (User's key) - paste into console
-  - [ ] `setup-verda-solo-script.sh` (latest version from GitHub!) - paste into console 
-- [ ] R2: **User files bucket** (`comfy-multi-user-files`)
-  - [ ] available to receive backups
+  - [ ] `setup-verda-solo-script.sh` (latest version from GitHub!) - paste into console
 
 ### Step-by-Step Deployment Process
 
@@ -781,4 +739,4 @@ Before each session ends:
 
 ---
 
-**Last Updated:** 2026-01-19
+**Last Updated:** 2026-02-01

@@ -12,7 +12,7 @@ event: stop
 
 1. Run `/CLAUDE-HANDOVER` skill to update:
    - GitHub issues (current work + related issues)
-   - progress-02.md (session progress log)
+   - progress-verda-dev.md
    - Collaboration issue #7: https://github.com/ahelme/comfyume/issues/7
    - Top of CLAUDE.md (HANDOVER section)
    - Commit and push all changes
@@ -20,4 +20,4 @@ event: stop
 2. Run `/compact` to compress context
 
 ### SessionStart Hook Active ✅
-The `/resume-context` skill runs automatically at session start!
+The `/resume-context-verda` skill runs automatically at session start!
