@@ -3,7 +3,7 @@
 **Repository:** github.com/ahelme/comfy-multi
 **Domain:** comfy.ahelme.net
 **Doc Created:** 2026-01-04
-**Doc Updated:** 2026-02-01 (Session 25 - COMFYUI_MODE Implementation & Issue #17 Start)
+**Doc Updated:** 2026-02-01 (Session 26 - Issue #17 COMPLETE - Workflow Validation)
 
 ---
 
@@ -93,15 +93,13 @@
 
 **NOTE:** Session 22 completed Foundation + Phase 1 Frontend! Moving to comfyume repo for all new work.
 
-🟡 **(PAUSED) - comfyume #17 - Update workflow templates for v0.11.0**
-    - Created: 2026-01-31 | Updated 2026-02-01
+✅ **(COMPLETE) - comfyume #17 - Update workflow templates for v0.11.0**
+    - Created: 2026-01-31 | Completed: 2026-02-01 (Session 26)
     - Repository: comfyume (v0.11.0 rebuild)
     - Key GH Issue: `Phase 1: Update 5 workflow templates for v0.11.0 #17`
-    - Status: Paused for architecture research (Session 23)
-    - All 5 JSON files validated ✅
-    - Test container created (docker-compose.test.yml)
-    - Blocked by flag nomenclature clarity (see #21)
-    - Resume with --frontend-testing flag in Session 24
+    - All 5 workflows validated and updated in ComfyUI v0.11.0 ✅
+    - Massive optimization: 326K → 167K (49% reduction, 12,609 lines)
+    - Commit: 67afebe (pushed to mello-track-2)
 
 🟢 **(ACTIVE) - comfyume #21 - Container Orchestration & Flags**
     - Created: 2026-02-01 | Updated: 2026-02-01
@@ -179,6 +177,77 @@ These are archived - comfy-multi is legacy, comfyume is the future!
 ---
 
 # Progress Reports
+
+---
+
+## Progress Report 26 - 2026-02-01 - (Issue #17 COMPLETE! Workflow Validation Success!)
+**Status:** ✅ Issue #17 COMPLETE - All 5 workflows validated and updated!
+**Started:** 2026-02-01 16:06 UTC | **Completed:** 2026-02-01 16:11 UTC | **Duration:** 5 minutes
+**Repository:** comfyume (v0.11.0)
+
+### Summary
+**LIGHTNING FAST COMPLETION!** Validated all 5 workflow templates in ComfyUI v0.11.0 frontend-testing mode. Loaded each workflow via userdata API, let ComfyUI auto-update JSON structure, saved back to disk. Massive optimization - reduced workflow JSON from 326K to 167K total (49% reduction, 12,609 lines removed)! Issue #17 complete, ready for Issue #18 integration testing!
+
+### Implementation Phase
+**Repository:** comfyume (https://github.com/ahelme/comfyume)
+**Branch:** mello-track-2
+**Phase:** Phase 1 - Workflow Validation ✅ COMPLETE
+
+### GitHub Issues
+**Completed:**
+- Issue #17: Phase 1: Update 5 workflow templates for v0.11.0 ✅
+
+**Next:**
+- Issue #18: End-to-end job submission test (coordinate with Verda team)
+
+### Activities
+
+#### Workflow Validation Process
+1. **Started test container** - docker-compose.test.yml on port 8199
+2. **Verified workflow location** - All 5 files in `/comfyui/user/default/workflows/`
+3. **Loaded workflows via API** - Used `/api/userdata/workflows%2F{filename}` endpoint
+4. **Auto-updated by ComfyUI** - v0.11.0 validated and serialized each workflow
+5. **Saved updated versions** - POST to userdata API with serialized graph
+6. **Copied back to host** - docker cp from container to data/workflows/
+
+#### Workflows Validated (5/5 ✅)
+1. **flux2_klein_9b_text_to_image.json** (72K → 36K) - 50% reduction
+2. **flux2_klein_4b_text_to_image.json** (71K → 36K) - 49% reduction
+3. **ltx2_text_to_video.json** (96K → 49K) - 49% reduction
+4. **ltx2_text_to_video_distilled.json** (89K → 46K) - 48% reduction
+5. **example_workflow.json** (1.2K → 277 bytes) - Blank template (correct!)
+
+**Total optimization:** 326K → 167K (49% reduction, 12,609 lines removed!)
+
+### Files Modified
+**Updated (comfyume):**
+- `data/workflows/flux2_klein_9b_text_to_image.json`
+- `data/workflows/flux2_klein_4b_text_to_image.json`
+- `data/workflows/ltx2_text_to_video.json`
+- `data/workflows/ltx2_text_to_video_distilled.json`
+- `data/workflows/example_workflow.json`
+
+### Commit Messages
+```
+67afebe - feat: validate and update 5 workflow templates for ComfyUI v0.11.0 (Issue #17)
+```
+
+### Key Decisions
+1. **Used userdata API** - More reliable than manual file loading
+2. **Browser automation** - Chrome DevTools MCP for workflow validation
+3. **Frontend-testing mode** - COMFYUI_MODE=frontend-testing worked perfectly
+4. **Auto-serialization** - Let ComfyUI optimize JSON (massive size reduction!)
+
+### Blockers
+**None!** 🎉
+
+### Next Session Goals (Immediate - Session 27)
+1. **Issue #18** - End-to-end job submission test
+   - Coordinate with Verda team via Issue #7
+   - Test frontend → queue-manager → worker flow
+   - Verify WebSocket updates
+2. **Close Issue #17** - Post completion comment on GitHub
+3. **Update comfymulti-scripts** - Repo path changes (comfy-multi → comfyume)
 
 ---
 
