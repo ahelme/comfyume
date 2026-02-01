@@ -5,7 +5,7 @@
     - related gh issues (VERY CONCISE - JUST INFO NEEDED/HELPFUL/RELEVANT)
     - progress-02.md
     - update this doc so that it references CURRENT PENDING work at the bottom 
-        - /home/dev/projects/comfyui/.claude/CLAUDE-RESUME-MELLO.md 
+        - /home/dev/projects/comfyui/.claude/CLAUDE-RESUME-MELLO-TEAM.md 
         - (replace stale instructions)
     - COLLABORATION gh issue: https://github.com/ahelme/comfyume/issues/7
         - short update of work performed & any questions / info needed

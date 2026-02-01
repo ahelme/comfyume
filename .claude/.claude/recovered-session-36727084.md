@@ -17608,7 +17608,7 @@ Based on my analysis of the conversation history and project documentation, I've
 - **Category**: Context management
 - **Tool**: Multiple
 - **Pattern**: Context >160k tokens without handover update
-- **Context**: CLAUDE-HANDOVER.md specifies tasks to perform at 80% context (update issues, progress-02.md, CLAUDE.md, etc.)
+- **Context**: CLAUDE-HANDOVER-MELLO.md specifies tasks to perform at 80% context (update issues, progress-02.md, CLAUDE.md, etc.)
 - **Severity**: HIGH
 - **Suggested Rule**: Alert when context exceeds 160k tokens without updating handover documents
 
@@ -17794,7 +17794,7 @@ drwxrwxr-x  2 dev dev  4096 Jan 21 22:51 server-config
 total 40
 drwxrwxr-x 2 dev dev  4096 Jan 31 18:59 .
 drwx------ 4 dev dev  4096 Jan 31 19:18 ..
--rw-rw-r-- 1 dev dev   727 Jan 31 18:59 CLAUDE-HANDOVER.md
+-rw-rw-r-- 1 dev dev   727 Jan 31 18:59 CLAUDE-HANDOVER-MELLO.md
 -rw-rw-r-- 1 dev dev  4631 Jan 21 23:19 issue.md
 -rw-rw-r-- 1 dev dev   181 Jan 31 18:15 resume-context.md
 -rw-rw-r-- 1 dev dev 15979 Jan 26 08:13 tasks-phase.md

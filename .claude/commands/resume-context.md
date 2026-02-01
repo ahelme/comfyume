@@ -4,4 +4,4 @@ Please read this file CLAUDE-CONTEXT-ABOUT-US.md
 
 and then read/action steps within:
 
-CLAUDE-RESUME-MELLO.md THANK YOU!! 🤗
+CLAUDE-RESUME-MELLO-TEAM.md THANK YOU!! 🤗
