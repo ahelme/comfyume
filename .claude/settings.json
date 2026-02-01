@@ -1,4 +1,10 @@
 {
+  "enabledPlugins": {
+    "playground@claude-plugins-official": true
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "echo 'Session 25 - Mello Team | comfyume | '$(git branch --show-current 2>/dev/null || echo 'no git')"
   "permissions": {
     "defaultMode": "bypassPermissions"
   },

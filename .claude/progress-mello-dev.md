@@ -3,7 +3,7 @@
 **Repository:** github.com/ahelme/comfy-multi
 **Domain:** comfy.ahelme.net
 **Doc Created:** 2026-01-04
-**Doc Updated:** 2026-02-01 (Session 24 - .env Consolidation & Git Merge)
+**Doc Updated:** 2026-02-01 (Session 25 - COMFYUI_MODE Implementation & Issue #17 Start)
 
 ---
 
@@ -179,6 +179,138 @@ These are archived - comfy-multi is legacy, comfyume is the future!
 ---
 
 # Progress Reports
+
+---
+
+## Progress Report 25 - 2026-02-01 - (COMFYUI_MODE Implementation Complete!)
+**Status:** ✅ Issue #21 Phase 1 COMPLETE - Ready for Issue #17
+**Started:** 2026-02-01 | **Duration:** ~1 hour
+**Repository:** comfyume (v0.11.0) + comfymulti-scripts
+
+### Summary
+**Quick pragmatic win!** Implemented COMFYUI_MODE environment variable to resolve flag nomenclature confusion from Session 23/24. Added clear deployment mode indicator (frontend-testing vs worker), updated all documentation, pushed to both repos, created PR. Issue #21 Phase 1 complete - now ready to proceed with Issue #17 (workflow validation)!
+
+### Implementation Phase
+**Repository:** comfyume (https://github.com/ahelme/comfyume)
+**Branch:** mello-track-2
+**Phase:** Issue #21 Phase 1 (Flag Nomenclature) ✅ COMPLETE
+
+### GitHub Issues & PRs
+**Updated:**
+- Issue #21: Container Orchestration & Flag Nomenclature (Phase 1 complete)
+
+**Created:**
+- PR #31: docs: consolidate project documentation and context files
+
+### Activities
+
+#### Part 1: Resume & Documentation Sync
+- ✅ Completed resume checklist (date, docs, git status)
+- ✅ Read CLAUDE-CONTEXT-ABOUT-US.md, CLAUDE-RESUME-MELLO-TEAM.md
+- ✅ Read README.md, CLAUDE.md, docs/admin-backup-restore.md, progress-02.md
+- ✅ Committed 108 documentation files (61,262 lines)
+- ✅ Created PR #31 for documentation consolidation
+
+#### Part 2: COMFYUI_MODE Implementation (Issue #21 Phase 1)
+**Decision:** Implement environment variable for deployment clarity
+
+**Updated .env files (v0.3.1 → v0.3.2):**
+- comfymulti-scripts/.env (master secrets repo)
+- comfyume/.env.example (template for users)
+- Added COMFYUI_MODE variable with clear comments
+
+```bash
+# ComfyUI deployment mode (clarifies architecture intent)
+# - frontend-testing: UI only, no inference (uses --cpu flag internally)
+# - worker: Full inference capability with GPU (no --cpu flag)
+COMFYUI_MODE=frontend-testing
+```
+
+**Updated comfyui-frontend/Dockerfile:**
+- Added `ENV COMFYUI_MODE=frontend-testing`
+- Updated comments: "frontend-testing mode" (clearer than "CPU mode")
+- Clarified `--cpu` flag purpose (disables GPU, not CPU hardware)
+
+**Updated Documentation:**
+- README.md: Added COMFYUI_MODE to Key Improvements
+- CLAUDE.md: Added to env vars section, updated architecture diagram, services section
+- CLAUDE.md: Version updates (v0.9.2 → v0.11.0)
+
+#### Part 3: Analysis of Issue #17 vs #21
+- ✅ Analyzed dependency: Can do #17 without fully completing #21
+- ✅ Determined COMFYUI_MODE provides sufficient clarity for #17
+- ✅ User decision: Fix flag now, then proceed to #17
+
+#### Part 4: File Structure Cleanup (Session 25 end)
+- ✅ Consolidated progress: progress-02.md → .claude/progress-mello-dev.md
+- ✅ Renamed resume: CLAUDE-RESUME-MELLO.md → .claude/CLAUDE-RESUME-MELLO-TEAM.md
+- ✅ Renamed handover: CLAUDE-HANDOVER.md → .claude/commands/CLAUDE-HANDOVER-MELLO.md
+- ✅ Renamed command: resume-context.md → .claude/commands/resume-context-mello.md
+- ✅ Removed nested .claude/.claude/ directory (moved 10 files up)
+- ✅ Updated all command/progress references
+- ✅ 7 additional cleanup commits (0fdf45a, 76a08e8, 34adddf, 3da5796, af2e8b2, 158b7d2, ad5b410)
+
+### Files Created/Modified (comfyume)
+**Commits to mello-track-2 branch (4 commits total):**
+
+**Commit 1 (1623f81) - Documentation consolidation:**
+- 108 files changed, 61,262 insertions
+- .claude/.claude/ context files (16 files)
+- .claude/commands/ (4 files)
+- docs/admin-backup-restore.md
+- docs/old-comfy-multi-docs/ (88 files)
+- implementation-backup-restore.md, implementation-serverless-options.md
+- progress-02.md
+
+**Commit 2 (f082267) - COMFYUI_MODE implementation:**
+- .env.example (v0.3.2)
+- comfyui-frontend/Dockerfile (added ENV, updated comments)
+
+**Commit 3 (e8e5fa6) - Documentation updates:**
+- README.md (COMFYUI_MODE in Key Improvements)
+- CLAUDE.md (env vars, architecture, services sections)
+
+**Commit 4 (comfymulti-scripts 6e4dfaa) - Master .env update:**
+- .env (v0.3.2 with COMFYUI_MODE)
+
+### Commit Messages
+```
+# Main work
+1623f81 - docs: consolidate project documentation and context files
+f082267 - feat: add COMFYUI_MODE environment variable for deployment clarity (Issue #21)
+e8e5fa6 - docs: update COMFYUI_MODE references in README and CLAUDE (Issue #21)
+6e4dfaa - feat: add COMFYUI_MODE environment variable (v0.3.2) [comfymulti-scripts]
+
+# Handover & cleanup
+a9d644d - docs: add Session 25 progress report
+3da5796 - docs: Session 25 handover
+af2e8b2 - docs: update Dockerfile header comment
+0fdf45a - refactor: consolidate progress file to .claude/progress-mello-dev.md
+76a08e8 - refactor: rename resume file to CLAUDE-RESUME-MELLO.md
+34adddf - refactor: rename files with MELLO-TEAM suffix
+158b7d2 - refactor: remove nested .claude/.claude/ directory
+4153acd - docs: update Session 25 progress with file cleanup summary
+ad5b410 - refactor: rename resume-context.md to resume-context-mello.md
+```
+
+### Key Decisions
+1. **Pragmatic approach** - Fix immediate confusion, defer complex orchestration
+2. **Environment variable pattern** - COMFYUI_MODE clarifies deployment intent
+3. **Documentation-first** - Updated all references immediately
+4. **Version bump** - .env v0.3.1 → v0.3.2
+5. **Ready for #17** - Sufficient clarity to proceed with workflow validation
+
+### Blockers
+**None!** 🎉
+- Issue #21 Phase 1 complete
+- Ready to proceed with Issue #17
+
+### Next Session Goals (Immediate - Session 25 continued)
+1. **Issue #17** - Update 5 workflow templates for v0.11.0 ⚡ STARTING NOW!
+   - Load workflows in v0.11.0 frontend (COMFYUI_MODE=frontend-testing)
+   - Let ComfyUI auto-populate new parameters
+   - Save updated workflows
+2. **Issue #18** - Integration testing (after #17 complete)
 
 ---
 
@@ -473,14 +605,14 @@ accef58 - docs: Add README for comfyume v0.11.0 rebuild
 
 ### Files Modified
 **Modified (uncommitted):**
-- `.claude/CLAUDE-RESUME-VERDA-INSTANCE.md` - Updated coordination section
+- `.claude/CLAUDE-RESUME-MELLO-TEAM.md` - Updated coordination section
 - `.claude/commands/resume-context.md` - (previous session changes)
 - `.claude/settings.json` - Added SessionStart & PreCompact hooks
 - `CLAUDE.md` - Added team coordination section
 
 **Created (uncommitted):**
 - `.claude/hookify.context-reminder.local.md` - Stop event hook
-- `.claude/commands/CLAUDE-HANDOVER.md` - This handover command
+- `.claude/commands/CLAUDE-HANDOVER-MELLO.md` - This handover command
 - Recovered session files (documentation)
 
 ### Key Learnings
@@ -1395,7 +1527,7 @@ User browser testing:
 - `scripts/generate-user-compose.sh` - Batched startup logic with health checks
 - `docker-compose.users.yml` - Regenerated with dependency chains and health checks
 - `comfyui-frontend/Dockerfile` - Added requests module, reverted user_workflows mkdir
-- `.claude/CLAUDE-RESUME-VERDA-INSTANCE.md` - Reverted to previous version
+- `.claude/CLAUDE-RESUME-MELLO-TEAM.md` - Reverted to previous version
 - `docs/storage-hierarchy.md` - Added (from previous session)
 - `docs/workflows.md` - Added (from previous session)
 - `implementation-serverless-options.md` - Added (from previous session)
@@ -1819,7 +1951,7 @@ Completed backup automation with hourly cron jobs on Verda triggering Mello user
 - ✅ Cleaner separation of user container configuration
 
 #### Part 5: Project File Reorganization
-- ✅ Moved CLAUDE-RESUME.md to .claude/CLAUDE-RESUME-VERDA-INSTANCE.md
+- ✅ Moved CLAUDE-RESUME.md to .claude/CLAUDE-RESUME-MELLO-TEAM.md
 - ✅ Archived docs-audit.md to docs/archive/
 - ✅ Renamed progress-2.md to progress-02.md
 - ✅ Added .claude/DEPLOYMENT-TO-DO.md for deployment checklist
