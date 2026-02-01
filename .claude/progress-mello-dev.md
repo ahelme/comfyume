@@ -241,6 +241,14 @@ COMFYUI_MODE=frontend-testing
 - ✅ Determined COMFYUI_MODE provides sufficient clarity for #17
 - ✅ User decision: Fix flag now, then proceed to #17
 
+#### Part 4: File Structure Cleanup (Session 25 end)
+- ✅ Consolidated progress: progress-02.md → .claude/progress-mello-dev.md
+- ✅ Renamed resume: CLAUDE-RESUME-MELLO.md → .claude/CLAUDE-RESUME-MELLO-TEAM.md
+- ✅ Renamed handover: CLAUDE-HANDOVER.md → .claude/commands/CLAUDE-HANDOVER-MELLO.md
+- ✅ Removed nested .claude/.claude/ directory (moved 10 files up)
+- ✅ Updated all command/progress references
+- ✅ 6 additional cleanup commits (0fdf45a, 76a08e8, 34adddf, 3da5796, af2e8b2, 158b7d2)
+
 ### Files Created/Modified (comfyume)
 **Commits to mello-track-2 branch (4 commits total):**
 
@@ -266,10 +274,20 @@ COMFYUI_MODE=frontend-testing
 
 ### Commit Messages
 ```
+# Main work
 1623f81 - docs: consolidate project documentation and context files
 f082267 - feat: add COMFYUI_MODE environment variable for deployment clarity (Issue #21)
 e8e5fa6 - docs: update COMFYUI_MODE references in README and CLAUDE (Issue #21)
-6e4dfaa - feat: add COMFYUI_MODE environment variable (v0.3.2)
+6e4dfaa - feat: add COMFYUI_MODE environment variable (v0.3.2) [comfymulti-scripts]
+
+# Handover & cleanup
+a9d644d - docs: add Session 25 progress report
+3da5796 - docs: Session 25 handover
+af2e8b2 - docs: update Dockerfile header comment
+0fdf45a - refactor: consolidate progress file to .claude/progress-mello-dev.md
+76a08e8 - refactor: rename resume file to CLAUDE-RESUME-MELLO.md
+34adddf - refactor: rename files with MELLO-TEAM suffix
+158b7d2 - refactor: remove nested .claude/.claude/ directory
 ```
 
 ### Key Decisions
