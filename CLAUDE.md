@@ -14,6 +14,24 @@
 
 ---
 
+## 🔄 HANDOVER (Session 28 - 2026-02-01)
+
+**Completed:**
+- ✅ Issue #39: Infrastructure test (4/5 passing) - 20 containers validated
+- ✅ Test report: test-reports/infrastructure-test-2026-02-01-175318.txt
+- ✅ Created Issue #41: Architectural clarification needed on output file handling
+
+**Next:**
+- Issue #41: Clarify how outputs transfer from Verda to Mello (Tailscale VPN + ?)
+- Based on answer: Update/close Issue #39
+- Proceed to load testing or end-to-end testing
+
+**Questions:**
+- How do output files get from Verda (/mnt/scratch/outputs) to Mello for user downloads?
+- See Issue #41 and .claude/ARCHITECTURE-ASCII.md for details
+
+---
+
 ## ⚠️  CRITICAL INSTRUCTIONS - YOU MUST:
 
 1. **USE LATEST STABLE LIBRARIES AS OF JAN 2026**
