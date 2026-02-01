@@ -44,7 +44,7 @@
 ---
 
 ## Session 25 - 2026-02-01
-✅ File org: renamed resume, created handover-verda, deleted old files | ✅ CLAUDE.md cleanup: fixed refs, R2 buckets (7 total), removed redundancy | ✅ .env: added COMFYUI_MODE | ✅ PR #32 merged
+✅ File org: renamed resume, created handover-verda, deleted old files | ✅ CLAUDE.md cleanup: fixed refs, R2 buckets (7 total), removed redundancy | ✅ .env: added COMFYUI_MODE | ✅ PR #32 merged | ✅ Fixed broken statusline (restored colors) | ✅ Pulled from Mello: workflows validated, ready for testing
 
 ---
 
