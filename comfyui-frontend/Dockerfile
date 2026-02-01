@@ -1,5 +1,5 @@
 # ComfyUI Frontend Container - v0.11.0
-# Multi-user workshop platform - CPU-only frontends
+# Multi-user workshop platform - COMFYUI_MODE=frontend-testing (UI only, no GPU inference)
 # ComfyUI treated as immutable upstream dependency
 
 FROM python:3.11-slim
