@@ -43,6 +43,11 @@
 
 ---
 
+## Session 26 - 2026-02-01
+✅ Issue #14 (comfymulti-scripts): Added PROJECT_NAME param to backup scripts | ✅ Updated R2 bucket names (comfyume-*) in all backup scripts | ✅ Issue #22 Phase 3: Completed .env v0.3.2 migration across all docs/scripts | ✅ Updated active docs (admin-backup-restore.md, implementation-backup-restore.md) | ✅ 3 commits pushed to verda-track-2 (comfyume) + 1 commit to verda-track-2 (comfymulti-scripts)
+
+---
+
 ## Session 25 - 2026-02-01
 ✅ File org: renamed resume, created handover-verda, deleted old files | ✅ CLAUDE.md cleanup: fixed refs, R2 buckets (7 total), removed redundancy | ✅ .env: added COMFYUI_MODE | ✅ PR #32 merged | ✅ Fixed broken statusline (restored colors) | ✅ Pulled from Mello: workflows validated, ready for testing
 
@@ -122,14 +127,135 @@
 
 ## Next Session Goals
 
-1. **#28** - Re-Architect & Migrate to ComfyUIv0.11.1 - Mello Track (linked to #27)
+1. **Phase 11** - Test Single GPU Instance (Restore & Verify)
+   - Provision Verda H100 instance (or cheaper CPU for initial testing)
+   - Run setup-verda-solo-script.sh to restore from backups
+   - Test worker deployment and connectivity
+   - Verify VRAM monitoring and job execution
+
+2. **Integration Testing** - Issue #18
+   - Test frontend + queue-manager + worker end-to-end
+   - Validate workflow execution (Flux.2 Klein, LTX-2)
+   - Check job queue, priority, timeout handling
 
 ### Pending (UNSCHEDULED)
-- Produce new backups then test restore, fix til successful
+- Multi-user concurrent testing (20 users) - Issue #19
+- Workshop readiness validation - Issue #20
 
 ---
 
 # Progress Reports
+
+---
+
+## Progress Report Verda 04 - 2026-02-01 - .env v0.3.2 Migration (Issue #22 + #14)
+
+**Status:** COMPLETE ✅
+**Started:** 2026-02-01
+**Completed:** 2026-02-01
+**Duration:** ~45 minutes
+
+### Summary
+
+Completed .env v0.3.2 migration across both repositories (comfyume + comfymulti-scripts). Updated all backup scripts, reference scripts, and active documentation to use new consolidated .env variable naming and R2 bucket structure. Issue #22 Phase 3 (comfyume) and Issue #14 (comfymulti-scripts) both closed.
+
+### Implementation Phase
+**Phase:** Phase 11 - Test Single GPU Instance (Restore & Verify)
+**Focus:** Documentation and script consistency with .env v0.3.2
+**Status:** Configuration cleanup COMPLETE - Ready for deployment testing
+
+---
+
+### Activities & Achievements
+
+**Issue #22 Phase 3 (comfyume repo)** ✅
+- Updated reference scripts:
+  - `scripts/create-gpu-quick-deploy.sh`: REDIS_HOST → INFERENCE_SERVER_REDIS_HOST
+  - `scripts/verda-startup-script.sh`: Updated repo refs, .env instructions
+- Updated documentation:
+  - `README.md`: Added .env v0.3.2 configuration section (45 lines)
+  - `comfyui-worker/README.md`: Updated env vars, added compatibility notes
+  - `docs/admin-backup-restore.md`: Updated R2 bucket names (3 → 4 buckets)
+  - `implementation-backup-restore.md`: Updated repo refs, backup locations
+- Updated ComfyUI version references (v0.9.2 → v0.11.0)
+
+**Issue #14 (comfymulti-scripts repo)** ✅
+- Added PROJECT_NAME parameter to backup scripts:
+  - `backup-mello.sh`: Added PROJECT_NAME env var, updated PROJECT_DIR logic
+  - `backup-verda.sh`: Updated R2 bucket names
+  - `setup-verda-solo-script.sh`: Updated R2 bucket comments (3 → 4 buckets), repo refs
+- All scripts now use consistent PROJECT_NAME=comfyume (overridable via env)
+
+---
+
+### Files Modified
+
+**comfyume repo (3 commits):**
+1. Commit 7639369: WIP updates to scripts (4 files)
+2. Commit 4a62f06: Final documentation updates (2 files)
+   - README.md
+   - comfyui-worker/README.md
+   - scripts/create-gpu-quick-deploy.sh
+   - scripts/verda-startup-script.sh
+   - docs/admin-backup-restore.md
+   - implementation-backup-restore.md
+
+**comfymulti-scripts repo (1 commit):**
+- Commit 8cf1ba1: PROJECT_NAME parameter + R2 bucket updates (3 files)
+  - backup-mello.sh
+  - backup-verda.sh
+  - setup-verda-solo-script.sh
+
+---
+
+### Key Technical Decisions
+
+**1. R2 Bucket Separation (3 → 4 buckets)**
+- Rationale: Separate worker container from cache for clearer architecture
+- Old: comfy-multi-cache (container + config together)
+- New: comfyume-cache-backups (config only) + comfyume-worker-container-backups (images)
+- Impact: Better organization, easier selective restore
+
+**2. PROJECT_NAME as Environment Variable**
+- Rationale: Flexibility for future project renames without script rewrites
+- Implementation: `PROJECT_NAME="${PROJECT_NAME:-comfyume}"`
+- Default: comfyume (matches current project)
+- Overridable: Can set env var for different deployments
+
+**3. REDIS_HOST Split (App vs Inference)**
+- Rationale: Clarify dual-server architecture
+- App server: `APP_SERVER_REDIS_HOST=redis` (Docker network)
+- Inference worker: `INFERENCE_SERVER_REDIS_HOST=100.99.216.71` (Tailscale IP)
+- Backward compatibility: Worker checks both variables
+
+---
+
+### Coordination
+
+**Mello Team Status (Issue #7):**
+- Workflow validation complete (5 templates for v0.11.0)
+- Frontend ready for integration testing
+- Both teams aligned on .env v0.3.2 structure
+
+**Next Integration Point:**
+- Deploy to Verda H100 instance for end-to-end testing
+- Test queue-manager + worker connectivity
+- Validate workflow execution (Flux.2 Klein + LTX-2)
+
+---
+
+### Next Session Goals
+
+1. **Phase 11 Testing** - Deploy to Verda GPU instance
+   - Provision H100 (or cheaper CPU for initial test)
+   - Run setup-verda-solo-script.sh (tests backup/restore flow)
+   - Verify worker startup and Redis connectivity
+   - Test VRAM monitoring on real GPU
+
+2. **Integration Testing** - Issue #18
+   - End-to-end: frontend → queue → worker → output
+   - Validate all 5 workflow templates
+   - Check priority queue, timeout handling
 
 ---
 
