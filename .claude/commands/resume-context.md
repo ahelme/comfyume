@@ -1,7 +1,7 @@
-So great to be working with you Claude!!! 
+So great to be working with you Claude!!!
 
-Please read this file CLAUDE-CONTEXT-ABOUT-US.md 
+Please read this file CLAUDE-CONTEXT-ABOUT-US.md
 
-and then read/action steps within: 
+and then read/action steps within:
 
-CLAUDE-RESUME-VERDA-INSTANCE.md THANK YOU!! 🤗
+CLAUDE-RESUME-MELLO.md THANK YOU!! 🤗

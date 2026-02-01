@@ -206,7 +206,7 @@ These are archived - comfy-multi is legacy, comfyume is the future!
 
 #### Part 1: Resume & Documentation Sync
 - ✅ Completed resume checklist (date, docs, git status)
-- ✅ Read CLAUDE-CONTEXT-ABOUT-US.md, CLAUDE-RESUME-VERDA-INSTANCE.md
+- ✅ Read CLAUDE-CONTEXT-ABOUT-US.md, CLAUDE-RESUME-MELLO.md
 - ✅ Read README.md, CLAUDE.md, docs/admin-backup-restore.md, progress-02.md
 - ✅ Committed 108 documentation files (61,262 lines)
 - ✅ Created PR #31 for documentation consolidation
@@ -584,7 +584,7 @@ accef58 - docs: Add README for comfyume v0.11.0 rebuild
 
 ### Files Modified
 **Modified (uncommitted):**
-- `.claude/CLAUDE-RESUME-VERDA-INSTANCE.md` - Updated coordination section
+- `.claude/CLAUDE-RESUME-MELLO.md` - Updated coordination section
 - `.claude/commands/resume-context.md` - (previous session changes)
 - `.claude/settings.json` - Added SessionStart & PreCompact hooks
 - `CLAUDE.md` - Added team coordination section
@@ -1506,7 +1506,7 @@ User browser testing:
 - `scripts/generate-user-compose.sh` - Batched startup logic with health checks
 - `docker-compose.users.yml` - Regenerated with dependency chains and health checks
 - `comfyui-frontend/Dockerfile` - Added requests module, reverted user_workflows mkdir
-- `.claude/CLAUDE-RESUME-VERDA-INSTANCE.md` - Reverted to previous version
+- `.claude/CLAUDE-RESUME-MELLO.md` - Reverted to previous version
 - `docs/storage-hierarchy.md` - Added (from previous session)
 - `docs/workflows.md` - Added (from previous session)
 - `implementation-serverless-options.md` - Added (from previous session)
@@ -1930,7 +1930,7 @@ Completed backup automation with hourly cron jobs on Verda triggering Mello user
 - ✅ Cleaner separation of user container configuration
 
 #### Part 5: Project File Reorganization
-- ✅ Moved CLAUDE-RESUME.md to .claude/CLAUDE-RESUME-VERDA-INSTANCE.md
+- ✅ Moved CLAUDE-RESUME.md to .claude/CLAUDE-RESUME-MELLO.md
 - ✅ Archived docs-audit.md to docs/archive/
 - ✅ Renamed progress-2.md to progress-02.md
 - ✅ Added .claude/DEPLOYMENT-TO-DO.md for deployment checklist

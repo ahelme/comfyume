@@ -5,7 +5,7 @@
     - related gh issues (VERY CONCISE - JUST INFO NEEDED/HELPFUL/RELEVANT)
     - .claude/progress-mello-dev.md
     - update this doc so that it references CURRENT PENDING work at the bottom
-        - .claude/CLAUDE-RESUME-VERDA-INSTANCE.md
+        - .claude/CLAUDE-RESUME-MELLO.md
         - (replace stale instructions)
     - COLLABORATION gh issue: https://github.com/ahelme/comfyume/issues/7
         - short update of work performed & any questions / info needed
