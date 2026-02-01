@@ -85,7 +85,7 @@ echo ""
 echo "Test 3: Tailscale VPN Connection"
 echo "--------------------------------"
 
-REDIS_HOST=${REDIS_HOST:-100.99.216.71}
+REDIS_HOST=${INFERENCE_SERVER_REDIS_HOST:-100.99.216.71}
 REDIS_PORT=${REDIS_PORT:-6379}
 
 if ! timeout 5 bash -c "cat < /dev/null > /dev/tcp/$REDIS_HOST/$REDIS_PORT" 2>/dev/null; then
