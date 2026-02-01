@@ -53,7 +53,7 @@ for i in $(seq 1 $NUM_USERS); do
     # Start writing service definition
     cat >> "$OUTPUT_FILE" << EOF
   $USER_ID:
-    image: comfy-multi-frontend:latest
+    image: comfyume-frontend:v0.11.0
     container_name: comfy-$USER_ID
     ports:
       - "127.0.0.1:$PORT:8188"
