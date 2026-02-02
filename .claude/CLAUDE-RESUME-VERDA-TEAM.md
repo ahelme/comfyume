@@ -82,13 +82,14 @@ THEN: we delete Verda GPU instance END OF DAY to save highest cost GPU instance 
 
 ## SESSION PROGRESS
 
-**For detailed session notes, see:** `.claude/progress-02.md`
+**For detailed session notes, see:** `.claude/progress-verda-dev.md`
 
 ## CURRENT PENDING WORK
 
-**Assignment:** Issue #22 Phase 3 - Update scripts/docs for .env v0.3.1
+**Assignment:** Issue #22 Phase 3 Cleanup - Update scripts/docs for .env v0.3.2
 **Branch:** `verda-track-2` → merge to `main`
 **Coordination:** Issue #7
+**Note:** Fresh .env v0.3.2 already in project (includes COMFYUI_MODE)
 
 **Critical Constraints:**
 - Preserve setup-verda-solo-script.sh compatibility
