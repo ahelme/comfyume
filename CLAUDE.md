@@ -23,6 +23,66 @@
 
 ---
 
+## 🚨 TESTING WITH BOSS TODAY - MUST GET WORKING!
+
+**Timeline:** Boss testing in ~3 hours (2026-02-02)
+**Status:** Models downloading, GPU provisioning next
+
+### Selected Templates for Workshop
+
+**Template 1: Flux Klein 9B - Text to Image**
+- File: `flux2_klein_9b_text_to_image.json`
+- Use case: High-quality image generation
+- VRAM: ~12-16GB
+
+**Template 4: LTX-2 Distilled - Text to Video**
+- File: `ltx2_text_to_video_distilled.json`
+- Use case: Fast video generation (distilled = faster than standard)
+- VRAM: ~20-25GB
+
+### GPU Choice: L40S (48GB VRAM)
+
+**Why L40S:**
+- Cost: ~$0.80-1.20/hour = **$19-29 for 24 hours**
+- VRAM: 48GB (handles both templates with headroom)
+- vs A100: Save ~$20-30 per day
+
+**Verda Provisioning:**
+- Instance type: L40S 48GB
+- Duration: 24 hours (for boss test + safety margin)
+- SFS: Mount existing `/mnt/sfs` (models already there)
+
+### Required Models (EXACT MATCHES)
+
+**Flux Klein 9B:**
+```
+diffusion_models/flux-2-klein-9b-fp8.safetensors
+https://huggingface.co/Comfy-Org/flux2-klein-9B/resolve/main/split_files/diffusion_models/flux-2-klein-9b-fp8.safetensors
+
+text_encoders/qwen_3_8b_fp8mixed.safetensors (8.07 GB)
+https://huggingface.co/Comfy-Org/flux2-klein-9B/resolve/main/split_files/text_encoders/qwen_3_8b_fp8mixed.safetensors
+
+vae/flux2-vae.safetensors (320 MB)
+https://huggingface.co/Comfy-Org/flux2-dev/resolve/main/split_files/vae/flux2-vae.safetensors
+```
+
+**LTX-2 Distilled:**
+```
+checkpoints/ltx-2-19b-dev-fp8.safetensors (27 GB) - downloading to SFS
+text_encoders/gemma_3_12B_it.safetensors (20 GB)
+loras/ltx-2-19b-distilled-lora-384.safetensors
+latent_upscale_models/ltx-2-spatial-upscaler-x2-1.0.safetensors
+```
+
+### Success Criteria
+- ✅ Both templates load in ComfyUI
+- ✅ Flux Klein generates image in <30 seconds
+- ✅ LTX-2 Distilled generates video in 1-2 minutes
+- ✅ Boss sees working demo
+- ✅ No model loading errors
+
+---
+
 ## 📬 **PARALLEL DEV TEAMS** 
 
 **Two Teams Were Recently Working in Parallel:**
@@ -456,6 +516,30 @@ sudo ufw status
 ---
 
 ## ⚠️  Gotchas
+
+### 🚨 CRITICAL: WORKSHOP WORKAROUND - MUST USE TEMPLATES NOT WORKFLOWS
+
+**Issue #54: Workflow save/load broken** - POST to userdata API returns 405 through nginx
+
+**IMPACT:** Workshop participants CANNOT save or load custom workflows!
+
+**WORKAROUND (MANDATORY FOR WORKSHOP):**
+- ✅ **USE TEMPLATES MENU ONLY** - Pre-loaded templates work perfectly
+- ❌ **DO NOT use workflow save/load** - Broken, unfixable before workshop
+- ⚠️ **MODELS MUST EXACTLY MATCH TEMPLATE REQUIREMENTS** - No flexibility!
+
+**Critical Implications:**
+1. **Template selection is FINAL** - Choose 2-3 templates max for workshop
+2. **Model downloads MUST be exact** - Wrong model = template fails = workshop fails
+3. **Test every template thoroughly** - No room for error during live workshop
+4. **Document which templates work** - Participants need clear instructions
+
+**Template Sources:**
+- Bundled templates: `/home/dev/projects/comfyume/data/workflows/*.json`
+- Served via: ComfyUI Templates menu (not workflow save/load)
+- Model requirements: Extracted from workflow JSON (see below)
+
+**Post-Workshop:** Fix Issue #54 properly (aiohttp/nginx POST issue)
 
 ### .eu domain for R2 Buckets
 - connection / uploads can fail and not know why
