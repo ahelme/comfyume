@@ -180,6 +180,102 @@ These are archived - comfy-multi is legacy, comfyume is the future!
 
 ---
 
+## Progress Report 28 - 2026-02-02 - Issue #54 Workflow Save/Load Emergency Fix
+
+**Status:** ✅ WORKAROUND - Templates work, user ready for meeting
+**Started:** 2026-02-02 21:00 UTC | **Duration:** 90 mins
+**Repository:** comfyume (v0.11.0)
+**Branch:** mello-track-2
+
+### Issue #54 - Workflow Save 405 Error
+
+**Problem:**
+- POST `/user001/api/userdata/workflows/*.json` → 405 Method Not Allowed
+- GET workflows from UI → 404
+- Templates sidebar works
+- Direct API access (curl, browser URL) works
+
+**Root Causes:**
+1. ComfyUI aiohttp returns 405 when POST comes through nginx (works direct to port 8188)
+2. Custom extensions (`default_workflow_loader`, `queue_redirect`) failing with "app is not defined" → cascade failures
+
+**Investigation:**
+- Tested nginx routing, proxy headers, HTTP/1.1 vs HTTP/2
+- Tried `^~` priority prefix, commented `/api/` location, `proxy_method`
+- Enabled nginx debug logging → found backend returns `Allow: GET,HEAD`
+- POST works direct to container, fails through nginx (header/path issue in aiohttp)
+
+**Fix Applied:**
+- Disabled broken extensions in user001 container
+- Restarted container → extensions no longer break frontend
+- Workflows panel still broken, but Templates work
+
+**Workaround for Meeting:**
+- Use Templates sidebar (Flux2 Klein, LTX-2 templates load successfully)
+- Export workflows to save locally
+- Import to reload
+
+**Files Modified:**
+- Disabled: `/comfyui/custom_nodes/default_workflow_loader` (renamed .disabled)
+- Disabled: `/comfyui/custom_nodes/queue_redirect` (renamed .disabled)
+- nginx: Restored to backup config (multiple debug attempts reverted)
+
+**GitHub:**
+- Created Issue #54 with full diagnostic details
+- Posted 4 updates tracking investigation
+
+**Status:** User ready for boss meeting in 6 hours. Will fix properly after meeting.
+
+---
+
+## Progress Report 27 - 2026-02-02 - Issue #40 Backup Task - Silent Failures Discovery
+
+**Status:** 🟡 IN PROGRESS - Backups on SFS, R2 upload pending
+**Started:** 2026-02-02 20:00 UTC | **Duration:** 90 mins
+**Repository:** comfyume (v0.11.0)
+**Branch:** mello-track-2
+
+### Issue #40 - Worker Container & R2 Backup
+
+**Completed:**
+- Built worker container: comfyume-worker:v0.11.0 (5.9GB)
+- Exported Portainer edge agent: portainer/agent:latest (47MB)
+- Created complete config backup: verda-config-complete-20260202-203934.tar.gz (6.1GB)
+  - Includes: /var/lib/tailscale, /etc/ssh, /etc/fail2ban, /etc/ufw, /home/dev (ENTIRE), /root/.bashrc, /root/.ssh
+- All backups copied to SFS /mnt/sfs/cache/
+- Created manifest: MANIFEST.md on SFS
+- Freed 6GB disk space (77% usage)
+
+**Critical Discovery - Silent Failures:**
+- Models sync reported success but failed (only 1 of 2 models downloaded)
+- Root cause: /tmp 100% full → silent failure
+- Legacy R2 only has 2 models (47GB), not 45GB expected
+- Flux2 Klein models never backed up to legacy R2
+
+**In Progress:**
+- Downloading ltx-2-19b-dev-fp8.safetensors (27GB) to SFS with TMPDIR=/mnt/sfs/tmp
+- Current: ~145MB downloaded
+
+**Added to CLAUDE.md:**
+- New gotcha section: "CRITICAL: Silent Failures on Large File Operations"
+- Verification checklist for all large file operations
+- Root causes: disk space, silent failures, no verification
+
+**Files Modified:**
+- CLAUDE.md - Added silent failures gotcha
+- .claude/BACKUP-CHECKLIST.md - Updated with complete backup list
+- Created /mnt/sfs/cache/MANIFEST.md
+
+**Next:**
+- Complete model download (27GB checkpoint)
+- Locate Flux2 Klein models or download fresh
+- Upload all backups to R2 from Mello
+- Update Issue #40 with completion status
+
+**Lesson:** ALWAYS verify operations immediately. Check file counts, sizes, checksums. Don't trust exit codes alone.
+
+---
+
 ## Progress Report 26 - 2026-02-01 - (Issue #17 COMPLETE! Workflow Validation Success!)
 **Status:** ✅ Issue #17 COMPLETE - All 5 workflows validated and updated!
 **Started:** 2026-02-01 16:06 UTC | **Completed:** 2026-02-01 16:11 UTC | **Duration:** 5 minutes

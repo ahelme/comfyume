@@ -522,6 +522,46 @@ sudo ufw status
 
 This stops all ComfyUI containers to prevent resource exhaustion on startup.
 
+### CRITICAL: Silent Failures on Large File Operations
+
+**Why this matters:** Operations report success while actually failing. Hours wasted redownloading, deploying apps that won't work, discovering missing data at critical moments.
+
+**Root causes:**
+- **Disk space issues**: /tmp full → silent failure
+- **Silent failures**: AWS CLI returns success even when operations fail
+- **Incomplete backups**: Assumed complete, weren't verified
+- **Lack of verification**: No immediate check of results after operations
+
+**How to avoid:**
+1. **Check disk space FIRST**:
+   ```bash
+   df -h /tmp /mnt/sfs  # before any large operation
+   ```
+
+2. **Use adequate temp space**:
+   ```bash
+   TMPDIR=/mnt/sfs/tmp  # for large downloads
+   ```
+
+3. **Verify immediately after operations**:
+   ```bash
+   # After sync/download
+   find /target -type f | wc -l  # file count
+   du -sh /target                # total size
+   ```
+
+4. **Compare source vs destination**:
+   ```bash
+   aws s3 ls --recursive | wc -l  # source count
+   find /local -type f | wc -l     # dest count
+   ```
+
+5. **Use checksums**: Generate md5sums for all files and verify
+
+6. **Manifest-driven operations**: Create expected file list FIRST, then verify against it
+
+7. **Explicit verification in scripts**: Don't trust exit codes alone - check actual results
+
 ### Docker Image Architecture (IMPORTANT!)
 
 **Single Shared Image for All Users:**
