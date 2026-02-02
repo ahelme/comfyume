@@ -83,6 +83,28 @@ SECTION 3. Progress Reports
 
 ---
 
+## Session 27 - 2026-02-02
+
+**Issue:** #40
+
+**Done:**
+- SFS: 50GB→200GB
+- Downloaded: 7 models (LTX-2, Flux.2 Klein) = 77GB
+- Downloaded: gemma_3_12B_it_fp4_mixed.safetensors (8.8GB) for template compatibility
+- R2 upload: Models (86GB), containers (6GB), configs (6GB) = 98GB total
+- All uploads verified (byte-level size checks)
+- Added HuggingFace token to .env
+- Fixed R2 endpoint: .r2. → .eu.r2.
+- Updated README-RESTORE.md v0.3.1 (SFS size, model inventory)
+
+**Commits:**
+- comfymulti-scripts: 79b4633, 5fbda97, 4d823e0
+- PR #26: https://github.com/ahelme/comfymulti-scripts/pull/26
+
+**Status:** Ready to delete instance, provision GPU
+
+---
+
 ## Progress Report Verda 06 - 2026-02-01 - Task Management & Handover Process Cleanup
 
 **Status:** In Progress 🔨
@@ -865,3 +887,27 @@ Created master issue and all detailed Verda Team issues in new comfyume reposito
 
 ---
 
+
+---
+
+## Session 27 - 2026-02-02
+
+**Issue:** #40 model downloads
+
+**Done:**
+- SFS scaled: 50GB→200GB (no restart needed)
+- Downloaded all models to SFS (77GB):
+  - LTX-2: checkpoint 26GB, encoder 19GB, upscaler 950MB, 2 LoRAs 7.5GB
+  - Flux.2 Klein: 9B 17GB, 4B 7.3GB
+- HuggingFace token added to .env (`HUGGINGFACE_TOKEN`)
+- Fixed R2 endpoint: `.r2.` → `.eu.r2.` for EU buckets
+- R2 upload started (77GB, ~30min, with size verification)
+- Updated docs: comfymulti-scripts README v0.3.1, .env endpoint fix
+
+**Commits:**
+- comfymulti-scripts: 79b4633, 5fbda97
+- comfyume: .env updated (gitignored)
+
+**PR:** https://github.com/ahelme/comfymulti-scripts/pull/26
+
+**Status:** R2 upload in progress, ~30min remaining
