@@ -83,6 +83,28 @@ SECTION 3. Progress Reports
 
 ---
 
+## Session 27 - 2026-02-02
+
+**Issue:** #40
+
+**Done:**
+- SFS: 50GB→200GB
+- Downloaded: 7 models (LTX-2, Flux.2 Klein) = 77GB
+- Downloaded: gemma_3_12B_it_fp4_mixed.safetensors (8.8GB) for template compatibility
+- R2 upload: Models (86GB), containers (6GB), configs (6GB) = 98GB total
+- All uploads verified (byte-level size checks)
+- Added HuggingFace token to .env
+- Fixed R2 endpoint: .r2. → .eu.r2.
+- Updated README-RESTORE.md v0.3.1 (SFS size, model inventory)
+
+**Commits:**
+- comfymulti-scripts: 79b4633, 5fbda97, 4d823e0
+- PR #26: https://github.com/ahelme/comfymulti-scripts/pull/26
+
+**Status:** Ready to delete instance, provision GPU
+
+---
+
 ## Progress Report Verda 06 - 2026-02-01 - Task Management & Handover Process Cleanup
 
 **Status:** In Progress 🔨
