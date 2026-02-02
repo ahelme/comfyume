@@ -30,10 +30,11 @@ docker build -t comfyume-worker:v0.11.0 .
 ### Run (Standalone)
 
 ```bash
-# Set environment variables
-export REDIS_HOST=100.99.216.71  # Mello VPS via Tailscale
+# Set environment variables (.env v0.3.2)
+export INFERENCE_SERVER_REDIS_HOST=100.99.216.71  # Mello VPS via Tailscale
 export REDIS_PASSWORD=your_password
 export QUEUE_MANAGER_URL=http://100.99.216.71:3000
+export COMFYUI_MODE=worker  # Full inference mode
 
 # Start worker
 docker compose up -d
@@ -52,13 +53,14 @@ docker run --gpus all comfyume-worker:v0.11.0 nvidia-smi
 
 ## Environment Variables
 
-### Core Settings
+### Core Settings (.env v0.3.2)
 - `WORKER_ID` - Worker identifier (default: worker-1)
-- `REDIS_HOST` - Redis server (Mello VPS via Tailscale)
+- `INFERENCE_SERVER_REDIS_HOST` - Redis server IP (Mello VPS via Tailscale: 100.99.216.71)
 - `REDIS_PORT` - Redis port (default: 6379)
 - `REDIS_PASSWORD` - Redis authentication
 - `QUEUE_MANAGER_URL` - Queue manager API endpoint
 - `COMFYUI_URL` - ComfyUI server URL (default: http://localhost:8188)
+- `COMFYUI_MODE` - Deployment mode (worker = full inference, frontend-testing = UI only)
 
 ### Timeouts
 - `COMFYUI_TIMEOUT` - ComfyUI request timeout (default: 900s / 15 min)
@@ -179,8 +181,9 @@ docker compose logs worker-1
 
 # Common issues:
 # - Missing REDIS_PASSWORD
-# - Wrong REDIS_HOST (Tailscale IP)
+# - Wrong INFERENCE_SERVER_REDIS_HOST (should be Tailscale IP: 100.99.216.71)
 # - Models not mounted (check /mnt/sfs/models exists)
+# - COMFYUI_MODE not set to 'worker'
 ```
 
 ### GPU not detected
@@ -265,4 +268,17 @@ docker compose up -d
 
 ---
 
-**Last Updated:** 2026-01-31
+## Configuration Notes
+
+**Environment Variables v0.3.2:**
+- `INFERENCE_SERVER_REDIS_HOST` replaces `REDIS_HOST` for GPU workers
+- App server containers use `APP_SERVER_REDIS_HOST=redis` (Docker network)
+- This separation clarifies dual-server deployment architecture
+
+**Backward Compatibility:**
+- Worker.py checks for both `INFERENCE_SERVER_REDIS_HOST` and legacy `REDIS_HOST`
+- Falls back gracefully if old variable names are used
+
+---
+
+**Last Updated:** 2026-02-01
