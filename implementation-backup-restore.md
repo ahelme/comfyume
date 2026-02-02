@@ -1,9 +1,9 @@
 **Project:** ComfyUI Multi-User Workshop Platform
 **Project Started:** 2026-01-02
-**Repository:** github.com/ahelme/comfy-multi
+**Repository:** github.com/ahelme/comfyume
 **Domain:** comfy.ahelme.net
 **Doc Created:** 2026-01-14
-**Doc Updated:** 2026-01-14
+**Doc Updated:** 2026-02-01
 
 ---
 
@@ -40,12 +40,13 @@ This document covers Phases 9-13 of the ComfyUI Multi-User Workshop implementati
 
 | Data | Location | Size | Notes |
 |------|----------|------|-------|
-| **Models (LTX-2)** | Cloudflare R2 | ~45GB | `comfy-multi-model-vault-backup` bucket |
-| **Configs** | Hetzner VPS (mello) | ~50KB | `~/backups/verda/` |
-| **Tailscale identity** | Hetzner VPS (mello) | 5KB | Preserves IP 100.89.38.43 |
-| **oh-my-zsh custom** | Hetzner VPS (mello) | 9KB | bullet-train theme |
-| **.zshrc** | Hetzner VPS (mello) | 14KB | Full shell config |
-| **.env** | Hetzner VPS (mello) | 1.6KB | Environment variables |
+| **Models (LTX-2, Flux.2 Klein)** | Cloudflare R2 | ~45GB | `comfyume-model-vault-backups` bucket |
+| **Configs** | Cloudflare R2 | ~14MB | `comfyume-cache-backups` bucket |
+| **Worker Container** | Cloudflare R2 | ~2.5GB | `comfyume-worker-container-backups` bucket |
+| **Tailscale identity** | Verda SFS | 5KB | Preserves IP 100.89.38.43 |
+| **oh-my-zsh custom** | Verda SFS | 9KB | bullet-train theme |
+| **.zshrc** | Verda SFS | 14KB | Full shell config |
+| **.env** | Verda SFS | 1.6KB | Environment variables |
 
 ### Cloudflare R2 Details
 

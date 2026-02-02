@@ -1,10 +1,10 @@
 **Doc Title:** Admin Guide - Backup & Restore
 **Project:** ComfyUI Multi-User Workshop Platform
 **Project Started:** 2026-01-02
-**Repository:** github.com/ahelme/comfy-multi
+**Repository:** github.com/ahelme/comfyume
 **Domain:** comfy.ahelme.net
 **Doc Created:** 2026-01-16
-**Doc Updated:** 2026-01-18
+**Doc Updated:** 2026-02-01
 
 ---
 
@@ -79,21 +79,25 @@ This preserves the expected IP: **100.89.38.43**
 
 ## Backup Locations
 
-**Primary: Cloudflare R2** (three buckets)
+**Primary: Cloudflare R2** (.env v0.3.2 - four buckets)
 
-**Models Bucket:** `comfy-multi-model-vault-backup` (Oceania)
+**Models Bucket:** `comfyume-model-vault-backups` (Oceania)
 | Data | R2 Path | Size |
 |------|---------|------|
 | **Model Checkpoints** | `checkpoints/*.safetensors` | ~25-50 GB |
 | **Text Encoders** | `text_encoders/*.safetensors` | ~20 GB |
 
-**Cache Bucket:** `comfy-multi-cache` (Eastern Europe)
+**Cache Bucket:** `comfyume-cache-backups` (EU)
+| Data | R2 Path | Size |
+|------|---------|------|
+| **Config Backup** | `verda-config-backup.tar.gz` | 14 MB |
+
+**Worker Container Bucket:** `comfyume-worker-container-backups` (EU)
 | Data | R2 Path | Size |
 |------|---------|------|
 | **Worker Container** | `worker-image.tar.gz` | 2.5 GB |
-| **Config Backup** | `verda-config-backup.tar.gz` | 14 MB |
 
-**User Files Bucket:** `comfy-multi-user-files` (Eastern Europe)
+**User Files Bucket:** `comfyume-user-files-backups` (EU)
 | Data | R2 Path | Size |
 |------|---------|------|
 | **User Workflows** | `user_data/userXXX/` | Variable |
