@@ -7,13 +7,6 @@
 
 ---
 
-# Claude Project Guide
-
-**Architecture:** App on VPS, Inference via GPU Cloud
-**Health Check:** https://comfy.ahelme.net/health
-
----
-
 ## ⚠️  CRITICAL INSTRUCTIONS - YOU MUST:
 
 1. **USE LATEST STABLE LIBRARIES AS OF JAN 2026**
@@ -21,33 +14,28 @@
 2. **ALWAYS CHECK IF CODE HAS BEEN CREATED FIRST**
    - **NEVER EVER** REWRITE CODE IF IT HAS ALREADY BEEN WRITTEN
    - **ALWAYS CHECK** FOR PREVIOUS SOLUTIONS
+  
+   - WHY? We just spent A WHOLE WEEK DEALING WITH OLD COMFYUI 0.8.1 BEING INSTALLED BEFORE THE APP WAS ARCHITECTED !!!
+   - (user requested "latest" - got "ancient")
+   - **A NIGHTMARE.**
+   - WE MAY MISS OUR DEADLINE!!!
+   - PLEASE, NO MORE!!!
 
 ---
 
-## 📬 **TEAM COORDINATION** (CHECK REGULARLY!)
+## 📬 **PARALLEL DEV TEAMS** 
 
-**Two Teams Working in Parallel:**
-- **Mello Team** (this Claude) - Frontend, extensions, workflows
-- **Verda Team** (other Claude) - Worker, GPU, VRAM monitoring
+**Two Teams Were Recently Working in Parallel:**
+- **Mello Team** - Frontend, extensions, workflows
+- **Verda Team** - Worker, GPU, VRAM monitoring
 
-**Repository:** `comfyume` (https://github.com/ahelme/comfyume) - v0.11.0 clean rebuild
+**Collab via Issue on Main Repository:** `comfyume` 
+- (https://github.com/ahelme/comfyume) - v0.11.0 clean rebuild
 **Main Branch:** `main` (unified codebase)
-
-**GitHub Issues:**
-- Master task list: Issue #1
+- **Master task list: Issue #1**
 - **Team Coordination: Issue #7** ⚠️ CHECK LIKE EMAIL!
-  - Post questions, clarifications, decisions
-  - Both teams communicate here
-  - Don't proceed with conflicting work without coordination
-
-**Team Resume Files (current status/tasks):**
-- Verda Team: [.claude/CLAUDE-RESUME-VERDA-TEAM.md](.claude/CLAUDE-RESUME-VERDA-TEAM.md)
-- Mello Team: [.claude/CLAUDE-RESUME-MELLO-TEAM.md](.claude/CLAUDE-RESUME-MELLO-TEAM.md)
-
-**Progress Tracking:**
-- [Mello Progress](.claude/progress-mello-dev.md)
-- [Verda Progress](.claude/progress-verda-dev.md)
-
+  - Both teams post questions, clarifications, decisions
+  - While in parallel dev - don't proceed with conflicting work without coordination
 ---
 
 ## 🎯 Project Quick Reference
@@ -89,7 +77,7 @@
 ├── progress-**.md                      # Recent session logs (UPDATE ON COMMITS)
 ├── CLAUDE.md                           # This file - project guide
 ├── README.md                           # Public project documentation
-├── .env                                # Local configuration (gitignored)
+├── .env                                # Local configuration (gitignored - ⚠️ FULL OF SECRETS!!!)
 ├── .env.example                        # Template configuration
 ├── docker-compose.yml                  # Main orchestration (includes docker-compose.users.yml)
 ├── docker-compose.users.yml            # ⚠️ 20 USER CONTAINERS - per-user isolation (auto-generated)
@@ -111,6 +99,7 @@
 │   │   │       └── custom_nodes/       # User-installed custom nodes (mounted per-user)
 │   │   │           ├── ComfyUI-Manager/
 │   │   │           └── my-custom-node/
+│   │   │       └── ⚠️ WHERE ARE USER-SAVED WORKFLOWS???⚠️ - <-info needs adding !!!
 │   │   ├── user002/
 │   │   │   └── ... (same structure)
 │   │   └── ... (user003-user020)
@@ -138,8 +127,9 @@
 │       └── ... (user003-user020)
 └── docs/                               # User/admin guides
 
-/home/dev/comfymulti-scripts/
-├── README-RESTORE.md              # Basic backup/restore doc
+/home/dev/projects/comfymulti-scripts/  # ⚠️ PRIVATE REPO FOR SCRIPTS & SECRETS ⚠️
+├── .env                           # ⚠️ <- HOW SECRET/PRIVATE .env IS SHARED BETWEEN DEVS ⚠️
+├── README-RESTORE.md              # Basic backup/restore doc (may need updating since comfy-multi > comfyume
 ├── setup-verda-solo-script.sh     # Single consolidated setup/restore script
 ├── backup-cron.sh                 # Hourly backups: Verda→SFS + triggers mello→R2
 ├── backup-mello.sh                # Backs up user files on mello e.g. workflows
@@ -163,16 +153,16 @@
 - **ALWAYS reference GitHub issue numbers** (e.g., #15, #22, #13)
 - **DO NOT use internal task numbers** (no Task #1, Task #2, etc.)
 - **If no GitHub issue exists**, create one first before tracking work
-- See top section of [.claude/progress-mello-dev.md](.claude/progress-mello-dev.md) / [.claude/progress-verda-dev.md](.claude/progress-verda-dev.md) for comprehensive task formatting instructions
+- See top section of [.claude/progress-mello-dev.md](.claude/progress-mello-dev.md) / [.claude/progress-verda-dev.md](.claude/progress-verda-dev.md) for comprehensive task instructions
 
 ### 📋 Implementation Plan (Phases)
 
 - [Current Implementation Plan: Deploy/Backup/Restore](./implementation-backup-restore.md)
     - IMPLEMENTATION PLANS MUST BE CONCISE! DETAILS CHANGE!    
-    - **NO CODE SNIPS**
-    - Replace detail with simple steps 
-    - Provide pointers to single source of truth (docs)
-    - ==MUST UPDATE AS PLAN CHANGES==
+    - **NO CODE SNIPPETS !**
+    - Replace detail with SIMPLE steps 
+    - Provide POINTERS to single source of truth (docs)
+    - ==UPDATE AS PLAN CHANGES==
 
 ---
 
@@ -184,12 +174,11 @@
 - [Admin Guide](.docs/admin-guide.md) - Admin docs index / overview
 - [Deploy/Backup Guide](.docs/admin-backup-restore.md) - Docs: deploy/restore/backups
 - [GPU Deployment](./implementation-backup-restore.md) - Plan: deploy/restore/backup
-- [Claude Guide](./CLAUDE.md) - Development context for custom deployment (this file)
 
 ### User Documentation 
-- **docs/user-guide.md** - For workshop participants
+- **docs/archive/user-guide.md** - For workshop participants (MAY need update)
 - **docs/admin-guide.md** - For developer/maintainer/instructor
-- **docs/troubleshooting.md** - Common issues
+- **docs/archive/troubleshooting.md** - Common issues (will need update)
 
 ### Documentation Format
 
@@ -207,7 +196,7 @@ Ensure these details are listed the top of ALL .md documentation files:
 
 ==IMPORTANT: Docs MUST be comprehensive yet NO FLUFF== 
 
-==NO extraneous / irrelevant info / value-statements / achievements boasting==
+==NO extraneous info / hasty "FINAL!" pronouncements / "SUCCESS!" "PRODUCTION-READY" boasting==
 
 ---
 
@@ -215,33 +204,11 @@ Ensure these details are listed the top of ALL .md documentation files:
 
 ### At EVERY GIT COMMIT update `.claude/progress-mello-dev.md` OR `.claude/progress-verda-dev.md`:
 
-```markdown
-### Session N - YYYY-MM-DD
-
-**Which Implmentation Phase**
-- See current dev plan doc (see below)
-
-**List Git Issues**
-
-**Activities:**
-- What was accomplished in this session
-- Key decisions made
-- Files created/modified
-
-**Code Created:**
-- List ALL files with brief description
-
-**Commit logs**
-- List for both repos:
-  - comfyume
-  - comfymulti-scripts (private repo inc. secrets)
-
-**Blockers:**
-- Any issues encountered
-
-**Next Session Goals:**
-- What to do next
-```
+   1. **PRIORITY TASKS:**
+      - What to do next
+   2. **PROGRESS REPORT**
+      - What was done
+      - NO BOASTING!!
 
 ---
 
@@ -305,6 +272,8 @@ feat: add queue manager REST API endpoints
 fix: resolve nginx routing for user/20
 docs: update admin guide with priority override
 test: add integration tests for worker
+
+NO (you guessed it) BOASTING!!!
 ```
 
 ### When to Commit
@@ -373,30 +342,8 @@ test: add integration tests for worker
 
 ## ⚙️ Configuration
 
-### Environment Variables (.env)
-```env
-# Domain & SSL
-DOMAIN=ahelme.net
-SSL_CERT_PATH=/path/to/fullchain.pem
-SSL_KEY_PATH=/path/to/privkey.pem
-
-# ComfyUI deployment mode (Issue #21)
-# - frontend-testing: UI only, no inference (--cpu flag used internally)
-# - worker: Full inference capability with GPU
-COMFYUI_MODE=frontend-testing
-
-# Inference Provider (verda, runpod, modal, local)
-INFERENCE_PROVIDER=verda
-VERDA_API_KEY=
-RUNPOD_API_KEY=
-MODAL_API_KEY=
-
-# User configuration
-NUM_USERS=20
-NUM_WORKERS=1
-QUEUE_MODE=fifo
-REDIS_PASSWORD=changeme
-```
+### Environment Variables
+See .env
 
 ---
 
@@ -427,16 +374,12 @@ REDIS_PASSWORD=changeme
   SFS (network drive)                               │ Persistent: models, cache, backups
 ---
 
-## ✅ Success Criteria
-
-### MVP Requirements (Must Have)
-- ✅ 20 isolated user interfaces accessible
-- ✅ Jobs queue and execute on GPU
-- ✅ HTTPS working with SSL cert
-- ✅ Outputs persist after restart
-- ✅ Admin can monitor queue
-- ✅ System stable for 8-hour workshop
-- ✅ Deployment tested on Verda GPU instance AND serverless
+## Portainer - container monitoring & management
+- uses Tailscale Tailnet - verda, mello, aeon (Mac)
+- can see containers across app
+- monitor resource consumption
+- restart containers
+- if GPU is ticked on Verda's Portainer config - we can manage NVIDIA GPU resources
 
 ---
 
@@ -452,8 +395,8 @@ sudo ufw status
 **Allowed Ports:**
 - **22/tcp** - SSH (rate limited)
 - **80/tcp, 443/tcp** - HTTP/HTTPS (Nginx Full)
-- **21115-21119/tcp** - RustDesk remote desktop
-- **21116/udp** - RustDesk UDP
+- **Mello only: 21115-21119/tcp** - RustDesk remote desktop
+- **Mello only: 21116/udp** - RustDesk UDP
 
 **Redis Security:**
 - **Port 6379** - NOT exposed to public internet
@@ -483,12 +426,12 @@ sudo ufw status
 
 ### Cloudflare R2 Buckets
 - **Provider:** Cloudflare R2 (S3-compatible)
-- **Endpoint:** `https://f1d627b48ef7a4f687d6ac469c8f1dea.r2.cloudflarestorage.com`
+- **Endpoint:** `https://f1d627b48ef7a4f687d6ac469c8f1dea.r2.cloudflarestorage.com.eu`
 - **Cost:** ~$3/month total (no egress fees)
 - **Access:** Via AWS CLI with R2 API credentials
 
-**Current Buckets (comfyume v0.11.0):**
-- `comfyume-model-vault-backups` - Models (~45GB, Oceania)
+**Current .eu R2 Buckets (comfyume v0.11.0):**
+- `comfyume-model-vault-backups` - Models (~45GB, EU)
 - `comfyume-cache-backups` - Container + configs (~3GB, EU)
 - `comfyume-user-files-backups` - User data from mello (~1GB, EU)
 - `comfyume-worker-container-backups` - Worker images (~2.5GB, EU)
@@ -514,8 +457,11 @@ sudo ufw status
 
 ## ⚠️  Gotchas
 
+### .eu domain for R2 Buckets
+- connection / uploads can fail and not know why
+
 ### CRITICAL: Server Unresponsive Emergency Fix
-**If server stops responding:**
+**If server stops responding (20x user containers overwhelm resources:**
 1. Hard Reset the server via hosting provider dashboard
 2. SSH in ASAP after reboot
 3. Run: `sudo docker stop $(sudo docker ps -q --filter "name=comfy")`
@@ -648,6 +594,9 @@ This stops all ComfyUI containers to prevent resource exhaustion on startup.
 - Values comprehensive and accurate documentation
 - Wants progress tracking (hence `progress-**.md`)
 - Likes structured approaches
+- Hates BOASTING in DOCS, COMMITS, GH ISSUES, GH COMMENTS
+- Why? MASSIVE waste of context & fills up brain with crap.
+==EXPRESS PRIDE TO **USER** in chat NOT DOCS/GITHUB!!==
 
 ## Deployment
 
@@ -739,4 +688,4 @@ Before each session ends:
 
 ---
 
-**Last Updated:** 2026-02-01
+**Last Updated:** 2026-02-03 (AEST)

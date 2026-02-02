@@ -116,15 +116,25 @@ CLAUDE RESUME - COMFY-MULTI (ASSUMES WELCOME HAS BEEN COMPLETED)
   • IN WHICH CASE we could explore slightly different Verda disk              
   configurations                                               
 
-## NEXT TASKS (Session 26+):
+## NEXT TASKS (Session 29+):
 
-**Status:** ✅ Issue #21 Phase 1 Complete - Ready for Issue #17! (Session 25)
+**Status:** ✅ Issue #39 COMPLETE - Awaiting architectural clarification (Issue #41)
+
+**Immediate Priority:**
+1. **Issue #41** - Get clarification on output file handling in split mode
+2. Based on #41 answer: Close #39 or update approach
+3. Proceed with load testing or end-to-end testing
 
 **Repository:** comfyume (https://github.com/ahelme/comfyume)
-**Branches:**
-- **main**: Unified (mello-track + verda-track merged)
-- **mello-track-2**: Active development branch (Mello team)
-- **verda-track**: Worker v0.11.0 (Verda team) ✅ READY!
+**Branch:** main (all work merged)
+
+### Session 28 Completed (2026-02-01):
+
+**Infrastructure Test (Issue #39):**
+- ✅ All 20 containers validated (comfyume-frontend:v0.11.0)
+- ✅ Test results: 4/5 passing
+- ✅ Report: test-reports/infrastructure-test-2026-02-01-175318.txt
+- ✅ Created Issue #41 for architectural clarification
 
 ### Session 25 Completed (2026-02-01):
 
@@ -175,18 +185,22 @@ CLAUDE RESUME - COMFY-MULTI (ASSUMES WELCOME HAS BEEN COMPLETED)
 | **Worker v0.11.0** | **verda-track** | **Verda** | ✅ **Ready!** |
 | Queue Manager | mello-track | Mello | ✅ Copied |
 
-### Session 26 - NEXT STEPS:
+### Session 27 - NEXT STEPS:
 
-**Current Branch:** mello-track-2 (already checked out and synced)
+**Current Branch:** main (PR #37 merged!)
+
+**Status:** ✅ Issue #17 COMPLETE! All 5 workflows validated and updated!
 
 **Immediate Work:**
 
-1. **Issue #17** - Validate 5 workflow templates ⚡ STARTING NEXT!
-   - Build/start frontend container (COMFYUI_MODE=frontend-testing)
-   - Load workflows in browser
-   - Let ComfyUI v0.11.0 validate and update JSON
-   - Save updated workflows
-   - Close Issue #17
+1. **Issue #18** - End-to-end integration testing ⚡ NEXT!
+   - Coordinate with Verda team via Issue #7
+   - Test frontend → queue-manager → worker flow
+   - Full end-to-end job submission
+   - Verify WebSocket updates work
+
+2. **Update comfymulti-scripts repo** - Repo path changes
+   - Update setup-verda-solo-script.sh (comfy-multi → comfyume paths)
 
 2. **Issue #18** - Integration testing (after #17)
    - Coordinate with Verda team via Issue #7
