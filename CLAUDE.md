@@ -26,7 +26,7 @@
 ## 🚨 TESTING WITH BOSS TODAY - MUST GET WORKING!
 
 **Timeline:** Boss testing in ~3 hours (2026-02-02)
-**Status:** Models downloading, GPU provisioning next
+**Status:** ✅ Models ready on SFS (77GB + 8.8GB gemma), ✅ R2 backup complete (98GB), 🔄 Provisioning RTX 6000 ADA
 
 ### Selected Templates for Workshop
 
@@ -40,17 +40,18 @@
 - Use case: Fast video generation (distilled = faster than standard)
 - VRAM: ~20-25GB
 
-### GPU Choice: L40S (48GB VRAM)
+### GPU Choice: RTX 6000 ADA (48GB VRAM)
 
-**Why L40S:**
-- Cost: ~$0.80-1.20/hour = **$19-29 for 24 hours**
+**Why RTX 6000 ADA:**
+- Cost: €0.7020/hour = **~$28 AUD for 24 hours**
 - VRAM: 48GB (handles both templates with headroom)
-- vs A100: Save ~$20-30 per day
+- vs A100: Save ~$20 AUD per day
+- L40S not available, RTX 6000 ADA similar specs/price
 
 **Verda Provisioning:**
-- Instance type: L40S 48GB
+- Instance type: RTX 6000 ADA 48GB (on-demand, no spot available)
 - Duration: 24 hours (for boss test + safety margin)
-- SFS: Mount existing `/mnt/sfs` (models already there)
+- SFS: Mount existing `/mnt/sfs` (models already there - 77GB models + 8.8GB gemma downloaded)
 
 ### Required Models (EXACT MATCHES)
 
