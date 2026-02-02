@@ -82,10 +82,42 @@ comfyume/
 
 ## 🎯 Next Steps
 
-1. **Workflow Templates** - Update for v0.11.0 validation (Issue #17)
+1. ✅ **Workflow Templates** - Update for v0.11.0 validation (Issue #17) COMPLETE
 2. **Integration Testing** - Frontend + queue-manager + worker (Issue #18)
 3. **Multi-User Testing** - 20 users concurrent (Issue #19)
 4. **Workshop Readiness** - Final validation (Issue #20)
+
+---
+
+## ⚙️ Configuration
+
+**Environment Variables (.env v0.3.2):**
+
+This project uses a consolidated `.env` file structure. For production deployments:
+- Use consolidated `.env` from [comfymulti-scripts](https://github.com/ahelme/comfymulti-scripts) repo (private)
+- See `.env.example` in this repo for variable reference
+
+**Key Variables:**
+
+**Deployment Mode:**
+- `SERVER_MODE=dual` - Split app/inference servers (default for workshop)
+- `SERVER_MODE=single` - All-in-one deployment
+
+**Redis Connection (Dual-Server Mode):**
+- `APP_SERVER_REDIS_HOST=redis` - App containers use Docker network
+- `INFERENCE_SERVER_REDIS_HOST=100.99.216.71` - GPU worker uses Tailscale VPN
+
+**ComfyUI Deployment:**
+- `COMFYUI_MODE=frontend-testing` - UI only, no inference (app server)
+- `COMFYUI_MODE=worker` - Full inference with GPU (inference server)
+
+**Storage (Cloudflare R2 - v0.11.0):**
+- `comfyume-model-vault-backups` - Models (~45GB)
+- `comfyume-cache-backups` - Container images & config (~3GB)
+- `comfyume-user-files-backups` - User data from app server (~1GB)
+- `comfyume-worker-container-backups` - Worker images (~2.5GB)
+
+See [docs/admin-backup-restore.md](docs/admin-backup-restore.md) for deployment guides
 
 ---
 
@@ -108,6 +140,7 @@ Built with systematic precision, documented with love.
 
 ---
 
-**Branch:** mello-track
+**Main Branch:** main
 **Created:** 2026-01-31
-**Status:** 🟢 Building momentum!
+**Updated:** 2026-02-01
+**Status:** 🟢 Ready for integration testing!

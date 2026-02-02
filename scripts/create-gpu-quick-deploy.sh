@@ -50,6 +50,7 @@ echo ""
 # Configuration
 VPS_IP="${VPS_IP:-100.99.216.71}"
 REDIS_PASSWORD="${REDIS_PASSWORD}"
+# Note: Uses INFERENCE_SERVER_REDIS_HOST for GPU worker connections
 
 # Check for required env vars
 if [ -z "$REDIS_PASSWORD" ]; then
@@ -97,7 +98,7 @@ cd ~/comfy-worker
 
 # Configure environment
 cat > .env << EOF
-REDIS_HOST=$VPS_IP
+INFERENCE_SERVER_REDIS_HOST=$VPS_IP
 REDIS_PORT=6379
 REDIS_PASSWORD=$REDIS_PASSWORD
 WORKER_ID=worker-1
@@ -114,7 +115,7 @@ services:
       dockerfile: Dockerfile
     container_name: comfy-worker-1
     environment:
-      - REDIS_HOST=${REDIS_HOST}
+      - INFERENCE_SERVER_REDIS_HOST=${INFERENCE_SERVER_REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - WORKER_ID=worker-1
@@ -143,7 +144,7 @@ echo ""
 echo "1. Authenticate Tailscale:"
 echo "   sudo tailscale up"
 echo ""
-echo "2. Test Redis:"
+echo "2. Test Redis connection:"
 echo "   redis-cli -h $VPS_IP -p 6379 -a '$REDIS_PASSWORD' ping"
 echo ""
 echo "3. Download models (optional - only if needed):"
@@ -424,7 +425,7 @@ echo "📦 Package: $BACKUP_DIR/$PACKAGE_NAME"
 echo "💾 Size: $PACKAGE_SIZE"
 echo ""
 echo "📋 What's included:"
-echo "   • Worker Docker config (ComfyUI v0.9.2)"
+echo "   • Worker Docker config (ComfyUI v0.11.0)"
 echo "   • Deploy script (works on ANY GPU provider)"
 echo "   • Model downloader (optional)"
 echo "   • Cost optimization guide"

@@ -359,9 +359,9 @@ See .env
   scripts/start.sh                                  │ Start all services
   scripts/stop.sh                                   │ Stop all services
 
-  ~/projects/comfymulti-scripts/                       │ Backup/Restore/Deploy scripts for Verda GPU Cloud
-  ~/projects/comfymulti-scripts/setup-verda-solo-script.sh │ Single setup/restore script for Verda
-  ~/projects/comfymulti-scripts/README-RESTORE.md      │ README for restoring Verda
+  ~/comfymulti-scripts/                       │ Backup/Restore/Deploy scripts for Verda GPU Cloud
+  ~/comfymulti-scripts/setup-verda-solo-script.sh │ Single setup/restore script for Verda
+  ~/comfymulti-scripts/README-RESTORE.md      │ README for restoring Verda
 
  *(NOTE: restore scripts have their own private gh repo: https://github.com/ahelme/comfymulti-scripts)*
 
@@ -444,7 +444,7 @@ sudo ufw status
 ### Restore Scripts (Private GitHub Repo)
 - **Repo:** `ahelme/comfymulti-scripts` (private)
 - **URL:** https://github.com/ahelme/comfymulti-scripts
-- **Local path on mello:** `/home/dev/projects/comfymulti-scripts/`
+- **Local path on mello:** `/home/dev/comfymulti-scripts/`
 - **Purpose:** Version-controlled setup/restore scripts for Verda instances
 - **Contents:**
   - `setup-verda-solo-script.sh` - Single consolidated setup/restore script
