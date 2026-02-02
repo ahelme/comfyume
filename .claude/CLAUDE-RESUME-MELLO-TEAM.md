@@ -17,9 +17,6 @@ CLAUDE RESUME - COMFY-MULTI (ASSUMES WELCOME HAS BEEN COMPLETED)
  - read IN FULL:                                                             
     - `./README.md` - open source project (deployment agnostic)
     - `./CLAUDE.md` - OUR custom deployment on Hetzner / Verda GPU Cloud
-    - [Admin Guide](.docs/admin-guide.md) - Admin docs index
-    - [Admin Backup & Restore Guide](./docs/admin-backup-restore.md) 
-        - NOTE setup-verda-solo-script.sh now in use (refactored from 2x setup scripts) 
                                                                  
   - read top ~450 lines:
     - `.claude/progress-mello-dev.md` - progress log
@@ -33,24 +30,21 @@ CLAUDE RESUME - COMFY-MULTI (ASSUMES WELCOME HAS BEEN COMPLETED)
     - CURRENT PHASE: | **Phase 11** | Test Single GPU Instance (Restore & Verify) | 🔨 Current |
     - NOTE: context within overall plan
 
-## CORE KNOWLEDGE: DEPLOYMENT WORKFLOWS
-
 ## CORE KNOWLEDGE: DEPLOYMENT WORKFLOWS                                     
                                                                               
   Mello Server                                                                
   We always run  mello  - main dev server (Hetzner VPS)                       
   This is where "Mello team" does development (Claude Code).                  
                                                                               
-  For our workshop - mello runs ComfyMulti frontend user containers & files,  
-  REDIS                                                                       
-                                                                              
+  For our workshop - 
+     mello runs ComfyMulti frontend user containers & fast api & REDIS                                                                       
   Verda Server                                                                
-  We don't always run a  verda  - instance on Verda GPU cloud                 
+  We don't always provision a verda  - instance on Verda GPU cloud                 
                                                                               
-  NOTE: we can in fact choose between GPU or CPU instances                    
-  e.g. CPU instance for dev/testing / GPU for workshop use                    
+  NOTE: we can choose between GPU or CPU instances                    
+  e.g. CPU instance for dev / GPU for workshop use                    
                                                                               
-  But sometimes - like TODAY! - the "Verda team" does dev on this machine.    
+  But sometimes - like recently - the "Verda team" does dev on this machine.    
                                                                               
   For our workshop - we try to choose/run instances/storage on Verda          
   economically.                                                               
@@ -67,19 +61,16 @@ CLAUDE RESUME - COMFY-MULTI (ASSUMES WELCOME HAS BEEN COMPLETED)
   Instance/OS-BlockStorage + Scratch/Data-BlockStorage                        
                                                                               
   When in regular use we keep SFS network drive (with our models+worker) so we
-  don't                                                                       
-  need to D/L models from storage, and to quickly restore instance from cache.
+  don't need to D/L models from storage, and to quickly restore instance from cache.
                                                                               
   DURING 'TESTING MONTH' - or - 'WORKSHOP MONTH'                              
   We create fresh Verda disks & restore from R2:                              
-  SFS (models, cache) +  Instance/OS-BlockStorage (fully set up, running      
-  worker).                                                                    
-                                                                              
+  SFS (models, cache) +  
+  Instance/OS-BlockStorage (fully set up, running worker).                                                                    
   We format a fresh Data-Block-Storage (scratch disk)                         
                                                                               
   Then we retain the SFS on Verda - (faster than re-downloading models etc.   
-  from                                                                        
-  R2!)                                                                        
+  from R2!)                                                                        
                                                                               
   But we delete the Instance & Scratch to save $$$.                           
                                                                               
@@ -110,127 +101,38 @@ CLAUDE RESUME - COMFY-MULTI (ASSUMES WELCOME HAS BEEN COMPLETED)
                                                                               
   NOTE: If we decide to switch to Serverless inference                        
                                                                               
-  • we may choose to rent/restore to cheap Verda CPU (NOT GPU)       
-  Instance                                                                    
+  • we may choose to rent/restore to cheap Verda CPU (NOT GPU) Instance 
   • and keep it running during Workshop periods (less backup/restore)         
-  • IN WHICH CASE we could explore slightly different Verda disk              
-  configurations                                               
+  • IN WHICH CASE we could explore slightly different Verda disk configurations
 
-## NEXT TASKS (Session 29+):
-
-**Status:** ✅ Issue #39 COMPLETE - Awaiting architectural clarification (Issue #41)
-
-**Immediate Priority:**
-1. **Issue #41** - Get clarification on output file handling in split mode
-2. Based on #41 answer: Close #39 or update approach
-3. Proceed with load testing or end-to-end testing
-
-**Repository:** comfyume (https://github.com/ahelme/comfyume)
-**Branch:** main (all work merged)
-
-### Session 28 Completed (2026-02-01):
-
-**Infrastructure Test (Issue #39):**
-- ✅ All 20 containers validated (comfyume-frontend:v0.11.0)
-- ✅ Test results: 4/5 passing
-- ✅ Report: test-reports/infrastructure-test-2026-02-01-175318.txt
-- ✅ Created Issue #41 for architectural clarification
-
-### Session 25 Completed (2026-02-01):
-
-**Documentation & Environment:**
-- ✅ Documentation consolidation (108 files, 61,262 lines)
-- ✅ PR #31 created (docs consolidation)
-- ✅ .env v0.3.1 → v0.3.2 (COMFYUI_MODE added)
-
-**Issue #21 Phase 1 Complete:**
-- ✅ Added COMFYUI_MODE environment variable
-- ✅ Frontend Dockerfile: ENV COMFYUI_MODE=frontend-testing
-- ✅ Documentation updated (README.md, CLAUDE.md)
-- ✅ 5 commits pushed (both repos)
-
-**Git Status:**
-- Branch: mello-track-2
-- Latest commit: a9d644d (Session 25 progress report)
-- All changes committed and pushed
-
-### Session 22 Completed (2026-01-31):
-
-**Issues Closed (8/12 total):**
-- ✅ #9-12: Foundation (queue-manager, admin, nginx, scripts copied)
-- ✅ #13-16: Phase 1 Frontend (Dockerfile, entrypoint, 2 extensions)
-
-**Commits Pushed (3 commits to mello-track):**
-- 95d31dd: Foundation phase (40 files, 18,306 lines)
-- 2d9b911: Phase 1 Frontend (6 files, 273 lines)
-- accef58: README.md (113 lines)
-
-**Time:** ~2 hours (estimated 6-8 hours!) - WAY ahead of schedule! 🚀
-
-### 🚨 CRITICAL DISCOVERY (Session 23 - 2026-02-01):
-
-**ARCHITECTURE CLARIFICATION:**
-- ✅ Verda team has worker container on **verda-track branch**!
-- ✅ Both single-server AND dual-server modes supported
-- ⚠️ Flag nomenclature needs clarity (--cpu is misleading)
-
-**Issue #21 Created:** Container Orchestration & Flag Nomenclature System
-- Documents: `architecture/orchestration-commands-scenarios.md`
-- Proposes clear flag system (--frontend-testing, --dual-server, etc.)
-
-**Component Locations:**
-| Component | Branch | Owner | Status |
-|-----------|--------|-------|--------|
-| Frontend v0.11.0 | mello-track | Mello | ✅ Complete |
-| **Worker v0.11.0** | **verda-track** | **Verda** | ✅ **Ready!** |
-| Queue Manager | mello-track | Mello | ✅ Copied |
-
-### Session 27 - NEXT STEPS:
-
-**Current Branch:** main (PR #37 merged!)
-
-**Status:** ✅ Issue #17 COMPLETE! All 5 workflows validated and updated!
-
-**Immediate Work:**
-
-1. **Issue #18** - End-to-end integration testing ⚡ NEXT!
-   - Coordinate with Verda team via Issue #7
-   - Test frontend → queue-manager → worker flow
-   - Full end-to-end job submission
-   - Verify WebSocket updates work
-
-2. **Update comfymulti-scripts repo** - Repo path changes
-   - Update setup-verda-solo-script.sh (comfy-multi → comfyume paths)
-
-2. **Issue #18** - Integration testing (after #17)
-   - Coordinate with Verda team via Issue #7
-   - Test frontend → queue-manager → worker flow
-   - Full end-to-end validation
-
-**Workflow Files to Validate (Issue #17):**
-- `data/workflows/flux2_klein_9b_text_to_image.json`
-- `data/workflows/flux2_klein_4b_text_to_image.json`
-- `data/workflows/ltx2_text_to_video.json`
-- `data/workflows/ltx2_text_to_video_distilled.json`
-- `data/workflows/example_workflow.json`
-
-### Remaining Work (3/12 issues):
-
-**Phase 1:**
-- 🔄 Issue #17: Workflow templates (ready to start!)
-- ✅ Issue #21: Flag nomenclature Phase 1 (complete!)
-
-**Phase 3 - Integration Testing:**
-- Issue #18: End-to-end job submission test
-- Issue #19: Multi-user load test (20 users)
-- Issue #20: Workshop readiness checklist
-
-### Team Coordination
-
+## DEV TEAM COORDINATION - VIA GH TRACKER
+We have had another team - Verda Team - developing on the Verda server recently.
+We may consolidate now to Mello Team only - but if parallel developing check:
 **Channel:** https://github.com/ahelme/comfyume/issues/7
-- ✅ Mello team: Session 25 update posted
-- ✅ Frontend ready with COMFYUI_MODE=frontend-testing
-- 📋 Next: Coordinate for Issue #18 integration testing
 
-**Ready to proceed with Issue #17!** 🚀
+## NEXT STEPS
+
+  Please now:
+
+ - CHECK today's date
+
+ - read IN FULL:
+    - `./README.md` - open source project (deployment agnostic)
+    - `./CLAUDE.md` - OUR custom deployment on Hetzner / Verda GPU Cloud
+
+  - read top ~450 lines:
+    - `.claude/progress-mello-dev.md` - progress log
+
+  - perform git status & check commit history
+    - REPORT: any pending commits/pushes ?
+    - REPORT: was progress-mello-dev.md up to date?
+
+  - read list of implementation phases (phased dev plan)
+    - **READ lines: 21-35 ONLY**: `./implementation-backup-restore.md`
+    - CURRENT PHASE: | **Phase 11** | Test Single GPU Instance (Restore & Verify) 
+    - NOTE: context within overall plan
+
+  - read .env (IN FULL) to FAST DOWNLOAD of key tech & config
+
+  - discuss plan for next work with user!
 

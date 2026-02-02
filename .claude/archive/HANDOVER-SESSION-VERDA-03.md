@@ -281,9 +281,18 @@ scripts/
 
 **Documentation:**
 ```
+<<<<<<< HEAD
 docs/
 ├── implementation-plan-v0.11.0.md  # Original implementation plan
 └── backup-restore-flow.md          # Backup/restore flow analysis
+=======
+.claude/
+├── HANDOVER-SESSION-VERDA-03.md   # This handover document
+└── backup-restore-flow.md          # Backup/restore flow analysis
+
+docs/
+└── ideas/                          # Future ideas and plans
+>>>>>>> 4e8fbad (re-org docs)
 ```
 
 ### comfymulti-scripts Repository
@@ -482,7 +491,10 @@ gh issue view 22 --repo ahelme/comfyume
 **Documentation:**
 - [comfyume README.md](../README.md)
 - [Worker README](../comfyui-worker/README.md)
+<<<<<<< HEAD
 - [Implementation Plan v0.11.0](./implementation-plan-v0.11.0.md)
+=======
+>>>>>>> 4e8fbad (re-org docs)
 - [Backup/Restore Flow](./backup-restore-flow.md)
 
 **GitHub:**

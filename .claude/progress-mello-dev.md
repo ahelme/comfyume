@@ -3,123 +3,45 @@
 **Repository:** github.com/ahelme/comfy-multi
 **Domain:** comfy.ahelme.net
 **Doc Created:** 2026-01-04
-**Doc Updated:** 2026-02-01 (Session 26 - Issue #17 COMPLETE - Workflow Validation)
+**Doc Updated:** 2026-02-03 (AEST) - re-org priority tasks
 
 ---
-
-# Project Progress Tracker (Continued from docs/archive/progress.md)
+# Project Progress Tracker 
 **Target:** Workshop in ~2 weeks (early February 2026)
-
+### Implementation Phase
+**MAIN Repo:** comfyume (https://github.com/ahelme/comfyume)
+**Branch:** mello-track-2 > main
+**Phase:** Phase 3a - Infrastructure Testing 
 ---
+## 0. Update Instructions
 
-## Progress Tracker Structure
+   RE: PRIORITY TASKS 
+   **UPDATE:** 
+     - WHEN NEW TASKS EMERGE
+     - AT END OF SESSION - YOU MUST UPDATE/CULL TASKS - carefully!!!
 
-0. Update Instructions
+   **ALWAYS reference issues in our TWO  Github Issue Trackers**
+      - 📋 MAIN COMFYUME REPO:   github.com/ahelme/comfyume/issues/
+      - 📋 PRIVATE SCRIPTS REPO: github.com/ahelme/comfymulti-scripts/issues/
+   
+   **FORMAT:** 
+          [🔴] [PRIORITY] [GH#s] [SHORT DESC.] 
+             - [DATE-CREATED] [DATE-UPDATED]
+               - CONCISE NOTES INC. RELATED [GH#] (IF ANY)
+   **BE CONCISE** 
+     - DETAIL BELONGS IN GH ISSUE! and in PROGRESS REPORT BELOW !!!
 
-1. Task Management
-   - TASKS SCRATCHPAD - QUICK ADD NEW TASKS HERE
-   - CURRENT TASKS DASHBOARD - REFACTOR SESSION TASKS - END OF SESSION 
-        - IMPORTANT: use gh issue # as reference
-        - FORMAT: [🔴] [PRIORITY] [GH#s] [SHORT DESC.] 
-            - [DATE-CREATED] [DATE-UPDATED]
-            - Key GH Issues:
-                - [GH ISSUE TITLE #1]
-                - [GH ISSUE TITLE #2]
-            - CONCISE NOTES
-            - CONCISE NOTES INC. RELATED [GH#] (IF ANY)
-
-2. Next Session Goals
-    - SESSION GOALS - SET NEXT SESSION GOALS - END OF SESSION
-        - FORMAT: [GH#] [SHORT DESC.]
-            - CONCISE NOTES
-            - CONCISE NOTES INC. RELATED [GH#] (IF ANY)
-
-
-3. Progress Reports
-   - post in reverse chronological order (LATEST AT TOP)
-   - CRITICAL DETAIL - NO FLUFF/BOASTING
-
+   RE: Progress Reports (NEWEST AT TOP!)
+     **CRITICAL DETAIL - NO FLUFF/BOASTING**
+     **UPDATE OFTEN e.g. after RESEARCH, COMMITS, DECISIONS** 
+      - concise notes, refer to GH issues
+      - new blockers / tasks / completed tasks
+      - investigations needed
+      - research found
+      - solutions formulated
+      - decisions made
 ---
-
-## 0. UPDATE INSTRUCTIONS
-
- - update Progress Report OFTEN e.g. after RESEARCH, COMMITS, DECISIONS 
-        
-     - update autonomously
-     - concise notes, refer to GH issues
-     - new blockers / tasks / completed tasks
-     - investigations needed
-     - research found
-     - solutions formulated
-     - decisions made
-
- - update Task Management
-
-    1. When NEW TASKS emerge - add tasks autonomously to "TASKS SCRATCHPAD"
-
-    2. End of session - re-org Task Management carefully
-        
-        - thoughtfully consider and discuss with user
-        - delete fully tested/completed/invalid/non-priority tasks (from this section)
-        - FOR EACH TASK: merge new task notes with existing - in logical order
-        - **BE CONCISE** DETAIL BELONGS IN GH ISSUE! AND IN PROGRESS REPORT BELOW
-        - **USE CORRECT TASK FORMAT** See above
-        - **CRITICAL:** update gh issues associated with each task!
-        - **CRITICAL:** COMMIT changes when Tasks/Goals/Progress updated
-
-     **NEVER UPDATE OR CHANGE PRIORITY AUTONOMOUSLY - ALWAYS DISCUSS FIRST WITH USER**
-
- - update Next Session Goals - at end of Context/Session
-
-    - delete fully tested/completed/invalid goals
-    - merge new Next Session Goals
-
-## 2. Task Management
-
-📋 **ALWAYS reference issues in our two Github Issue Trackers**
-    GH MAIN COMFY-MULTI REPO:   https://github.com/ahelme/comfy-multi/issues/
-    GH PRIVATE SCRIPTS REPO:    https://github.com/ahelme/comfymulti-scripts/issues/
-
-### TASKS SCRATCHPAD - ADD REGULARLY e.g. on breaks, after commits
-
-**New Tasks (Session 27)**
-- comfyume #39 - Infrastructure load test (CREATED) - independent testing without workers
-- comfyume #19 - Infrastructure complete, ready for end-to-end with workers
-
-### CURRENT TASKS DASHBOARD - (UPDATED, PRIORITISED, REFERENCED) - UPDATE END SESSION
-
-    **ALWAYS CHECK WITH USER BEFORE UPDATING**
-
-**NOTE:** Session 27 completed Issue #19 infrastructure! Created Issue #39 for independent testing.
-
-🟢 **(ACTIVE) - comfyume #39 - Infrastructure load test (independent)**
-    - Created: 2026-02-01 (Session 27)
-    - Repository: comfyume (v0.11.0)
-    - Key GH Issue: `Phase 3a: Infrastructure load test (20 containers, no workers) #39`
-    - Split from #19 to enable independent testing
-    - Can test NOW without workers
-    - Tests: Container startup, queue management, user isolation
-    - Scripts ready: load-test.sh, monitor-queue.sh, validate-load-test.sh
-    - Documentation: docs/testing-guide.md
-
-✅ **(COMPLETE) - comfyume #19 Infrastructure - Multi-user load test setup**
-    - Created: 2026-01-31 | Infrastructure Complete: 2026-02-01 (Session 27)
-    - Repository: comfyume (v0.11.0)
-    - Key GH Issue: `Phase 3: Multi-user load test (20 users concurrent) #19`
-    - Infrastructure complete: 20 containers, testing scripts, docs ✅
-    - User directories initialized ✅
-    - docker-compose.users.yml generated ✅
-    - Testing framework ready ✅
-    - Full end-to-end test needs Issue #18 (workers)
-    - Commits: 17cea21, 9625030
-
-✅ **(COMPLETE) - comfyume #17 - Update workflow templates for v0.11.0**
-    - Created: 2026-01-31 | Completed: 2026-02-01 (Session 26)
-    - Repository: comfyume (v0.11.0 rebuild)
-    - Key GH Issue: `Phase 1: Update 5 workflow templates for v0.11.0 #17`
-    - All 5 workflows validated and updated in ComfyUI v0.11.0 ✅
-    - Massive optimization: 326K → 167K (49% reduction, 12,609 lines)
-    - Commit: 67afebe (pushed to mello-track-2)
+## 1. PRIORITY TASKS
 
 🟡 **(NEXT) - comfyume #18 - End-to-end job submission test (coordinated)**
     - Created: 2026-01-31 | Updated: 2026-02-01 (Session 27)
@@ -145,62 +67,17 @@
     - Depends on: #39, #18, #19
     - Final validation before workshop
 
----
-
-**LEGACY TASKS (comfy-multi repo - v0.9.2):**
-These are archived - comfy-multi is legacy, comfyume is the future!
-
-🔵 **(ARCHIVED) - comfy-multi #19 & #21 - v0.9.2 migration issues**
-    - Status: Resolved by clean v0.11.0 rebuild approach
-    - Context: Userdata API issues in v0.9.2
-    - Resolution: Building v0.11.0 from scratch (comfyume) avoids migration problems
-
-🔵 **(ARCHIVED) - comfy-multi #23 - Rebuild all 20 user containers**
-    - Status: Superseded by comfyume rebuild
-    - Context: v0.9.2 batched startup
-    - Resolution: Will implement in comfyume with v0.11.0
-
----
-
-## Next Session Goals
-
-**Immediate (Session 28 - NOW!):**
-1. **Issue #39** - Infrastructure load test (independent testing) 🎯
-   - Start 20 frontend containers
-   - Run load-test.sh (100 jobs - will queue without processing)
-   - Monitor with monitor-queue.sh
-   - Validate with validate-load-test.sh
-   - Document results and close issue
-
-2. **Issue #18** - End-to-end job submission test (after #39)
-   - Coordinate with Verda team via Issue #7
-   - Set up worker connection
-   - Run full end-to-end test
-   - Verify job processing
-
-**Medium-term:**
-- Update comfymulti-scripts repo with path changes (comfy-multi → comfyume)
-- Issue #19: Complete full load test (infrastructure + workers)
-- Issue #20: Workshop readiness checklist
-
-**Context (Session 27):**
-- ✅ Issue #17 complete (workflows validated)
-- ✅ Issue #19 infrastructure complete (20 containers, testing framework)
-- ✅ Issue #39 created (independent testing split out)
-- ✅ All testing scripts ready
-- ✅ Documentation complete
-- 🎯 Ready to test infrastructure NOW!
-
-### Pending (UNSCHEDULED - comfy-multi legacy)
-- **#30** - Clean up untracked files (gitignore user_data, track custom_nodes)
-- **#4** - Refactor implementation-backup-restore.md
-- **#24** - MINOR ComfyUI v0.9.2 frontend errors
-
+  **Medium-term:**
+    - Issue #19: Complete full load test (infrastructure + workers)
 ---
 
 # Progress Reports
 
 ---
+### Implementation Phase
+**Repository:** comfyume (https://github.com/ahelme/comfyume)
+**Branch:** main
+**Phase:** Phase 3a - Infrastructure Testing 
 
 ## Progress Report 28 - 2026-02-01 - (Issue #39 COMPLETE! Infrastructure Test Validated!)
 **Status:** ✅ Issue #39 COMPLETE - Infrastructure Test Passed 4/5!
@@ -208,19 +85,13 @@ These are archived - comfy-multi is legacy, comfyume is the future!
 **Repository:** comfyume (v0.11.0)
 
 ### Summary
-**Infrastructure test executed successfully!** Stopped and restarted all containers fresh, started all 20 user containers using batched startup, validated with automated test script. Results: 4/5 tests passing! All critical infrastructure working (container orchestration, queue management, health checks, resource limits). One identified issue: output/input directories need creation before load testing. Created comprehensive test report, posted detailed results to Issue #39, marked ready-for-user-testing. Ready to proceed with directory creation and full load test!
-
-### Implementation Phase
-**Repository:** comfyume (https://github.com/ahelme/comfyume)
-**Branch:** main
-**Phase:** Phase 3a - Infrastructure Testing (Issue #39) ✅ COMPLETE
+**Infrastructure test executed successfully!** Stopped and restarted all containers fresh, started all 20 user containers using batched startup, validated with automated test script. Results: 4/5 tests passing! All critical infrastructure working (container orchestration, queue management, health checks, resource limits). Created comprehensive test report, posted detailed results to Issue #39, marked ready-for-user-testing. Ready to proceed with FULL MULTI SERVER ORCHESTRATION - verda + mello!
 
 ### GitHub Issues
 **Completed:**
 - Issue #39: Phase 3a: Infrastructure load test (20 containers, no workers) ✅
 
 **Next:**
-- Create output/input directories (5-minute fix)
 - Issue #18: End-to-end job submission test (coordinate with Verda team)
 - Issue #19: Full load test (infrastructure + workers)
 
@@ -262,6 +133,7 @@ These are archived - comfy-multi is legacy, comfyume is the future!
 - 20 user containers: comfy-user001 through comfy-user020
 - 3 core services: comfy-redis, comfy-queue-manager, comfy-admin
 - Image: comfyume-frontend:v0.11.0 (all user containers)
+- Test Worker Container on mello - failed (had GPU flag set)
 
 ### Commit Messages
 ```
@@ -278,6 +150,7 @@ ea844ee - test: complete infrastructure test for Issue #39
 
 **Failing (1/5):**
 - ❌ Output Directory Isolation: Missing data/outputs/userXXX/ and data/inputs/userXXX/
+- Verda server's worker container needs to be running
 
 ### Key Findings
 
@@ -287,31 +160,8 @@ ea844ee - test: complete infrastructure test for Issue #39
 3. **Queue manager operational** - Ready to accept jobs
 4. **Resource constraints applied** - Memory and CPU limits enforced
 
-**Issues Identified:**
-1. **Missing per-user directories** - init-user-data.sh doesn't create outputs/inputs subdirectories
-2. **Impact** - When jobs process, outputs will write to shared directory
-3. **Severity** - HIGH (breaks user isolation)
-4. **Workaround** - Create directories manually before load testing
-5. **Permanent fix** - Update init-user-data.sh or add setup step
-
-### Blockers
-**None!** Infrastructure test complete, issue identified with workaround available.
-
 ### Next Session Goals (Immediate - Session 29)
-**Option 1: Create Missing Directories**
-- Run simple script to create data/outputs/userXXX/ and data/inputs/userXXX/
-- Re-run validation (should be 5/5 passing)
-- Close Issue #39 completely
-
-**Option 2: Proceed to Load Testing**
-- Create directories
-- Run load-test.sh (100 jobs)
-- Monitor with monitor-queue.sh
-- Validate queue management
-
-**Option 3: Coordinate for End-to-End**
-- Check with Verda team on Issue #7
-- Set up worker connection
+- full verda & mello servers orchestration
 - Run full end-to-end test (Issue #18)
 
 ### Success Metrics (Issue #39 Criteria)
@@ -320,7 +170,6 @@ ea844ee - test: complete infrastructure test for Issue #39
 - ✅ 20 user containers started
 - ✅ Batched startup < 3 minutes (actual: 5-7 min acceptable)
 - ✅ All containers healthy
-- ⚠️ Output isolation needs directory creation
 - ✅ Resource limits applied
 
 **Queue Management (Tested):**
