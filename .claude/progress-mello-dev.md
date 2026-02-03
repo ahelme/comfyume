@@ -79,6 +79,50 @@
 **Branch:** main
 **Phase:** Phase 3a - Infrastructure Testing 
 
+## Progress Report 30 - 2026-02-03 - Serverless Multi-GPU Implementation Complete
+
+**Status:** ✅ COMPLETE - Serverless inference with H200/B300 switching
+**Started:** 2026-02-03 | **Repository:** comfyume (v0.11.0) | **Branch:** main
+
+### Completed: GitHub Issue #62 - Serverless Inference Mode Switch
+
+**Implementation:**
+- `queue-manager/config.py`: Added multi-endpoint support (H200, B300, default)
+  - `serverless_endpoint_h200`, `serverless_endpoint_b300` env vars
+  - `serverless_active` selector: "default" | "h200" | "b300"
+  - `active_serverless_endpoint` property for dynamic endpoint selection
+  - `active_gpu_type` property for health check display
+- `queue-manager/main.py`: Uses `active_serverless_endpoint` property
+  - Health check shows active GPU type and endpoint name
+  - CORS updated for aiworkshop.art domain
+- `queue-manager/models.py`: HealthCheck includes `active_gpu` and `serverless_endpoint`
+- `docker-compose.yml`: Queue-manager service includes all serverless env vars
+
+**New Files:**
+- `h200.env` - H200 serverless config ($3.29/hr, 141GB, workshop)
+- `b300.env` - B300 serverless config ($4.95/hr, 288GB, 4K production)
+- `local.env` - Local/Redis mode config
+- `scripts/switch-gpu.sh` - CLI tool to switch between GPU modes
+
+**Usage:**
+```bash
+./scripts/switch-gpu.sh h200   # Workshop mode
+./scripts/switch-gpu.sh b300   # 4K production mode
+./scripts/switch-gpu.sh local  # Local/Redis workers
+docker compose restart queue-manager
+```
+
+**Serverless Deployments (User to create in Verda Console):**
+- `comfyui-vca-ftv-h200` - H200 SXM5 141GB ($3.29/hr)
+- `comfyui-vca-ftv-b300` - B300 SXM6 288GB ($4.95/hr)
+
+**Next Steps:**
+- User creates deployments in Verda Console
+- Update endpoint URLs in .env after deployment
+- Test switching between H200 and B300
+
+---
+
 ## Progress Report 29 - 2026-02-02 - Favicon & Frontend Assets Fix for Presentation
 
 **Status:** ✅ COMPLETE - Favicon and assets working

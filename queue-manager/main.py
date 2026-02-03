@@ -56,14 +56,17 @@ async def lifespan(app: FastAPI):
 
     # Initialize serverless client if needed
     if settings.inference_mode == "serverless":
-        if not settings.serverless_endpoint:
-            logger.warning("SERVERLESS_ENDPOINT not set - serverless mode will fail!")
+        endpoint = settings.active_serverless_endpoint
+        if not endpoint:
+            logger.warning("No serverless endpoint configured - serverless mode will fail!")
+            logger.warning("Set SERVERLESS_ENDPOINT or SERVERLESS_ENDPOINT_H200/B300 with SERVERLESS_ACTIVE")
         else:
             serverless_client = httpx.AsyncClient(
-                base_url=settings.serverless_endpoint,
+                base_url=endpoint,
                 timeout=httpx.Timeout(300.0)  # 5 min timeout for inference
             )
-            logger.info(f"Serverless client initialized: {settings.serverless_endpoint}")
+            logger.info(f"Serverless client initialized: {endpoint}")
+            logger.info(f"Active GPU: {settings.active_gpu_type}")
 
     # Start background tasks
     asyncio.create_task(cleanup_task())
@@ -91,6 +94,9 @@ app.add_middleware(
     allow_origins=[
         "https://comfy.ahelme.net",
         "https://www.comfy.ahelme.net",
+        "https://aiworkshop.art",
+        "https://admin.aiworkshop.art",
+        "https://*.aiworkshop.art",  # User subdomains
         "http://localhost:8080",  # For local admin dashboard testing
     ],
     allow_credentials=False,  # Disabled for security - no cookies needed
@@ -108,10 +114,19 @@ async def health_check():
     """Health check endpoint"""
     uptime = (datetime.now(timezone.utc) - app_start_time).total_seconds()
 
+    # Get active endpoint for serverless mode (redact full URL for security)
+    endpoint_display = None
+    if settings.inference_mode == "serverless" and settings.active_serverless_endpoint:
+        # Show just the deployment name, not full URL
+        endpoint = settings.active_serverless_endpoint
+        endpoint_display = endpoint.split("//")[-1].split(".")[0] if "//" in endpoint else endpoint
+
     return HealthCheck(
         status="healthy" if redis_client.ping() else "unhealthy",
         version=settings.app_version,
         inference_mode=settings.inference_mode,
+        active_gpu=settings.active_gpu_type,
+        serverless_endpoint=endpoint_display,
         redis_connected=redis_client.ping(),
         workers_active=0,  # TODO: Track active workers
         queue_depth=redis_client.get_queue_depth(),

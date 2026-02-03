@@ -87,6 +87,11 @@ services:
   # ============================================================================
   # QUEUE MANAGER (FastAPI Service)
   # ============================================================================
+  # Switch GPU mode:
+  #   ./scripts/switch-gpu.sh h200   # Workshop ($3.29/hr)
+  #   ./scripts/switch-gpu.sh b300   # 4K Production ($4.95/hr)
+  #   ./scripts/switch-gpu.sh local  # Local/Redis workers
+  # Then: docker compose restart queue-manager
   queue-manager:
     build:
       context: ./queue-manager
@@ -97,16 +102,24 @@ services:
       # For container nginx mode, this will bind to all interfaces
       - "127.0.0.1:${QUEUE_MANAGER_PORT:-3000}:3000"
     environment:
+      # Redis connection
       - REDIS_HOST=${APP_SERVER_REDIS_HOST:-redis}
       - REDIS_PORT=${REDIS_PORT:-6379}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
+      # Queue settings
       - QUEUE_MODE=${QUEUE_MODE:-fifo}
       - ENABLE_PRIORITY=${ENABLE_PRIORITY:-true}
       - JOB_TIMEOUT=${JOB_TIMEOUT:-3600}
       - MAX_QUEUE_DEPTH=${MAX_QUEUE_DEPTH:-100}
       - LOG_LEVEL=${QUEUE_MANAGER_LOG_LEVEL:-INFO}
-      - INFERENCE_PROVIDER=${INFERENCE_PROVIDER:-local}
+      # Inference mode: local | redis | serverless
+      - INFERENCE_MODE=${INFERENCE_MODE:-local}
       - NUM_WORKERS=${NUM_WORKERS:-1}
+      # Serverless configuration (when INFERENCE_MODE=serverless)
+      - SERVERLESS_ENDPOINT=${SERVERLESS_ENDPOINT:-}
+      - SERVERLESS_ACTIVE=${SERVERLESS_ACTIVE:-default}
+      - SERVERLESS_ENDPOINT_H200=${SERVERLESS_ENDPOINT_H200:-}
+      - SERVERLESS_ENDPOINT_B300=${SERVERLESS_ENDPOINT_B300:-}
     volumes:
       - ${OUTPUTS_PATH}:/outputs
       - ${INPUTS_PATH}:/inputs

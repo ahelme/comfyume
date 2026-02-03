@@ -227,6 +227,8 @@ class HealthCheck(BaseModel):
     status: str
     version: str
     inference_mode: str  # local | redis | serverless
+    active_gpu: str  # local | H200-141GB | B300-288GB | serverless
+    serverless_endpoint: Optional[str] = None  # Only shown in serverless mode
     redis_connected: bool
     workers_active: int
     queue_depth: int
