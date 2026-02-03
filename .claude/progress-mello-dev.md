@@ -3271,3 +3271,12 @@ da951db - docs: update .env.example to v0.3.0 (Phase 2)
 
 ---
 
+
+## Session 30 - 2026-02-03 - BOSS DEMO PREP - Worker Running!
+
+**Status:** ✅ Worker operational, models mounted, ready to test
+**Critical Fixes:** Worker startup script (removed curl check), SFS remounted after reboot, Flux models symlinked
+
+**Achievements:** Fixed worker infinite restart loop, remounted SFS (105GB models), downloaded missing Flux models (qwen text encoder 8GB, flux vae 320MB), created symlinks for model paths, worker polling queue every 2s, Portainer connected, RTX 6000 ADA working (48GB VRAM)
+
+**Ready:** Both templates (Flux Klein 9B + LTX-2 Distilled) have all required models, waiting for final test before boss demo
