@@ -1,9 +1,15 @@
 """
 Queue Manager - FastAPI Application
 Main entrypoint for the job queue management service
+
+Supports three inference modes:
+- local: GPU on same machine, workers poll Redis queue
+- redis: Remote GPU via Tailscale, workers poll Redis queue
+- serverless: Direct HTTP to Verda Serverless (auto-scaling)
 """
 import logging
 import asyncio
+import httpx
 from datetime import datetime, timezone
 from typing import List, Optional
 from contextlib import asynccontextmanager
@@ -19,6 +25,9 @@ from models import (
 from config import settings
 from redis_client import RedisClient
 from websocket_manager import WebSocketManager
+
+# HTTP client for serverless mode
+serverless_client: Optional[httpx.AsyncClient] = None
 
 # Configure logging
 logging.basicConfig(
@@ -36,12 +45,25 @@ app_start_time: datetime = datetime.now(timezone.utc)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan manager"""
-    global redis_client, ws_manager
+    global redis_client, ws_manager, serverless_client
 
     # Startup
     logger.info(f"Starting {settings.app_name} v{settings.app_version}")
+    logger.info(f"Inference mode: {settings.inference_mode}")
+
     redis_client = RedisClient()
     ws_manager = WebSocketManager(redis_client)
+
+    # Initialize serverless client if needed
+    if settings.inference_mode == "serverless":
+        if not settings.serverless_endpoint:
+            logger.warning("SERVERLESS_ENDPOINT not set - serverless mode will fail!")
+        else:
+            serverless_client = httpx.AsyncClient(
+                base_url=settings.serverless_endpoint,
+                timeout=httpx.Timeout(300.0)  # 5 min timeout for inference
+            )
+            logger.info(f"Serverless client initialized: {settings.serverless_endpoint}")
 
     # Start background tasks
     asyncio.create_task(cleanup_task())
@@ -52,6 +74,8 @@ async def lifespan(app: FastAPI):
 
     # Shutdown
     logger.info("Shutting down Queue Manager")
+    if serverless_client:
+        await serverless_client.aclose()
 
 
 # Initialize FastAPI app
@@ -87,6 +111,7 @@ async def health_check():
     return HealthCheck(
         status="healthy" if redis_client.ping() else "unhealthy",
         version=settings.app_version,
+        inference_mode=settings.inference_mode,
         redis_connected=redis_client.ping(),
         workers_active=0,  # TODO: Track active workers
         queue_depth=redis_client.get_queue_depth(),
@@ -120,10 +145,68 @@ async def get_queue_status():
 # Job Management Endpoints
 # ============================================================================
 
+async def submit_to_serverless(workflow: dict, user_id: str) -> dict:
+    """Submit workflow directly to serverless endpoint (bypasses Redis queue)"""
+    if not serverless_client:
+        raise HTTPException(
+            status_code=503,
+            detail="Serverless client not initialized. Check SERVERLESS_ENDPOINT."
+        )
+
+    try:
+        # ComfyUI API expects POST /prompt with {"prompt": workflow}
+        response = await serverless_client.post(
+            "/prompt",
+            json={"prompt": workflow, "client_id": user_id}
+        )
+        response.raise_for_status()
+        return response.json()
+    except httpx.TimeoutException:
+        raise HTTPException(status_code=504, detail="Serverless inference timed out")
+    except httpx.HTTPStatusError as e:
+        raise HTTPException(status_code=e.response.status_code, detail=str(e))
+    except Exception as e:
+        logger.error(f"Serverless submission failed: {e}")
+        raise HTTPException(status_code=502, detail=f"Serverless error: {e}")
+
+
 @app.post("/api/jobs", response_model=JobResponse, status_code=201)
 async def submit_job(request: JobSubmitRequest):
-    """Submit a new job to the queue"""
+    """Submit a new job - routes based on INFERENCE_MODE"""
     try:
+        # SERVERLESS MODE: Direct HTTP to serverless endpoint (no queue)
+        if settings.inference_mode == "serverless":
+            logger.info(f"Serverless job from user {request.user_id}")
+
+            # Submit directly to serverless
+            result = await submit_to_serverless(request.workflow, request.user_id)
+
+            # Create a completed job record
+            job = Job(
+                user_id=request.user_id,
+                workflow=request.workflow,
+                priority=request.priority,
+                metadata=request.metadata
+            )
+            job.status = JobStatus.COMPLETED
+            job.result = result
+            job.completed_at = datetime.now(timezone.utc)
+
+            return JobResponse(
+                id=job.id,
+                user_id=job.user_id,
+                status=job.status,
+                priority=job.priority,
+                created_at=job.created_at,
+                started_at=job.created_at,
+                completed_at=job.completed_at,
+                worker_id="serverless",
+                result=result,
+                error=None,
+                position_in_queue=None
+            )
+
+        # LOCAL/REDIS MODE: Queue-based (workers poll for jobs)
         # Check queue depth limit
         if settings.max_queue_depth > 0:
             current_depth = redis_client.get_queue_depth()
@@ -149,7 +232,7 @@ async def submit_job(request: JobSubmitRequest):
         pending_jobs = redis_client.get_pending_jobs()
         position = next((i for i, j in enumerate(pending_jobs) if j.id == job.id), None)
 
-        logger.info(f"Job {job.id} submitted by user {job.user_id}")
+        logger.info(f"Job {job.id} submitted by user {job.user_id} (mode: {settings.inference_mode})")
 
         return JobResponse(
             id=job.id,

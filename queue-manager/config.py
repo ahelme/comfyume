@@ -20,8 +20,12 @@ class Settings(BaseSettings):
     job_timeout: int = 3600  # seconds
     max_queue_depth: int = 100
 
-    # Inference Provider
-    inference_provider: str = "local"
+    # Inference Mode: "local" | "redis" | "serverless"
+    # - local: GPU on same machine, workers poll Redis queue
+    # - redis: Remote GPU via Tailscale, workers poll Redis queue
+    # - serverless: Direct HTTP to Verda Serverless (auto-scaling)
+    inference_mode: str = "local"
+    serverless_endpoint: Optional[str] = None  # e.g., https://your-deployment.containers.verda.com
     num_workers: int = 1
 
     # Server Configuration

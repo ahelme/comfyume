@@ -226,6 +226,7 @@ class HealthCheck(BaseModel):
     """Health check response"""
     status: str
     version: str
+    inference_mode: str  # local | redis | serverless
     redis_connected: bool
     workers_active: int
     queue_depth: int
