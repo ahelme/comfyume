@@ -3280,3 +3280,39 @@ da951db - docs: update .env.example to v0.3.0 (Phase 2)
 **Achievements:** Fixed worker infinite restart loop, remounted SFS (105GB models), downloaded missing Flux models (qwen text encoder 8GB, flux vae 320MB), created symlinks for model paths, worker polling queue every 2s, Portainer connected, RTX 6000 ADA working (48GB VRAM)
 
 **Ready:** Both templates (Flux Klein 9B + LTX-2 Distilled) have all required models, waiting for final test before boss demo
+
+## Session 31 - 2026-02-03 - DEMO PREP CONTINUED - Bare-metal on Verda
+
+**Status:** 2x ComfyUI v0.11.1 bare-metal instances running on Verda with GPU. Boss rescheduled.
+
+**Issues Fixed:**
+- Models dir empty on Verda: symlinked `/home/dev/comfyume/data/models/shared` → `/mnt/sfs/models/shared`
+- ComfyUI couldn't find models: created `extra_model_paths.yaml` for both worker and frontend
+- Frontend executing locally instead of queue: `queue_redirect` was `.disabled` for user001, re-enabled
+- Frontend validation failing: created placeholder model files on Mello for validation pass-through
+- Worker container was v0.8.2 (old image), needed v0.11.x
+- Docker frontend missing `requests` module: fixed Dockerfile, rebuilt
+
+**Pivoted to bare-metal on Verda:**
+- Split architecture queue_redirect JS not intercepting reliably
+- Abandoned docker containers for demo, ran bare-metal ComfyUI v0.11.1 directly on Verda
+- `pip3 install` system-wide, 2 instances on ports 8301/8302
+- Models via `extra_model_paths.yaml` pointing to `/mnt/sfs/models/shared/`
+- All 23 models found, CUDA working (RTX 6000 ADA 48GB)
+
+**Infrastructure set up:**
+- Domain: aiworkshop.art (DNS → 65.108.33.89)
+- SSL: Let's Encrypt cert for aiworkshop.art
+- Nginx with SSL on port 443 (domain not loading from browser yet - needs debug)
+- HTTP Basic Auth created (user001/workshop2026, user002/workshop2026)
+- UFW ports opened: 80, 443, 8301, 8302
+
+**Working URLs:**
+- http://65.108.33.89:8301 (user1)
+- http://65.108.33.89:8302 (user2)
+
+**TODO:**
+- Fix domain https://aiworkshop.art (SSL works server-side, not loading in browser)
+- Add HTTP Basic Auth back
+- Test both templates end-to-end (Flux Klein 9B + LTX-2 Distilled)
+- Consider proper multi-user routing for workshop (sub-paths break ComfyUI assets)

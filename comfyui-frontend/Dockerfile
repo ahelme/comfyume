@@ -25,9 +25,9 @@ RUN git clone --branch v0.11.0 --depth 1 \
     https://github.com/comfyanonymous/ComfyUI.git /comfyui
 
 # 2. Install ComfyUI dependencies
-# v0.11.0 benefits: 'requests' now in requirements.txt (no manual install needed!)
+# Install ComfyUI dependencies + requests (needed by frontend_management.py)
 WORKDIR /comfyui
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt requests
 
 # 3. BACKUP default custom nodes (prevents volume mount trap!)
 # Problem: Volume-mounting empty host dir overwrites container's custom_nodes/
