@@ -4,6 +4,11 @@ set -e
 # ComfyUI Workshop Platform - Start Script
 # ==========================================
 
+# --- Disk Space Check (fail early if disk critical) ---
+if command -v disk-check.sh &> /dev/null; then
+    disk-check.sh --block || { echo "❌ ABORTING: Disk space critical. Free space before starting."; exit 1; }
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 

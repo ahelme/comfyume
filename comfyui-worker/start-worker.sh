@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+# --- Disk Space Check (warn but don't block worker startup) ---
+if command -v disk-check.sh &> /dev/null; then
+    disk-check.sh || true
+fi
+
 echo "==================================================================="
 echo "Starting ComfyUI Worker: $WORKER_ID"
 echo "==================================================================="
