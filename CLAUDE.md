@@ -627,9 +627,15 @@ This stops all ComfyUI containers to prevent resource exhaustion on startup.
 3. Within each batch: sequential with health checks (user002 depends on user001, etc.)
 4. Total time: ~1-2 minutes for 5 users, ~2-3 minutes estimated for 20 users
 
-**Commands:**
+**Commands (Mello - App Server):**
 - Start: `docker compose up -d` (includes docker-compose.users.yml automatically)
+- Set auto-restart: `docker update --restart=unless-stopped $(docker ps -q --filter "name=comfy")` (survives reboots)
 - Regenerate: `./scripts/generate-user-compose.sh` (updates docker-compose.users.yml)
+
+**Commands (Verda - Worker):**
+- Start worker: `cd ~/comfyume/comfyui-worker/ && docker compose up -d worker-1`
+- Set auto-restart: `docker update --restart=unless-stopped $(docker ps -q --filter "name=comfy")` (survives reboots)
+- Check Redis: `redis-cli -h 100.99.216.71 -p 6379 -a $REDIS_PASSWORD ping`
 
 ### ComfyUI v0.11.0 Workflow Storage (CRITICAL!)
 
