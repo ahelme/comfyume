@@ -633,8 +633,9 @@ This stops all ComfyUI containers to prevent resource exhaustion on startup.
 - Regenerate: `./scripts/generate-user-compose.sh` (updates docker-compose.users.yml)
 
 **Commands (Verda - Worker):**
-- Start worker: `cd ~/comfyume/comfyui-worker/ && docker compose up -d worker-1`
-- Set auto-restart: `docker update --restart=unless-stopped $(docker ps -q --filter "name=comfy")` (survives reboots)
+- Start worker: `cd ~/comfyume/comfyui-worker/ && sudo docker compose up -d worker-1`
+- Check logs: `sudo docker logs comfyume-worker-1 -f`
+- Set auto-restart: `sudo docker update --restart=unless-stopped $(sudo docker ps -q --filter "name=comfy")` (survives reboots)
 - Check Redis: `redis-cli -h 100.99.216.71 -p 6379 -a $REDIS_PASSWORD ping`
 
 ### ComfyUI v0.11.0 Workflow Storage (CRITICAL!)
