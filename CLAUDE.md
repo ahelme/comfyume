@@ -542,6 +542,53 @@ sudo ufw status
 
 **Post-Workshop:** Fix Issue #54 properly (aiohttp/nginx POST issue)
 
+### CRITICAL: Worker Container Infinite Restart Loop
+
+**Symptom:** Worker container restarts every 30 seconds with "ComfyUI failed to start" error.
+
+**Root Cause:**
+- Original startup script uses `curl` for health checks
+- `curl` not installed in worker container
+- Health check always fails → script exits → container restarts
+
+**Fix:** Remove curl-based health check, use simple sleep:
+```bash
+# /workspace/start-worker.sh (simplified version)
+#!/bin/bash
+echo "Starting ComfyUI Worker: $WORKER_ID"
+cd /workspace/ComfyUI
+python3 main.py --listen 0.0.0.0 --port 8188 &
+COMFYUI_PID=$!
+sleep 60  # Simple wait instead of curl check
+cd /workspace
+python3 worker.py
+kill $COMFYUI_PID 2>/dev/null || true
+```
+
+**To apply fix on running container:**
+```bash
+# Create fixed script
+cat > /tmp/start-simple.sh << 'EOF'
+#!/bin/bash
+echo "Starting ComfyUI Worker: $WORKER_ID"
+cd /workspace/ComfyUI
+python3 main.py --listen 0.0.0.0 --port 8188 &
+sleep 60
+cd /workspace && python3 worker.py
+EOF
+chmod +x /tmp/start-simple.sh
+
+# Copy to stopped container (preserves permissions)
+docker stop comfy-worker-1
+docker cp /tmp/start-simple.sh comfy-worker-1:/workspace/start-worker.sh
+docker start comfy-worker-1
+```
+
+**Success indicators:**
+- Worker logs show "Worker worker-1 started"
+- Polling queue manager every 2s
+- HTTP 200 OK responses from queue manager
+
 ### .eu domain for R2 Buckets
 - connection / uploads can fail and not know why
 
