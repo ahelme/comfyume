@@ -64,7 +64,22 @@ echo "✅ Workflow index created"
 # v0.11.0 expects /comfyui/user/default/ for user-specific data
 mkdir -p /comfyui/user/default
 
-# 6. Ready to start ComfyUI!
+# 6. Set up extra model paths (models mounted at /models/shared/)
+# Frontend needs model listings for prompt validation before sending to worker queue
+echo "📂 Setting up model paths..."
+cat > /comfyui/extra_model_paths.yaml <<EOF
+comfyume:
+    base_path: /models/shared/
+    checkpoints: checkpoints/
+    diffusion_models: diffusion_models/
+    text_encoders: text_encoders/
+    vae: vae/
+    loras: loras/
+    latent_upscale_models: latent_upscale_models/
+EOF
+echo "✅ Model paths configured"
+
+# 7. Ready to start ComfyUI!
 echo ""
 echo "✨ ComfyUI v0.11.0 frontend ready!"
 echo "   - Workflows: $WORKFLOW_PATH"
@@ -72,6 +87,6 @@ echo "   - Custom nodes: /comfyui/custom_nodes"
 echo "   - Mode: CPU only (--cpu flag)"
 echo ""
 
-# 7. Start ComfyUI with arguments passed to container
+# 8. Start ComfyUI with arguments passed to container
 # CMD from Dockerfile: ["python", "/comfyui/main.py", "--listen", "0.0.0.0", "--port", "8188", "--cpu"]
 exec "$@"

@@ -53,6 +53,9 @@ RUN mkdir -p /workspace/ComfyUI/models \
     /outputs \
     /inputs
 
+# Add extra model paths config (handles /models/ mount from restored containers)
+COPY extra_model_paths.yaml /workspace/ComfyUI/extra_model_paths.yaml
+
 # Create non-root user
 RUN useradd -m -u 1000 comfyuser && \
     chown -R comfyuser:comfyuser /workspace /outputs /inputs
