@@ -608,6 +608,9 @@ docker start comfy-worker-1
 
 This stops all ComfyUI containers to prevent resource exhaustion on startup.
 
+### Disk Space Monitoring: disk-check.sh
+Run `disk-check.sh` before builds/backups. Use `--block` to abort if >90% full. Auto-runs in start.sh, build.sh, backup scripts.
+
 ### CRITICAL: Silent Failures on Large File Operations
 
 **Why this matters:** Operations report success while actually failing. Hours wasted redownloading, deploying apps that won't work, discovering missing data at critical moments.
