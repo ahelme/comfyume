@@ -1,6 +1,6 @@
 #!/bin/bash
 # switch-gpu.sh - Switch between inference modes/GPUs
-# Usage: ./scripts/switch-gpu.sh [h100-spot|h100-on-demand|b300-spot|b300-on-demand|local]
+# Usage: ./scripts/switch-gpu.sh [h200-spot|h200-on-demand|b300-spot|b300-on-demand|local]
 
 set -e
 
@@ -18,15 +18,15 @@ show_usage() {
     echo "Usage: $0 [MODE]"
     echo ""
     echo "Modes:"
-    echo "  h100-spot       - H100 SPOT (€0.74/hr + VAT) - Workshop, testing"
-    echo "  h100-on-demand  - H100 On-Demand (€2.14/hr + VAT) - Demos"
+    echo "  h200-spot       - H200 SPOT (€0.97/hr + VAT) - Workshop, testing"
+    echo "  h200-on-demand  - H200 On-Demand (€2.80/hr + VAT) - Demos"
     echo "  b300-spot       - B300 SPOT (€1.61/hr + VAT) - Cheap 4K"
     echo "  b300-on-demand  - B300 On-Demand (€4.63/hr + VAT) - Premium 4K"
     echo "  local           - Local/Redis workers (no serverless)"
     echo "  status          - Show current mode"
     echo ""
     echo "Examples:"
-    echo "  $0 h100-spot        # Workshop with 20 users (cheapest)"
+    echo "  $0 h200-spot        # Workshop with 20 users (cheapest)"
     echo "  $0 b300-on-demand   # Boss demo with 4K video (premium)"
     echo "  $0 status           # Check current mode"
     echo ""
@@ -46,12 +46,12 @@ show_status() {
 
         if [ "$INFERENCE_MODE" = "serverless" ]; then
             case "$SERVERLESS_ACTIVE" in
-                h100-spot)
-                    echo -e "  Active GPU:        ${GREEN}H100 SPOT 80GB (€0.74/hr + VAT)${NC}"
+                h200-spot)
+                    echo -e "  Active GPU:        ${GREEN}H200 SPOT 141GB (€0.97/hr + VAT)${NC}"
                     echo -e "  Best for:          Workshop, testing, cost-sensitive"
                     ;;
-                h100-on-demand)
-                    echo -e "  Active GPU:        ${CYAN}H100 On-Demand 80GB (€2.14/hr + VAT)${NC}"
+                h200-on-demand)
+                    echo -e "  Active GPU:        ${CYAN}H200 On-Demand 141GB (€2.80/hr + VAT)${NC}"
                     echo -e "  Best for:          Important demos, guaranteed availability"
                     ;;
                 b300-spot)
@@ -81,23 +81,23 @@ switch_mode() {
     MODE=$1
 
     case $MODE in
-        h100-spot)
-            echo -e "${GREEN}Switching to H100 SPOT...${NC}"
+        h200-spot)
+            echo -e "${GREEN}Switching to H200 SPOT...${NC}"
             sed -i 's/^INFERENCE_MODE=.*/INFERENCE_MODE=serverless/' "$PROJECT_DIR/.env"
-            sed -i 's/^SERVERLESS_ACTIVE=.*/SERVERLESS_ACTIVE=h100-spot/' "$PROJECT_DIR/.env"
+            sed -i 's/^SERVERLESS_ACTIVE=.*/SERVERLESS_ACTIVE=h200-spot/' "$PROJECT_DIR/.env"
             echo "  INFERENCE_MODE=serverless"
-            echo "  SERVERLESS_ACTIVE=h100-spot"
-            echo -e "  GPU: ${GREEN}H100 SXM5 80GB - €0.74/hr + VAT${NC}"
+            echo "  SERVERLESS_ACTIVE=h200-spot"
+            echo -e "  GPU: ${GREEN}H200 SXM5 141GB - €0.97/hr + VAT${NC}"
             echo "  Type: SPOT (can be preempted)"
             echo "  Best for: Workshop (20 users), 720p/1080p, testing"
             ;;
-        h100-on-demand)
-            echo -e "${CYAN}Switching to H100 On-Demand...${NC}"
+        h200-on-demand)
+            echo -e "${CYAN}Switching to H200 On-Demand...${NC}"
             sed -i 's/^INFERENCE_MODE=.*/INFERENCE_MODE=serverless/' "$PROJECT_DIR/.env"
-            sed -i 's/^SERVERLESS_ACTIVE=.*/SERVERLESS_ACTIVE=h100-on-demand/' "$PROJECT_DIR/.env"
+            sed -i 's/^SERVERLESS_ACTIVE=.*/SERVERLESS_ACTIVE=h200-on-demand/' "$PROJECT_DIR/.env"
             echo "  INFERENCE_MODE=serverless"
-            echo "  SERVERLESS_ACTIVE=h100-on-demand"
-            echo -e "  GPU: ${CYAN}H100 SXM5 80GB - €2.14/hr + VAT${NC}"
+            echo "  SERVERLESS_ACTIVE=h200-on-demand"
+            echo -e "  GPU: ${CYAN}H200 SXM5 141GB - €2.80/hr + VAT${NC}"
             echo "  Type: On-Demand (guaranteed)"
             echo "  Best for: Important demos, time-critical work"
             ;;
@@ -144,7 +144,7 @@ switch_mode() {
 
 # Main
 case "${1:-}" in
-    h100-spot|h100-on-demand|b300-spot|b300-on-demand|local)
+    h200-spot|h200-on-demand|b300-spot|b300-on-demand|local)
         switch_mode "$1"
         ;;
     status|"")

@@ -32,14 +32,14 @@ class Settings(BaseSettings):
 
     # Multi-GPU Serverless Endpoints (4 options: 2 GPUs x 2 pricing tiers)
     # Usage: Set SERVERLESS_ACTIVE to switch between endpoints
-    # H100: 80GB HBM3, 3.35 TB/s bandwidth - good for 720p/1080p
-    serverless_endpoint_h100_spot: Optional[str] = None       # €0.74/hr + VAT (workshop)
-    serverless_endpoint_h100_on_demand: Optional[str] = None  # €2.14/hr + VAT (demos)
-    # B300: 288GB HBM3e, 8.0 TB/s bandwidth - required for 4K
+    # H200: 141GB HBM3e, 4.8 TB/s bandwidth - good for 720p/1080p/some 4K
+    serverless_endpoint_h200_spot: Optional[str] = None       # €0.97/hr + VAT (workshop)
+    serverless_endpoint_h200_on_demand: Optional[str] = None  # €2.80/hr + VAT (demos)
+    # B300: 288GB HBM3e, 8.0 TB/s bandwidth - required for native 4K
     serverless_endpoint_b300_spot: Optional[str] = None       # €1.61/hr + VAT (cheap 4K)
     serverless_endpoint_b300_on_demand: Optional[str] = None  # €4.63/hr + VAT (premium 4K)
 
-    # Active endpoint selector: "default" | "h100-spot" | "h100-on-demand" | "b300-spot" | "b300-on-demand"
+    # Active endpoint selector: "default" | "h200-spot" | "h200-on-demand" | "b300-spot" | "b300-on-demand"
     serverless_active: str = "default"
 
     # Worker configuration (for local/redis modes)
@@ -49,8 +49,8 @@ class Settings(BaseSettings):
     def active_serverless_endpoint(self) -> Optional[str]:
         """Get the currently active serverless endpoint based on serverless_active setting"""
         endpoints = {
-            "h100-spot": self.serverless_endpoint_h100_spot,
-            "h100-on-demand": self.serverless_endpoint_h100_on_demand,
+            "h200-spot": self.serverless_endpoint_h200_spot,
+            "h200-on-demand": self.serverless_endpoint_h200_on_demand,
             "b300-spot": self.serverless_endpoint_b300_spot,
             "b300-on-demand": self.serverless_endpoint_b300_on_demand,
         }
@@ -62,8 +62,8 @@ class Settings(BaseSettings):
         if self.inference_mode != "serverless":
             return "local"
         gpu_types = {
-            "h100-spot": "H100-80GB-SPOT",
-            "h100-on-demand": "H100-80GB",
+            "h200-spot": "H200-141GB-SPOT",
+            "h200-on-demand": "H200-141GB",
             "b300-spot": "B300-288GB-SPOT",
             "b300-on-demand": "B300-288GB",
         }
