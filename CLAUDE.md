@@ -9,9 +9,17 @@
 
 ## ⚠️  CRITICAL INSTRUCTIONS - YOU MUST:
 
-1. **USE LATEST STABLE LIBRARIES AS OF JAN 2026**
+1. **MUTUAL RESPECT - BELIEVE THE USER**
+   - When the user reports something isn't working, **BELIEVE THEM**
+   - Do not dismiss user reports with "try cache refresh" or "works for me"
+   - Investigate the actual problem they're describing
+   - Ask for error messages/details, then act on that information
+   - The user takes your suggestions seriously - reciprocate that respect
+   - Repeating "it's working" when told it isn't is dismissive and wastes time
 
-2. **ALWAYS CHECK IF CODE HAS BEEN CREATED FIRST**
+2. **USE LATEST STABLE LIBRARIES AS OF JAN 2026**
+
+3. **ALWAYS CHECK IF CODE HAS BEEN CREATED FIRST**
    - **NEVER EVER** REWRITE CODE IF IT HAS ALREADY BEEN WRITTEN
    - **ALWAYS CHECK** FOR PREVIOUS SOLUTIONS
   
