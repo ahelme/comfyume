@@ -61,9 +61,18 @@ async def lifespan(app: FastAPI):
             logger.warning("No serverless endpoint configured - serverless mode will fail!")
             logger.warning("Set SERVERLESS_ENDPOINT or SERVERLESS_ENDPOINT_H200/B300 with SERVERLESS_ACTIVE")
         else:
+            # Build headers with API key if configured
+            headers = {}
+            if settings.serverless_api_key:
+                headers["Authorization"] = f"Bearer {settings.serverless_api_key}"
+                logger.info("Serverless API key configured")
+            else:
+                logger.warning("No SERVERLESS_API_KEY configured - requests may fail!")
+
             serverless_client = httpx.AsyncClient(
                 base_url=endpoint,
-                timeout=httpx.Timeout(300.0)  # 5 min timeout for inference
+                timeout=httpx.Timeout(300.0),  # 5 min timeout for inference
+                headers=headers
             )
             logger.info(f"Serverless client initialized: {endpoint}")
             logger.info(f"Active GPU: {settings.active_gpu_type}")

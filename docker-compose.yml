@@ -124,6 +124,8 @@ services:
       # B300 endpoints (288GB, native 4K)
       - SERVERLESS_ENDPOINT_B300_SPOT=${SERVERLESS_ENDPOINT_B300_SPOT:-}
       - SERVERLESS_ENDPOINT_B300_ON_DEMAND=${SERVERLESS_ENDPOINT_B300_ON_DEMAND:-}
+      # Serverless API Key (required for auth)
+      - SERVERLESS_API_KEY=${SERVERLESS_API_KEY:-}
     volumes:
       - ${OUTPUTS_PATH}:/outputs
       - ${INPUTS_PATH}:/inputs

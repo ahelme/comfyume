@@ -2,13 +2,33 @@
 
 **Project:** ComfyuME
 **Date:** 2026-02-03
-**Status:** 🟡 In Progress - Code complete, deployment testing
+**Status:** 🟢 WORKING - H200 SPOT serverless deployed and tested
 
 ---
 
 ## Summary
 
-Implemented serverless inference mode with multi-GPU support (H200/B300, spot/on-demand). Code is complete and committed. Verda serverless container deployment created but returning 404 - needs health check path fix.
+Serverless inference mode with multi-GPU support is **WORKING**! H200 SPOT deployment active and receiving requests. Queue-manager routes to serverless (not instance).
+
+**Key Fixes Applied:**
+1. Created Inference API Key (required for auth - was returning 404 without it)
+2. Changed CMD from `python` to `python3` (container only has python3)
+3. Added `SERVERLESS_API_KEY` to config and docker-compose
+
+---
+
+## Quick Test
+
+```bash
+# Test serverless directly
+API_KEY="dc_62ed1655..."
+curl -H "Authorization: Bearer $API_KEY" https://containers.datacrunch.io/comfyume-vca-ftv-h200-spot/
+# Should return ComfyUI HTML (HTTP 200)
+
+# Check queue-manager mode
+curl -s http://localhost:3000/health | jq '.inference_mode, .active_gpu'
+# Should show: "serverless", "H200-141GB-SPOT"
+```
 
 ---
 
@@ -106,31 +126,38 @@ Updated in `.env`.
 
 ---
 
-## Current Issue: 404 on Serverless Endpoint
+## Issues Resolved
 
-**Problem:** All requests to `https://containers.datacrunch.io/comfyume-vca-ftv-h200-spot/` return 404.
+### Issue 1: 404 on Serverless Endpoint
+**Root Cause:** Missing Inference API Key
+**Fix:** Created API key in Verda Console > Keys > Inference API Keys
 
-**Likely Cause:** Health check path `/system_stats` is wrong.
+### Issue 2: Container CrashLoopBackOff
+**Root Cause:** `python` not found (container only has `python3`)
+**Fix:** Changed CMD to `python3 /workspace/ComfyUI/main.py ...`
 
-**Fix Required:** Change health check path in Verda console to:
-- `/api/system_stats` OR
-- `/` (root - ComfyUI serves HTML there)
-
-**Alternative:** Container may be scaled to 0 and health check fails on startup.
+### Issue 3: Queue-manager not using auth
+**Root Cause:** Missing `SERVERLESS_API_KEY` in config
+**Fix:** Added to config.py, docker-compose.yml, and .env
 
 ---
 
-## Next Steps
+## Current Status: WORKING ✅
 
-1. **Fix health check path** in Verda console: `/system_stats` → `/api/system_stats` or `/`
-2. **Restart deployment** after health check fix
-3. **Test endpoint** with curl or browser
-4. **Update mello** queue-manager to use serverless:
-   ```bash
-   ./scripts/switch-gpu.sh h200-spot
-   docker compose restart queue-manager
-   ```
-5. **Create remaining deployments:**
+- H200 SPOT: Deployed and responding (€0.97/hr + VAT)
+- Queue-manager: Routing to serverless with auth
+- Cold start: ~20 seconds (container was pre-warmed)
+
+---
+
+## Remaining Work
+
+1. ✅ ~~Fix health check path~~ - Done (set to `/`)
+2. ✅ ~~Create API key~~ - Done
+3. ✅ ~~Fix CMD python → python3~~ - Done
+4. ✅ ~~Update queue-manager with auth~~ - Done
+5. **Test end-to-end** - Submit workflow via ComfyUI, verify runs on serverless
+6. **Create remaining deployments** (when needed):
    - comfyume-vca-ftv-h200-on-demand
    - comfyume-vca-ftv-b300-spot
    - comfyume-vca-ftv-b300-on-demand
