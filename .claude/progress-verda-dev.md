@@ -61,8 +61,9 @@ SECTION 3. Progress Reports
 
 
  🟢 **(CURRENT WORK)**
- **[#40]comfyume Repo -  Create New Worker Container & Upload to R2 Buckets**
-    - Created: 2026-02-01 | Updated: 2026-02-01
+ **[#62] Serverless Inference - WORKING**
+    - Created: 2026-02-03 | Updated: 2026-02-04
+    - H200 SPOT deployed, auth working, queue-manager routing
 
 ## - PENDING - UNSCHEDULED TASKS
 - Multi-user concurrent testing (20 users) - Issue #19
@@ -71,15 +72,31 @@ SECTION 3. Progress Reports
    - Test frontend + queue-manager + worker end-to-end
    - Validate workflow execution (Flux.2 Klein, LTX-2)
    - Check job queue, priority, timeout handling
-**Phase 11** - Test Single GPU Instance (Restore & Verify)
-   - Provision Verda H100 instance (or cheaper CPU for initial testing)
-   - Run setup-verda-solo-script.sh to restore from backups
-   - Test worker deployment and connectivity
-   - Verify VRAM monitoring and job execution
+**Phase 11** - ✅ COMPLETE (Serverless working on Verda)
 
 ---
 
 # Progress Reports
+
+---
+
+## Session 28 - 2026-02-04
+
+**Issue:** #62 (serverless)
+
+**Done:**
+- Phase 11 complete: Serverless inference WORKING on Verda
+- H200 SPOT deployment active and receiving requests (€0.97/hr + VAT)
+- Fixed 3 issues to get serverless working:
+  1. Created Inference API Key (was returning 404 without auth)
+  2. Changed container CMD from `python` to `python3`
+  3. Added `SERVERLESS_API_KEY` to config.py and docker-compose.yml
+- Queue-manager now routes to serverless with proper Bearer auth
+
+**Commits:**
+- 9475024: feat: add serverless API key authentication support
+
+**Status:** Serverless working, ready for end-to-end testing
 
 ---
 
