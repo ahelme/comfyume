@@ -43,32 +43,21 @@
 ---
 ## 1. PRIORITY TASKS
 
-🟡 **(NEXT) - comfyume #18 - End-to-end job submission test (coordinated)**
-    - Created: 2026-01-31 | Updated: 2026-02-01 (Session 27)
-    - Repository: comfyume (v0.11.0 rebuild)
-    - Key GH Issue: `Phase 3: End-to-end job submission test #18`
-    - Needs coordination with Verda team via Issue #7
-    - Requires worker integration (Verda team)
-    - Will run AFTER Issue #39 (infrastructure test)
-    - Tests: Full frontend → queue-manager → worker flow
+✅ **(COMPLETE) - comfyume #62 - Serverless Inference - ALL 4 GPU DEPLOYMENTS**
+    - Completed: 2026-02-04
+    - All deployments created via DataCrunch API
+    - H200 SPOT/On-Demand + B300 SPOT/On-Demand
+    - Terraform configs + GitHub Actions for mobile switching
 
-🔵 **(LOWER PRIORITY) - comfyume #21 - Container Orchestration & Flags**
-    - Created: 2026-02-01 | Phase 1 Complete: 2026-02-01
-    - Repository: comfyume (v0.11.0 rebuild)
-    - Key GH Issue: `Container Orchestration & Flag Nomenclature System #21`
-    - Phase 1 complete: COMFYUI_MODE environment variable ✅
-    - Research complete: architecture/orchestration-commands-scenarios.md
-    - Phase 2: Full flag system (deferred)
+🟡 **(NEXT) - comfyume #18 - End-to-end job submission test**
+    - Tests: frontend → queue-manager → serverless → output
+    - Serverless is READY - just needs workflow testing
 
-🔵 **(LOWER PRIORITY) - comfyume #20 - Workshop readiness**
-    - Created: 2026-01-31
-    - Repository: comfyume (v0.11.0 rebuild)
-    - Key GH Issue: `Phase 3: Workshop readiness checklist #20`
-    - Depends on: #39, #18, #19
+🔵 **(PENDING) - comfyume #20 - Workshop readiness checklist**
     - Final validation before workshop
 
   **Medium-term:**
-    - Issue #19: Complete full load test (infrastructure + workers)
+    - Issue #19: Multi-user load test (20 concurrent users)
 ---
 
 # Progress Reports
@@ -78,6 +67,43 @@
 **Repository:** comfyume (https://github.com/ahelme/comfyume)
 **Branch:** main
 **Phase:** Phase 3a - Infrastructure Testing 
+
+## Progress Report 31 - 2026-02-04 - All 4 Serverless Deployments Created
+
+**Status:** ✅ COMPLETE - All GPU deployments operational
+**Date:** 2026-02-04 | **Repository:** comfyume (v0.11.0) | **Branch:** main
+
+### Completed: GitHub Issue #62 - Full Serverless Infrastructure
+
+**Deployments Created (via DataCrunch API):**
+| Deployment | GPU | Pricing | Status |
+|------------|-----|---------|--------|
+| comfyume-vca-ftv-h200-spot | H200 141GB | €0.97/hr | ✅ |
+| comfyume-vca-ftv-h200-on-demand | H200 141GB | €2.80/hr | ✅ |
+| comfyume-vca-ftv-b300-spot | B300 288GB | €1.61/hr | ✅ |
+| comfyume-vca-ftv-b300-on-demand | B300 288GB | €4.63/hr | ✅ |
+
+**Infrastructure Created:**
+- Terraform configs (`comfymulti-scripts/terraform/`)
+- GitHub Actions workflow for mobile GPU switching
+- DataCrunch API automation (no Terraform provider, used REST API)
+
+**Credentials Updated:**
+- comfyume .env (mello)
+- comfymulti-scripts .env (pushed)
+- Verda ~/comfyume/.env & ~/comfymulti-scripts/.env
+
+**Commits:**
+- 9475024: feat: add serverless API key authentication support
+- 00f6571: docs: update progress log - phase 11 serverless complete
+- 02e8043: docs: add Verda console deployment steps for serverless
+- comfymulti-scripts: 04861bf, e73caa5, ccf8578 (Terraform + credentials)
+
+**Also Fixed:**
+- Statusline script: context warnings at 50%/40% thresholds, session name, background tasks
+- B300 endpoint URLs (was wrong domain format)
+
+---
 
 ## Progress Report 30 - 2026-02-03 - Serverless Multi-GPU Implementation Complete
 
