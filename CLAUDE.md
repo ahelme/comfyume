@@ -1,9 +1,32 @@
 **Project:** ComfyUI Multi-User Workshop Platform
 **Project Started:** 2026-01-02
 **Repository:** github.com/ahelme/comfyume
-**Domain:** comfy.ahelme.net
+**Domain:** aiworkshop.art (PRODUCTION on Verda) + comfy.ahelme.net (Mello)
 **Doc Created:** 2026-01-02
-**Doc Updated:** 2026-02-01 (v0.11.0 clean rebuild - comfyume repo)
+**Doc Updated:** 2026-02-05
+
+---
+
+## 🚨 CRITICAL: PRODUCTION IS ON VERDA (aiworkshop.art)
+
+**The app was moved to Verda to fix Redis/queue/frontend issues!**
+
+| Server | Domain | Role | Status |
+|--------|--------|------|--------|
+| **VERDA** | aiworkshop.art | **PRODUCTION** | nginx, queue-manager, Redis → serverless |
+| MELLO | comfy.ahelme.net | Has containers but NOT primary | 20 frontends exist but traffic goes to Verda |
+
+**DO NOT DELETE VERDA without migrating aiworkshop.art back to Mello first!**
+
+**Verda runs:**
+- nginx (SSL for aiworkshop.art)
+- queue-manager (INFERENCE_MODE=serverless)
+- Redis (job queue)
+- Portainer edge agent
+
+**Before deleting Verda GPU instance:**
+1. Migrate aiworkshop.art to Mello OR
+2. Create CPU instance on Verda to keep aiworkshop.art running
 
 ---
 
