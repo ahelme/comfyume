@@ -526,29 +526,22 @@ sudo ufw status
 
 ## ⚠️  Gotchas
 
-### 🚨 CRITICAL: WORKSHOP WORKAROUND - MUST USE TEMPLATES NOT WORKFLOWS
+### Issue #54 RESOLVED: Workflow Save/Load Now Working
 
-**Issue #54: Workflow save/load broken** - POST to userdata API returns 405 through nginx
+**Issue #54: Workflow save/load was broken** - POST to userdata API returned 405 through nginx
 
-**IMPACT:** Workshop participants CANNOT save or load custom workflows!
+**Root Cause:** nginx `proxy_pass` with trailing slash (`http://backend/;`) decodes URL-encoded characters. ComfyUI requires encoded slashes (`%2F`) in path parameters like `/userdata/workflows%2Ffile.json`.
 
-**WORKAROUND (MANDATORY FOR WORKSHOP):**
-- ✅ **USE TEMPLATES MENU ONLY** - Pre-loaded templates work perfectly
-- ❌ **DO NOT use workflow save/load** - Broken, unfixable before workshop
-- ⚠️ **MODELS MUST EXACTLY MATCH TEMPLATE REQUIREMENTS** - No flexibility!
+**Fix Applied (2026-02-05):**
+1. Created `/etc/nginx/conf.d/comfyui-userdata-maps.conf` with maps that extract paths from `$request_uri` (preserves encoding)
+2. Updated all user location blocks to use `proxy_pass http://backend$userXXX_raw_path$is_args$args;`
 
-**Critical Implications:**
-1. **Template selection is FINAL** - Choose 2-3 templates max for workshop
-2. **Model downloads MUST be exact** - Wrong model = template fails = workshop fails
-3. **Test every template thoroughly** - No room for error during live workshop
-4. **Document which templates work** - Participants need clear instructions
+**Reference:** [ComfyUI PR #6376](https://github.com/comfyanonymous/ComfyUI/pull/6376)
 
-**Template Sources:**
-- Bundled templates: `/home/dev/projects/comfyume/data/workflows/*.json`
-- Served via: ComfyUI Templates menu (not workflow save/load)
-- Model requirements: Extracted from workflow JSON (see below)
-
-**Post-Workshop:** Fix Issue #54 properly (aiohttp/nginx POST issue)
+**Files:**
+- `/etc/nginx/conf.d/comfyui-userdata-maps.conf` - Map definitions (live server)
+- `nginx/conf.d/comfyui-userdata-maps.conf` - Map definitions (repo)
+- `nginx/docker-entrypoint.sh` - Updated to generate maps for containerized nginx
 
 ### CRITICAL: Worker Container Infinite Restart Loop
 

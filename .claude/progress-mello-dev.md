@@ -43,6 +43,12 @@
 ---
 ## 1. PRIORITY TASKS
 
+✅ **(COMPLETE) - comfyume #54 - Workflow Save/Load 405 Error FIXED**
+    - Completed: 2026-02-05
+    - Root cause: nginx URL decoding with proxy_pass trailing slash
+    - Fix: Use $request_uri maps to preserve %2F encoding
+    - All 20 users can now save/load workflows
+
 ✅ **(COMPLETE) - comfyume #62 - Serverless Inference - ALL 4 GPU DEPLOYMENTS**
     - Completed: 2026-02-04
     - All deployments created via DataCrunch API
@@ -51,7 +57,7 @@
 
 🟡 **(NEXT) - comfyume #18 - End-to-end job submission test**
     - Tests: frontend → queue-manager → serverless → output
-    - Serverless is READY - just needs workflow testing
+    - Serverless is READY - workflow save/load FIXED - ready for testing!
 
 🔵 **(PENDING) - comfyume #20 - Workshop readiness checklist**
     - Final validation before workshop
@@ -67,6 +73,54 @@
 **Repository:** comfyume (https://github.com/ahelme/comfyume)
 **Branch:** main
 **Phase:** Phase 3a - Infrastructure Testing 
+
+## Progress Report 32 - 2026-02-05 - Issue #54 FIXED: Workflow Save/Load Working
+
+**Status:** ✅ COMPLETE - Workflow save/load now working for all 20 users
+**Date:** 2026-02-05 | **Repository:** comfyume (v0.11.0) | **Branch:** main
+
+### Fixed: GitHub Issue #54 - Workflow Save 405 Error
+
+**Root Cause Identified:**
+- nginx `proxy_pass http://backend/;` (trailing slash) decodes URL-encoded characters
+- ComfyUI userdata API uses path parameters: `/userdata/workflows%2Ffile.json`
+- nginx decodes `%2F` to `/`, making path `/userdata/workflows/file.json`
+- aiohttp routes don't match this pattern → 405 Method Not Allowed
+
+**Fix Applied:**
+1. Created `/etc/nginx/conf.d/comfyui-userdata-maps.conf` - maps that extract path from `$request_uri` (raw, un-decoded)
+2. Updated all 20 user location blocks: `proxy_pass http://backend$userXXX_raw_path$is_args$args;`
+
+**Research Sources:**
+- [ComfyUI Issue #5629](https://github.com/comfyanonymous/ComfyUI/issues/5629)
+- [ComfyUI PR #6376](https://github.com/comfyanonymous/ComfyUI/pull/6376) - Official fix moved to query params
+- [ComfyUI_frontend Issue #1677](https://github.com/Comfy-Org/ComfyUI_frontend/issues/1677)
+
+**Files Modified:**
+- `/etc/nginx/conf.d/comfyui-userdata-maps.conf` (live server - NEW)
+- `/etc/nginx/sites-enabled/comfy.ahelme.net` (live server - 20 proxy_pass lines updated)
+- `nginx/conf.d/comfyui-userdata-maps.conf` (repo - NEW)
+- `nginx/docker-entrypoint.sh` (repo - generates maps for containerized nginx)
+- `CLAUDE.md` (removed workaround warning, added fix documentation)
+
+**Verified Working:**
+```bash
+# Save workflow - 200 OK
+curl -X POST 'https://comfy.ahelme.net/user001/userdata/workflows%2Ftest.json?overwrite=true'
+# → "workflows/test.json" (200)
+
+# List workflows - works
+curl 'https://comfy.ahelme.net/user001/userdata?dir=workflows'
+# → ["test.json", "flux2_klein_9b_text_to_image.json", ...]
+
+# Load workflow - works
+curl 'https://comfy.ahelme.net/user001/userdata/workflows%2Ftest.json'
+# → {"test": "workflow"}
+```
+
+**GitHub:** Issue #54 closed with resolution comment
+
+---
 
 ## Progress Report 31 - 2026-02-04 - All 4 Serverless Deployments Created
 
