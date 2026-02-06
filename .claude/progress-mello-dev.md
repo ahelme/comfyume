@@ -3,7 +3,7 @@
 **Repository:** github.com/ahelme/comfy-multi
 **Domain:** comfy.ahelme.net
 **Doc Created:** 2026-01-04
-**Doc Updated:** 2026-02-03 (AEST) - re-org priority tasks
+**Doc Updated:** 2026-02-06 (AEST) - Verda CPU instance provisioned
 
 ---
 # Project Progress Tracker 
@@ -43,21 +43,29 @@
 ---
 ## 1. PRIORITY TASKS
 
+🔴 **(CURRENT) - comfyume #64 - Set up Verda CPU instance as production app server**
+    - Created: 2026-02-05 | Updated: 2026-02-06
+    - New instance: soft-wolf-shines-fin-01 (CPU.8V.32G, 8CPU/32GB, 100GB SSD)
+    - IP: 95.216.229.236 | Tailscale: 100.89.38.43 (restore identity!)
+    - OS + scratch volumes restored from previous GPU instance
+    - NEXT: SSH in, run setup script, deploy app, capture nginx configs
+    - CRITICAL: aiworkshop.art is PRODUCTION - must get this running
+
+🔴 **(CURRENT) - Back up production frontend code to git**
+    - Verda runs production aiworkshop.art (NOT Mello)
+    - Need to verify git repo has all code needed to recreate production
+    - Create branch `verda-instance-frontend` if live code differs from git
+    - Back up all configs to SFS + R2
+
 ✅ **(COMPLETE) - comfyume #54 - Workflow Save/Load 405 Error FIXED**
     - Completed: 2026-02-05
-    - Root cause: nginx URL decoding with proxy_pass trailing slash
-    - Fix: Use $request_uri maps to preserve %2F encoding
-    - All 20 users can now save/load workflows
 
 ✅ **(COMPLETE) - comfyume #62 - Serverless Inference - ALL 4 GPU DEPLOYMENTS**
     - Completed: 2026-02-04
-    - All deployments created via DataCrunch API
-    - H200 SPOT/On-Demand + B300 SPOT/On-Demand
-    - Terraform configs + GitHub Actions for mobile switching
 
-🟡 **(NEXT) - comfyume #18 - End-to-end job submission test**
+🟡 **(AFTER VERDA SETUP) - comfyume #18 - End-to-end job submission test**
     - Tests: frontend → queue-manager → serverless → output
-    - Serverless is READY - workflow save/load FIXED - ready for testing!
+    - Blocked until Verda CPU instance is running
 
 🔵 **(PENDING) - comfyume #20 - Workshop readiness checklist**
     - Final validation before workshop
@@ -72,7 +80,41 @@
 ### Implementation Phase
 **Repository:** comfyume (https://github.com/ahelme/comfyume)
 **Branch:** main
-**Phase:** Phase 3a - Infrastructure Testing 
+**Phase:** Verda CPU Instance Setup + Production Backup
+
+## Progress Report 33 - 2026-02-06 - Verda CPU Instance Provisioned
+
+**Date:** 2026-02-06 | **Issues:** #64, #62
+
+**Context:**
+- Previous Verda GPU instance (wide-tree-opens-fin-01) ran out of credits and terminated
+- aiworkshop.art is PRODUCTION on Verda (not Mello!) - discovered last session
+- OS volume + scratch volume restored, SFS (models) available
+
+**Done:**
+- Provisioned new Verda CPU instance: soft-wolf-shines-fin-01
+  - CPU.8V.32G (8 CPU / 32GB RAM / 100GB SSD), €34/mth
+  - Based on Mello resource analysis: 20 frontends use ~8GB RAM at idle, 16GB too tight
+- Updated private scripts .env v0.3.5 with new instance details (PR #29)
+- Restructured nginx configs in private scripts repo:
+  - `nginx-staging/nginx/` → Mello/comfy.ahelme.net
+  - `nginx-production/nginx/` → Verda/aiworkshop.art (README + empty dirs for configs)
+- Investigated git repo completeness: code for all services IS in git (queue-manager, frontend, admin, nginx, redis, scripts), but Verda-specific nginx configs (aiworkshop.art) not yet captured
+- Mello resource snapshot: 14GB/15GB RAM used, 61GB/75GB disk (86%)
+
+**Commits (comfymulti-scripts):**
+- 4ad3fb4: feat: update .env for new Verda CPU production instance
+- 4f18951: refactor: split nginx configs into staging and production dirs
+
+**Next:**
+1. SSH into new Verda instance (95.216.229.236)
+2. Run setup script (Tailscale identity restore, Docker, app deploy)
+3. Mount OS volume from old instance, capture nginx configs for aiworkshop.art
+4. Get 20 frontends + queue-manager + Redis + nginx running
+5. Verify aiworkshop.art is live
+6. Back up everything to SFS + R2
+
+---
 
 ## Progress Report 32 - 2026-02-05 - Issue #54 FIXED: Workflow Save/Load Working
 
