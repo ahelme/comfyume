@@ -1,34 +1,65 @@
 # CLAUDE RESUME - COMFYUME (MELLO TEAM)
 
-**PHASE**: SERVERLESS INFERENCE - COMPLETE ✅
-**DATE**: 2026-02-04
+**PHASE**: VERDA CPU INSTANCE SETUP + PRODUCTION BACKUP
+**DATE**: 2026-02-06
+
+---
+
+## CRITICAL CONTEXT
+
+**aiworkshop.art is PRODUCTION and it runs on VERDA, not Mello!**
+
+The previous Verda GPU instance (wide-tree-opens-fin-01) was terminated (credits ran out). A new CPU instance has been provisioned but NOT YET SET UP.
 
 ---
 
 ## CURRENT STATUS
 
-🎉 **Phase 11 COMPLETE** - All 4 serverless GPU deployments operational!
+**New Verda CPU Instance (provisioned, not yet configured):**
 
-| Deployment | GPU | Price | Status |
-|------------|-----|-------|--------|
-| comfyume-vca-ftv-h200-spot | H200 141GB | €0.97/hr | ✅ |
-| comfyume-vca-ftv-h200-on-demand | H200 141GB | €2.80/hr | ✅ |
-| comfyume-vca-ftv-b300-spot | B300 288GB | €1.61/hr | ✅ |
-| comfyume-vca-ftv-b300-on-demand | B300 288GB | €4.63/hr | ✅ |
+| Detail | Value |
+|--------|-------|
+| Hostname | soft-wolf-shines-fin-01 |
+| IP | 95.216.229.236 |
+| Tailscale IP | 100.89.38.43 (MUST restore identity!) |
+| Instance ID | bb48b2c2-0414-407b-8f27-77b8867818a3 |
+| Spec | CPU.8V.32G (8 CPU / 32GB RAM / 100GB SSD) |
+| Contract | 1 month prepaid (~€34/mth, expires 2026-03-06) |
+| Role | Production app server: nginx + 20 frontends + queue-manager + Redis + admin |
+| Inference | Serverless via DataCrunch containers (unchanged) |
 
-**Switch between GPUs:**
-```bash
-./scripts/switch-gpu.sh h200-spot  # or h200-on-demand, b300-spot, b300-on-demand
-docker compose restart queue-manager
-```
+**Storage (all restored/available):**
+- OS volume from previous instance (may contain nginx configs for aiworkshop.art)
+- Scratch volume (user inputs/outputs)
+- SFS network drive (models, cache, scripts)
+
+**Mello (comfy.ahelme.net) - running but secondary:**
+- 20 frontends + queue-manager + admin + Redis all healthy
+- Serving comfy.ahelme.net (staging)
+- RAM: 14GB/15GB used (near capacity)
 
 ---
 
-## NEXT PRIORITIES
+## IMMEDIATE PRIORITIES
 
-1. **Issue #18** - End-to-end job submission test (serverless is ready!)
-2. **Issue #20** - Workshop readiness checklist
-3. **Issue #19** - Multi-user load test (20 concurrent)
+1. **SSH into Verda** (`ssh root@95.216.229.236`) and set up:
+   - Restore Tailscale identity (BEFORE starting Tailscale!)
+   - Install/configure nginx for aiworkshop.art
+   - Deploy app (Docker, 20 frontends, queue-manager, Redis, admin)
+   - SSL certs for aiworkshop.art (Let's Encrypt)
+
+2. **Capture production nginx configs** from restored OS volume
+   - Mount old OS volume, find `/etc/nginx/` configs
+   - Copy aiworkshop.art config to `nginx-production/nginx/` in private scripts repo
+
+3. **Verify git repo completeness** for production deployment
+   - All service code IS in git (confirmed)
+   - Verda-specific nginx config (aiworkshop.art) NOT yet in git
+   - May need branch `verda-instance-frontend` if live code differs
+
+4. **Back up everything** to SFS + R2
+
+5. **Then resume**: Issue #18 (end-to-end test), Issue #20 (workshop readiness)
 
 ---
 
@@ -36,7 +67,7 @@ docker compose restart queue-manager
 
 Please read:
 
-1. **`./CLAUDE.md`** - Project instructions and architecture
+1. **`./CLAUDE.md`** - Project instructions (note CRITICAL section about Verda = PRODUCTION)
 2. **`.claude/progress-mello-dev.md`** (top ~100 lines) - Recent progress
 3. **`./SERVERLESS_UPDATE.md`** - Serverless deployment details
 4. **`git status && git log --oneline -10`** - Check for pending work
@@ -45,26 +76,26 @@ Please read:
 
 ## KEY INFRASTRUCTURE
 
-**Serverless (DataCrunch/Verda):**
-- All endpoints: `https://containers.datacrunch.io/comfyume-vca-ftv-{gpu}-{mode}/`
+**Serverless (DataCrunch):**
+- Endpoints: `https://containers.datacrunch.io/comfyume-vca-ftv-{gpu}-{mode}/`
 - Auth: `SERVERLESS_API_KEY` in .env (Bearer token)
-- Models on SFS volume (volume_id: be539393-4946-42fa-9adf-d72fe62cded7)
+- Models on SFS volume
+- Switch: `./scripts/switch-gpu.sh h200-spot` (or h200-on-demand, b300-spot, b300-on-demand)
 
-**Mello (App Server):**
-- Redis, queue-manager, 20 user frontends
-- Domain: comfy.ahelme.net
+**Private Scripts Repo:** https://github.com/ahelme/comfymulti-scripts
+- `.env` v0.3.5 - updated with new instance details
+- `nginx-staging/nginx/` - Mello configs (comfy.ahelme.net)
+- `nginx-production/nginx/` - Verda configs (aiworkshop.art) - TO BE POPULATED
+- Setup/backup scripts
 
-**Credentials:**
-- All in `.env` (comfyume + comfymulti-scripts repos)
-- DataCrunch API: `DATACRUNCH_CLIENT_ID` + `DATACRUNCH_CLIENT_SECRET`
-- Serverless auth: `SERVERLESS_API_KEY`
+**Credentials:** All in `.env` (comfyume + comfymulti-scripts repos)
 
 ---
 
 ## TEAM COORDINATION
 
 **GitHub Issues:** https://github.com/ahelme/comfyume/issues
-**Collaboration:** Issue #7
+**Key Issues:** #64 (Verda setup), #18 (e2e test), #20 (workshop readiness)
 **Private Scripts:** https://github.com/ahelme/comfymulti-scripts
 
 ---
@@ -73,5 +104,6 @@ Please read:
 
 - [ ] Check today's date
 - [ ] `git status` - any uncommitted changes?
+- [ ] Can you SSH to Verda? `ssh root@95.216.229.236`
 - [ ] Read `.claude/progress-mello-dev.md` top section
 - [ ] Discuss priorities with user
