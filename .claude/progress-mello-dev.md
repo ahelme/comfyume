@@ -43,19 +43,19 @@
 ---
 ## 1. PRIORITY TASKS
 
-🟢 **(DONE) - comfyume #64 - Set up Verda CPU instance as production app server**
+🔴 **(CURRENT) - comfyume #64 - Admin /admin/ 404 + restore script fixes**
     - Created: 2026-02-05 | Updated: 2026-02-07
-    - Restore script ran with --skip-sfs, rebuilt from GitHub clone
-    - 24/24 containers healthy on comfyume v0.11.0 (shared frontend image)
-    - DNS updated: aiworkshop.art → 95.216.229.236
-    - HTTP Basic Auth enabled (htpasswd from old instance backup)
-    - nginx fixes: include user-maps.conf (#54), hardcode CORS domain, auth_basic
-    - REDIS_HOST fixed to local container, host nginx disabled
-    - **REMAINING:** Admin /admin/ returns 404 (minor routing), disk cleanup done
+    - Verda restore DONE: 24/24 containers healthy, auth enabled, DNS live
+    - **REMAINING:** Admin /admin/ returns 404 through nginx (container healthy on :8080)
+    - **REMAINING:** Update restore-verda-instance.sh for issues found (see GH #64 comments)
 
-🟡 **(BLOCKED) - comfyume #71 - Downgrade Mello VPS after Verda stable**
+🟡 **(NEXT) - comfyume #71 - Downgrade Mello VPS after Verda stable**
     - Created: 2026-02-07
-    - Blocked until Verda CPU instance fully operational
+    - Verda is stable now, can proceed
+
+🟡 **(NEXT) - comfyume #18 - End-to-end job submission test**
+    - Tests: frontend → queue-manager → serverless → output
+    - Verda is live, can test now
 
 ✅ **(COMPLETE) - comfyume #54 - Workflow Save/Load 405 Error FIXED**
     - Completed: 2026-02-05
@@ -75,6 +75,28 @@
 ---
 
 # Progress Reports
+
+---
+
+## Progress Report 37 - 2026-02-07 - Verda restore complete + auth lockdown
+
+**Date:** 2026-02-07 | **Issues:** #64 | **PRs:** #83
+
+**Done:**
+- Ran restore-verda-instance.sh on Verda with `--skip-sfs` (SFS blocked, support unresponsive)
+- Script cloned from GitHub, built containers from source (comfyume v0.11.0)
+- Fixed 9 issues during restore (see GH #64 comments for full details):
+  - Wrong git remote (comfy-multi → comfyume), old Dockerfile (v0.8.2 → v0.11.0)
+  - `requests` missing, `${DOMAIN}` undefined, `user-maps.conf` not included
+  - REDIS_HOST pointed to Mello, host nginx blocked port 80, worker failed (no GPU)
+- 24/24 containers healthy: 20 frontends + nginx + redis + queue-manager + admin
+- HTTP Basic Auth enabled from old instance .htpasswd backup
+- DNS updated: aiworkshop.art → 95.216.229.236
+- Disk cleaned: removed old per-user images + worker image (33GB free)
+
+**Remaining:**
+- Admin /admin/ returns 404 through nginx (container healthy, routing issue)
+- Restore script needs updates for issues found (exclude worker on CPU, disable host nginx, etc.)
 
 ---
 
