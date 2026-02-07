@@ -11,11 +11,19 @@ Newest at top. One line per commit. No fluff. Link issues.
 - **Mello:** [progress-mello-dev.md](./progress-mello-dev.md) | Branch: `main`
 - **Verda:** [progress-verda-dev.md](./progress-verda-dev.md) | Branch: `main`
 - **Admin Panel:** [progress-admin-panel-team-dev.md](./progress-admin-panel-team-dev.md) | Branch: `admin-panel-team`
+- **Testing Scripts:** [progress-testing-scripts-team-dev.md](./progress-testing-scripts-team-dev.md) | Branch: `testing-scripts-team`
 
 ---
 
 ## 2026-02-07
 
+- [TEST] 0731e29 fix: update docker-compose references across scripts (#6)
+- [TEST] 16d2767 docs: add comprehensive admin testing guide (#6)
+- [TEST] c166901 test: add connectivity test (#6)
+- [TEST] 61f202c test: add serverless inference e2e test (#6)
+- [TEST] ddda4e0 test: rewrite integration test suite for serverless architecture (#6)
+- [TEST] bd49f8c test: add shared test helper library (#6)
+- [TEST] f7a9574 docs: add testing-scripts-team onboarding files
 - [MELLO] 28eda1c docs: update refs for restore-verda-instance.sh v0.4.0 (#64, #71) - PR #72
 - [MELLO] ea6549b feat: add restore-verda-instance.sh v0.4.0 for production app server (#64, #71) [private scripts repo]
 - [MELLO] 38a28da docs: session 34 - Verda instance setup, central progress log in CLAUDE.md (#64, #71)

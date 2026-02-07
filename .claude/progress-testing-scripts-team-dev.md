@@ -3,7 +3,7 @@
 **Repository:** github.com/ahelme/comfyume
 **Domain:** comfy.ahelme.net (staging) / aiworkshop.art (production)
 **Doc Created:** 2026-02-07
-**Doc Updated:** 2026-02-07 (AEST) - Testing Scripts Team initialized
+**Doc Updated:** 2026-02-07 (AEST) - Testing infrastructure rewrite complete
 
 ---
 # Project Progress Tracker
@@ -43,7 +43,12 @@
 ---
 ## 1. PRIORITY TASKS
 
-(none yet - populate as work begins)
+- [ ] P1 #6 PR: Create PR to merge testing-scripts-team → main
+  - 2026-02-07
+  - 6 commits ready, all test scripts implemented
+- [ ] P2 #6 Run test.sh on Verda app server to validate
+  - 2026-02-07
+  - Requires services running on production
 
 ---
 
@@ -54,6 +59,29 @@
 **Repository:** comfyume (https://github.com/ahelme/comfyume)
 **Branch:** testing-scripts-team
 **Phase:** Initial Setup
+
+## Progress Report 2 - 2026-02-07 - Testing Infrastructure Rewrite (#6)
+
+**Date:** 2026-02-07
+
+**Done:**
+- `scripts/test-helpers.sh` — shared library (colors, counters, pass/fail, check_http, container helpers)
+- `scripts/test.sh` — rewritten: 10 sections for serverless arch, no worker refs, docker compose v2
+- `scripts/test-serverless.sh` — new: serverless E2E test with --dry-run/--all/--timeout flags
+- `scripts/test-connectivity.sh` — new: Redis/QM/nginx/domain/SSL/Docker network validation
+- `docs/admin-testing-guide.md` — new: comprehensive testing guide (10 sections, troubleshooting, reference)
+- `scripts/status.sh` — fixed docker-compose → docker compose (3 occurrences)
+- `scripts/load-test.sh` — updated "next steps" (removed worker reference)
+- `docs/testing-guide.md` → `docs/archive/testing-guide-load-test.md` (archived)
+
+**Key decisions:**
+- test.sh sources test-helpers.sh (DRY, consistent output across all test scripts)
+- Section 7 (Serverless) only runs when INFERENCE_MODE=serverless
+- Section 10 (SSL) only runs when DOMAIN is set and not example value
+- test-serverless.sh --dry-run is safe (no GPU cost) — default for CI
+- Endpoints returning 401 treated as "route exists" (auth-protected = valid)
+
+---
 
 ## Progress Report 1 - 2026-02-07 - Testing Scripts Team Initialized
 
