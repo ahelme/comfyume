@@ -10,8 +10,8 @@
 **Target:** Testing Scripts
 ### Implementation Phase
 **MAIN Repo:** comfyume (https://github.com/ahelme/comfyume)
-**Branch:** testing-scripts-team
-**Phase:** Implementation Complete — PR #75 open
+**Branch:** testing-scripts-team-2
+**Phase:** Issue #22 Phase 3 — Doc updates for serverless architecture
 ---
 ## 0. Update Instructions
 
@@ -43,14 +43,15 @@
 ---
 ## 1. PRIORITY TASKS
 
-- [x] P1 #6 PR: Create PR to merge testing-scripts-team → main
+- [x] P1 #6 Testing infrastructure rewrite — MERGED (PR #75)
+- [x] P1 #22 Phase 3: archive scripts, update .env.example, update READMEs
   - 2026-02-07 DONE
-  - PR #75 created, issue #6 updated, 7 commits pushed
-- [ ] P1 #6 Run test.sh on Verda app server to validate
+  - 4 commits on testing-scripts-team-2
+- [ ] P1 #22 Push, create PR for Phase 3 work
+  - 2026-02-07
+- [ ] P2 Run test.sh on Verda app server to validate
   - 2026-02-07
   - Requires services running on production
-- [ ] P2 #6 Merge PR #75 after validation
-  - 2026-02-07
 
 ---
 
@@ -59,8 +60,20 @@
 ---
 ### Implementation Phase
 **Repository:** comfyume (https://github.com/ahelme/comfyume)
-**Branch:** testing-scripts-team
-**Phase:** Implementation Complete — PR #75 open
+**Branch:** testing-scripts-team-2
+**Phase:** Issue #22 Phase 3 — Doc updates
+
+## Progress Report 4 - 2026-02-07 - Issue #22 Phase 3 Complete
+
+**Date:** 2026-02-07
+
+**Done:**
+- Archived `create-gpu-quick-deploy.sh` and `verda-startup-script.sh` to `scripts/archive/`
+- Updated `.env.example` v0.3.2 → v0.3.5: added INFERENCE_MODE, serverless endpoint vars, SERVERLESS_API_KEY
+- Updated `comfyui-worker/README.md`: added serverless production note
+- Updated `README.md`: added aiworkshop.art, serverless architecture, current status
+
+---
 
 ## Progress Report 3 - 2026-02-07 - PR #75 Created, Issue #6 Updated
 
