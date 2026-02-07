@@ -321,7 +321,7 @@
 
     ┌────────────────────────────────────┐
     │  Provision new H100 instance       │
-    │  setup-verda-solo-script.sh runs   │
+    │  restore-verda-instance.sh runs    │
     │  (automatically on first boot)     │
     └────────────┬───────────────────────┘
                  │

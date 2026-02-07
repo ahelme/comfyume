@@ -3,7 +3,7 @@
 **Repository:** github.com/ahelme/comfy-multi
 **Domain:** comfy.ahelme.net
 **Doc Created:** 2026-01-04
-**Doc Updated:** 2026-02-06 (AEST) - Verda CPU instance provisioned
+**Doc Updated:** 2026-02-07 - restore-verda-instance.sh v0.4.0
 
 ---
 # Project Progress Tracker 
@@ -81,6 +81,32 @@
 **Repository:** comfyume (https://github.com/ahelme/comfyume)
 **Branch:** main
 **Phase:** Verda CPU Instance Setup + Production Backup
+
+## Progress Report 35 - 2026-02-07 - restore-verda-instance.sh v0.4.0
+
+**Date:** 2026-02-07 | **Issues:** #64, #71 | **PR:** #72
+
+**Done:**
+- Created `restore-verda-instance.sh` (v0.4.0) in private scripts repo
+  - Replaces `setup-verda-solo-script.sh` (v0.3.3, archived) for production use
+  - Full app stack restore: containerized nginx + Redis + queue-manager + admin + 20x frontends
+  - Serverless inference (no GPU worker container)
+  - `--skip-sfs` flag for when SFS network drive is unavailable
+  - SSL via certbot/Let's Encrypt for aiworkshop.art
+  - R2 endpoint fixed to `.eu.` domain
+  - Firewall: added ports 80/443 for HTTP/HTTPS
+  - Project restore: tarball → SFS → git clone fallback
+  - Endpoint verification after startup
+- Updated CLAUDE.md, admin-backup-restore.md, README-RESTORE.md with new script refs
+- Committed to private scripts repo (ea6549b), pushed
+- Created PR #72 on comfyume for doc updates
+
+**NEXT:**
+- Merge PR #72
+- Run restore-verda-instance.sh on Verda CPU instance (once SFS blocker resolved or with --skip-sfs)
+- End-to-end test: aiworkshop.art accessible, all 20 frontends load
+
+---
 
 ## Progress Report 34 - 2026-02-07 - Verda Instance Setup, Backup & SFS Blocker
 

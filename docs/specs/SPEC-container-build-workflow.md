@@ -229,7 +229,7 @@ docker run --rm \
 
 ---
 
-## Updated setup-verda-solo-script.sh
+## Updated restore-verda-instance.sh (was setup-verda-solo-script.sh)
 
 ### Changes for CPU-Only Instance
 
@@ -247,7 +247,7 @@ echo "NOT for GPU inference (use serverless for that)"
 # Detect if GPU is present
 if nvidia-smi &>/dev/null; then
     echo "WARNING: GPU detected. This script is for CPU-only instances."
-    echo "For GPU worker setup, use setup-verda-solo-script.sh"
+    echo "For GPU worker setup, use restore-verda-instance.sh"
     read -p "Continue anyway? (y/N) " -n 1 -r
     [[ ! $REPLY =~ ^[Yy]$ ]] && exit 1
 fi
@@ -302,7 +302,7 @@ echo "Push to GHCR with: docker push ghcr.io/ahelme/comfyume-worker:tag"
 
 | Script | Purpose | GPU Required |
 |--------|---------|--------------|
-| `setup-verda-solo-script.sh` | Full GPU worker setup | Yes |
+| `restore-verda-instance.sh` | Full app server restore (v0.4.0) | No |
 | `setup-verda-cpu-instance.sh` | Build/backup instance | No |
 | `setup-serverless-builder.sh` | Serverless build container | No |
 
@@ -381,5 +381,5 @@ Plus serverless inference costs (pay-per-use):
 ## Related
 
 - GitHub Issue: TBD (create after spec approval)
-- Current setup script: `comfymulti-scripts/setup-verda-solo-script.sh`
+- Current restore script: `comfymulti-scripts/restore-verda-instance.sh` (v0.4.0)
 - Serverless deployments: Issue #62 (COMPLETE)

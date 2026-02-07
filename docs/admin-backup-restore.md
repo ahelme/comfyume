@@ -146,11 +146,12 @@ For detailed backup tables and options, see [admin-backup-routines.md](./admin-b
 
 ## Restore Script
 
-The private repo contains a single consolidated setup/restore script:
+The private repo contains restore/setup scripts:
 
 | Script | Purpose | When to Use |
 |--------|---------|-------------|
-| **setup-verda-solo-script.sh** | Full instance setup and restore | New Verda GPU instances |
+| **restore-verda-instance.sh** | Production app server restore (v0.4.0) | New Verda CPU instances (aiworkshop.art) |
+| **setup-verda-solo-script.sh** | Legacy GPU worker setup (v0.3.3) | GPU worker instances (archived) |
 
 **Location:** `ahelme/comfymulti-scripts` (private GitHub repo)
 
@@ -162,11 +163,11 @@ The private repo contains a single consolidated setup/restore script:
 
 ### Step 1: Provision Instance
 
-1. Get latest `setup-verda-solo-script.sh` from **https://github.com/ahelme/comfymulti-scripts** (private repo)
-2. In Verda Console, create GPU instance (A100/H100)
-3. Attach your SFS (create one first if needed - 50GB recommended)
+1. Get latest `restore-verda-instance.sh` from **https://github.com/ahelme/comfymulti-scripts** (private repo)
+2. In Verda Console, create CPU instance (CPU.8V.32G for app server) or GPU instance (for workers)
+3. Attach your SFS (create one first if needed - 50GB recommended) - or use `--skip-sfs` flag
 4. Create and attach Block Storage (10-20GB) for scratch disk
-5. In **"Startup Script"** field, paste `setup-verda-solo-script.sh` contents
+5. In **"Startup Script"** field, paste `restore-verda-instance.sh` contents
 6. Add **both SSH keys**: user's Mac key + Mello VPS key (`dev@vps-for-verda`)
 7. Provision instance
 

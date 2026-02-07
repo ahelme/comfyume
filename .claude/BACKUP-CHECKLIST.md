@@ -2,7 +2,7 @@
 
 **Project:** ComfyuME v0.11.0
 **Created:** 2026-02-02
-**Purpose:** Files needed for setup-verda-solo-script.sh restore
+**Purpose:** Files needed for restore-verda-instance.sh restore
 **Issue:** #40
 
 ---

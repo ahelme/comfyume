@@ -1,5 +1,5 @@
 # Backup Checklist for Issue #40
-**Purpose:** Create backups for R2 to enable setup-verda-solo-script.sh restore
+**Purpose:** Create backups for R2 to enable restore-verda-instance.sh restore
 **Created:** 2026-02-02
 **Target:** Phase 11 - Test Single GPU Instance deployment
 
@@ -197,7 +197,7 @@ comfyume-user-files-backups/
 
 1. **Delete Verda CPU instance** (save costs)
 2. **Provision Verda H100 GPU instance** (fresh, empty)
-3. **Run setup-verda-solo-script.sh** (restores from R2)
+3. **Run restore-verda-instance.sh** (restores from R2)
 4. **Test worker deployment** (Phase 11)
 5. **Integration testing** (Issue #18 - end-to-end workflow)
 
