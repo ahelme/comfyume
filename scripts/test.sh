@@ -1,328 +1,488 @@
 #!/bin/bash
 #
-# Integration Test Suite for ComfyUI Multi-User Platform
-# Tests all components end-to-end
+# Integration Test Suite for ComfyuME Multi-User Platform
+# Tests all components for the serverless architecture
+#
+# Usage: ./scripts/test.sh
+#
+# Architecture: Verda CPU app server + DataCrunch serverless inference
+# No local GPU workers — inference via direct HTTP to serverless endpoints
 #
 
 set -e
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
-
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
-
-# Test counters
-TESTS_PASSED=0
-TESTS_FAILED=0
-TESTS_TOTAL=0
+# Source shared helpers
+source "$(dirname "$0")/test-helpers.sh"
 
 # Load environment
-if [ -f "$PROJECT_DIR/.env" ]; then
-    source "$PROJECT_DIR/.env"
-else
-    echo -e "${RED}❌ .env file not found${NC}"
+if ! load_env; then
     exit 1
 fi
 
-echo "=========================================================="
-echo "  ComfyUI Multi-User Platform - Integration Tests"
-echo "=========================================================="
+echo "════════════════════════════════════════════════════════════"
+echo "  ComfyuME Integration Tests"
+echo "════════════════════════════════════════════════════════════"
+echo ""
+info "Domain: ${DOMAIN:-not set}"
+info "Inference mode: ${INFERENCE_MODE:-local}"
 echo ""
 
-# Helper functions
-pass_test() {
-    TESTS_PASSED=$((TESTS_PASSED + 1))
-    TESTS_TOTAL=$((TESTS_TOTAL + 1))
-    echo -e "${GREEN}✅ PASS${NC} - $1"
-}
+# ==========================================================================
+# 1. Docker Services
+# ==========================================================================
+section_header "1" "Docker Services"
 
-fail_test() {
-    TESTS_FAILED=$((TESTS_FAILED + 1))
-    TESTS_TOTAL=$((TESTS_TOTAL + 1))
-    echo -e "${RED}❌ FAIL${NC} - $1"
-    if [ ! -z "$2" ]; then
-        echo -e "${RED}   Error: $2${NC}"
-    fi
-}
+# Core services (always required)
+CORE_SERVICES=("comfy-redis" "comfy-queue-manager" "comfy-admin")
 
-info() {
-    echo -e "${BLUE}ℹ${NC}  $1"
-}
-
-warn() {
-    echo -e "${YELLOW}⚠${NC}  $1"
-}
-
-# Test 1: Docker Services Running
-echo ""
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "1. Testing Docker Services"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
-REQUIRED_SERVICES=("comfy-nginx" "comfy-redis" "comfy-queue-manager" "comfy-worker-1" "comfy-admin")
-
-for service in "${REQUIRED_SERVICES[@]}"; do
-    if docker ps --format '{{.Names}}' | grep -q "^${service}$"; then
+for service in "${CORE_SERVICES[@]}"; do
+    if container_running "$service"; then
         pass_test "Service $service is running"
     else
-        fail_test "Service $service is NOT running" "Start with: docker-compose up -d"
+        fail_test "Service $service is NOT running" "Start with: docker compose up -d"
     fi
 done
 
-# Test 2: Service Health Checks
-echo ""
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "2. Testing Service Health Endpoints"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+# Nginx: detect host vs container mode
+if [ "${USE_HOST_NGINX:-true}" = "true" ]; then
+    if systemctl is-active --quiet nginx 2>/dev/null; then
+        pass_test "Host nginx is running"
+    else
+        fail_test "Host nginx is NOT running" "Start with: sudo systemctl start nginx"
+    fi
+else
+    if container_running "comfy-nginx"; then
+        pass_test "Container nginx is running"
+    else
+        fail_test "Container nginx is NOT running"
+    fi
+fi
+
+# Frontend container count
+FRONTEND_COUNT=$(count_containers "comfy-user")
+EXPECTED_USERS="${NUM_USERS:-20}"
+if [ "$FRONTEND_COUNT" -ge "$EXPECTED_USERS" ]; then
+    pass_test "Frontend containers: ${FRONTEND_COUNT}/${EXPECTED_USERS} running"
+elif [ "$FRONTEND_COUNT" -gt 0 ]; then
+    warn "Frontend containers: ${FRONTEND_COUNT}/${EXPECTED_USERS} running (some missing)"
+else
+    fail_test "No frontend containers running" "Run: docker compose up -d"
+fi
+
+# ==========================================================================
+# 2. Service Health Endpoints
+# ==========================================================================
+section_header "2" "Service Health"
 
 # Redis health
-if docker-compose exec -T redis redis-cli -a "$REDIS_PASSWORD" ping 2>/dev/null | grep -q "PONG"; then
-    pass_test "Redis health check"
+if docker compose exec -T redis redis-cli --no-auth-warning -a "$REDIS_PASSWORD" ping 2>/dev/null | grep -q "PONG"; then
+    pass_test "Redis health check (PONG)"
 else
     fail_test "Redis health check" "Redis not responding"
 fi
 
-# Queue Manager health
-QUEUE_HEALTH=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:${QUEUE_MANAGER_PORT:-3000}/health)
-if [ "$QUEUE_HEALTH" = "200" ]; then
-    pass_test "Queue Manager health check (HTTP 200)"
-else
-    fail_test "Queue Manager health check" "Got HTTP $QUEUE_HEALTH"
-fi
+# Queue Manager health — parse JSON fields
+QM_PORT="${QUEUE_MANAGER_PORT:-3000}"
+QM_HEALTH_JSON=$(curl -s --max-time 10 "http://localhost:${QM_PORT}/health" 2>/dev/null || echo "{}")
 
-# Health dashboard
-HEALTH_PAGE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost/health 2>/dev/null || echo "000")
-if [ "$HEALTH_PAGE" = "200" ]; then
-    pass_test "Health dashboard endpoint"
+if echo "$QM_HEALTH_JSON" | jq -e '.status' >/dev/null 2>&1; then
+    QM_STATUS=$(echo "$QM_HEALTH_JSON" | jq -r '.status')
+    QM_INFERENCE=$(echo "$QM_HEALTH_JSON" | jq -r '.inference_mode')
+    QM_REDIS=$(echo "$QM_HEALTH_JSON" | jq -r '.redis_connected')
+    QM_GPU=$(echo "$QM_HEALTH_JSON" | jq -r '.active_gpu')
+
+    if [ "$QM_STATUS" = "healthy" ]; then
+        pass_test "Queue Manager health (status: healthy)"
+    else
+        fail_test "Queue Manager health" "Status: $QM_STATUS"
+    fi
+
+    if [ "$QM_REDIS" = "true" ]; then
+        pass_test "Queue Manager → Redis connected"
+    else
+        fail_test "Queue Manager → Redis disconnected"
+    fi
+
+    info "Inference mode: ${QM_INFERENCE}, Active GPU: ${QM_GPU}"
 else
-    warn "Health dashboard endpoint (Got HTTP $HEALTH_PAGE)"
+    fail_test "Queue Manager health endpoint" "No valid JSON from /health"
 fi
 
 # Admin Dashboard health
-ADMIN_HEALTH=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:${ADMIN_PORT:-8080}/health)
-if [ "$ADMIN_HEALTH" = "200" ]; then
-    pass_test "Admin Dashboard health check (HTTP 200)"
+ADMIN_PORT_VAL="${ADMIN_PORT:-8080}"
+if check_http "http://localhost:${ADMIN_PORT_VAL}/health" "200"; then
+    pass_test "Admin Dashboard health (HTTP 200)"
 else
-    fail_test "Admin Dashboard health check" "Got HTTP $ADMIN_HEALTH"
+    fail_test "Admin Dashboard health" "Got HTTP ${CHECK_HTTP_CODE}"
 fi
 
-# Worker health (ComfyUI)
-WORKER_HEALTH=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8188/system_stats 2>/dev/null || echo "000")
-if [ "$WORKER_HEALTH" = "200" ]; then
-    pass_test "Worker ComfyUI health check (HTTP 200)"
+# Health dashboard (nginx)
+if check_http "http://localhost/health" "200"; then
+    pass_test "Health dashboard endpoint (/health)"
 else
-    warn "Worker ComfyUI health check" "Got HTTP $WORKER_HEALTH (may not be exposed)"
+    warn "Health dashboard endpoint" "Got HTTP ${CHECK_HTTP_CODE}"
 fi
 
-# Test 3: Queue Manager API
-echo ""
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "3. Testing Queue Manager API"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+# ==========================================================================
+# 3. Queue Manager API
+# ==========================================================================
+section_header "3" "Queue Manager API"
 
-# Test queue status endpoint
-QUEUE_STATUS=$(curl -s http://localhost:${QUEUE_MANAGER_PORT:-3000}/api/queue/status)
+# Queue status endpoint
+QUEUE_STATUS=$(curl -s --max-time 10 "http://localhost:${QM_PORT}/api/queue/status" 2>/dev/null || echo "{}")
 if echo "$QUEUE_STATUS" | jq -e '.mode' >/dev/null 2>&1; then
     pass_test "Queue status endpoint returns valid JSON"
-    info "Queue mode: $(echo $QUEUE_STATUS | jq -r '.mode')"
-    info "Pending jobs: $(echo $QUEUE_STATUS | jq -r '.pending_jobs')"
+    info "Queue mode: $(echo "$QUEUE_STATUS" | jq -r '.mode')"
+    info "Pending: $(echo "$QUEUE_STATUS" | jq -r '.pending_jobs'), Running: $(echo "$QUEUE_STATUS" | jq -r '.running_jobs')"
 else
     fail_test "Queue status endpoint" "Invalid JSON response"
 fi
 
-# Test job submission endpoint (dry run)
+# Job submission + cancel (round-trip test)
 TEST_JOB='{"user_id":"test_user","workflow":{"test":"workflow"},"priority":2}'
 JOB_SUBMIT=$(curl -s -X POST \
     -H "Content-Type: application/json" \
     -d "$TEST_JOB" \
-    http://localhost:${QUEUE_MANAGER_PORT:-3000}/api/jobs)
+    --max-time 10 \
+    "http://localhost:${QM_PORT}/api/jobs" 2>/dev/null || echo "{}")
 
 if echo "$JOB_SUBMIT" | jq -e '.id' >/dev/null 2>&1; then
     JOB_ID=$(echo "$JOB_SUBMIT" | jq -r '.id')
-    pass_test "Job submission endpoint (job created: ${JOB_ID:0:8})"
+    pass_test "Job submit endpoint (job: ${JOB_ID:0:8}...)"
 
-    # Cancel the test job immediately
-    curl -s -X DELETE http://localhost:${QUEUE_MANAGER_PORT:-3000}/api/jobs/$JOB_ID >/dev/null
-    info "Test job cancelled"
+    # Test GET /api/jobs/{id}
+    JOB_GET=$(curl -s --max-time 10 "http://localhost:${QM_PORT}/api/jobs/${JOB_ID}" 2>/dev/null || echo "{}")
+    if echo "$JOB_GET" | jq -e '.id' >/dev/null 2>&1; then
+        pass_test "Job get endpoint (GET /api/jobs/{id})"
+    else
+        fail_test "Job get endpoint" "Could not retrieve job ${JOB_ID:0:8}"
+    fi
+
+    # Test GET /api/jobs (list)
+    JOBS_LIST=$(curl -s --max-time 10 "http://localhost:${QM_PORT}/api/jobs?user_id=test_user" 2>/dev/null || echo "[]")
+    if echo "$JOBS_LIST" | jq -e '.[0].id' >/dev/null 2>&1; then
+        pass_test "Job list endpoint (GET /api/jobs)"
+    else
+        warn "Job list endpoint" "No jobs returned for test_user"
+    fi
+
+    # Cancel the test job
+    CANCEL_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE \
+        --max-time 10 \
+        "http://localhost:${QM_PORT}/api/jobs/${JOB_ID}" 2>/dev/null || echo "000")
+    if [ "$CANCEL_CODE" = "204" ] || [ "$CANCEL_CODE" = "200" ]; then
+        pass_test "Job cancel endpoint (DELETE /api/jobs/{id})"
+    else
+        warn "Job cancel (HTTP ${CANCEL_CODE})" "Job may have already been processed (serverless mode)"
+    fi
 else
-    fail_test "Job submission endpoint" "Could not create test job"
+    # In serverless mode, submit may go directly to inference and complete immediately
+    if [ "${INFERENCE_MODE}" = "serverless" ]; then
+        if echo "$JOB_SUBMIT" | jq -e '.status' >/dev/null 2>&1; then
+            pass_test "Job submit endpoint (serverless — completed immediately)"
+        else
+            fail_test "Job submit endpoint" "Could not create test job"
+        fi
+    else
+        fail_test "Job submit endpoint" "Could not create test job"
+    fi
 fi
 
-# Test 4: Redis Queue Operations
-echo ""
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "4. Testing Redis Queue Operations"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+# ==========================================================================
+# 4. Redis Queue Operations
+# ==========================================================================
+section_header "4" "Redis Queue Operations"
 
-# Check queue depth
-PENDING_COUNT=$(docker-compose exec -T redis redis-cli -a "$REDIS_PASSWORD" ZCARD queue:pending 2>/dev/null || echo "0")
-RUNNING_COUNT=$(docker-compose exec -T redis redis-cli -a "$REDIS_PASSWORD" ZCARD queue:running 2>/dev/null || echo "0")
-COMPLETED_COUNT=$(docker-compose exec -T redis redis-cli -a "$REDIS_PASSWORD" ZCARD queue:completed 2>/dev/null || echo "0")
+REDIS_EXEC="docker compose exec -T redis redis-cli --no-auth-warning -a $REDIS_PASSWORD"
 
-pass_test "Redis queue operations accessible"
-info "Pending: $PENDING_COUNT, Running: $RUNNING_COUNT, Completed: $COMPLETED_COUNT"
+PENDING_COUNT=$($REDIS_EXEC ZCARD queue:pending 2>/dev/null | tr -d '[:space:]' || echo "error")
+RUNNING_COUNT=$($REDIS_EXEC ZCARD queue:running 2>/dev/null | tr -d '[:space:]' || echo "error")
+COMPLETED_COUNT=$($REDIS_EXEC ZCARD queue:completed 2>/dev/null | tr -d '[:space:]' || echo "error")
 
-# Test 5: Nginx Routing
-echo ""
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "5. Testing Nginx Routing"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
-# Test admin route
-ADMIN_ROUTE=$(curl -s -o /dev/null -w "%{http_code}" -k https://localhost/admin 2>/dev/null || curl -s -o /dev/null -w "%{http_code}" http://localhost/admin 2>/dev/null || echo "000")
-if [ "$ADMIN_ROUTE" = "200" ]; then
-    pass_test "Nginx admin route (/admin)"
+if [ "$PENDING_COUNT" != "error" ]; then
+    pass_test "Redis queue operations accessible"
+    info "Pending: ${PENDING_COUNT}, Running: ${RUNNING_COUNT}, Completed: ${COMPLETED_COUNT}"
 else
-    warn "Nginx admin route" "Got HTTP $ADMIN_ROUTE (SSL may not be configured)"
+    fail_test "Redis queue operations" "Could not read queue stats"
 fi
 
-# Test API route
-API_ROUTE=$(curl -s -o /dev/null -w "%{http_code}" -k https://localhost/api/queue/status 2>/dev/null || curl -s -o /dev/null -w "%{http_code}" http://localhost/api/queue/status 2>/dev/null || echo "000")
-if [ "$API_ROUTE" = "200" ]; then
+# ==========================================================================
+# 5. Nginx Routing
+# ==========================================================================
+section_header "5" "Nginx Routing"
+
+# Determine base URL — use DOMAIN if set and resolvable, otherwise localhost
+BASE_URL=""
+if [ -n "${DOMAIN}" ] && [ "${DOMAIN}" != "workshop.example.com" ]; then
+    # Try HTTPS first
+    if check_https "https://${DOMAIN}/health" "200"; then
+        BASE_URL="https://${DOMAIN}"
+    elif check_http "http://${DOMAIN}/health" "200"; then
+        BASE_URL="http://${DOMAIN}"
+    fi
+fi
+if [ -z "$BASE_URL" ]; then
+    # Fall back to localhost (try HTTPS then HTTP)
+    if check_https "https://localhost/health" "200"; then
+        BASE_URL="https://localhost"
+    else
+        BASE_URL="http://localhost"
+    fi
+fi
+info "Testing routes via: ${BASE_URL}"
+
+# Admin route — may require auth (401 = route exists)
+ADMIN_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 -k "${BASE_URL}/admin" 2>/dev/null || echo "000")
+if [ "$ADMIN_CODE" = "200" ] || [ "$ADMIN_CODE" = "301" ] || [ "$ADMIN_CODE" = "302" ]; then
+    pass_test "Nginx admin route (/admin → HTTP ${ADMIN_CODE})"
+elif [ "$ADMIN_CODE" = "401" ]; then
+    pass_test "Nginx admin route (/admin → 401, auth required)"
+else
+    fail_test "Nginx admin route" "Got HTTP ${ADMIN_CODE}"
+fi
+
+# API route
+API_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 -k "${BASE_URL}/api/queue/status" 2>/dev/null || echo "000")
+if [ "$API_CODE" = "200" ]; then
     pass_test "Nginx API route (/api/queue/status)"
 else
-    warn "Nginx API route" "Got HTTP $API_ROUTE"
+    fail_test "Nginx API route" "Got HTTP ${API_CODE}"
 fi
 
-# Test user001 route (if frontend exists)
-USER_ROUTE=$(curl -s -o /dev/null -w "%{http_code}" -k https://localhost/user001/ 2>/dev/null || curl -s -o /dev/null -w "%{http_code}" http://localhost/user001/ 2>/dev/null || echo "000")
-if [ "$USER_ROUTE" = "200" ]; then
-    pass_test "Nginx user route (/user001/)"
+# User route (user001)
+USER_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 -k "${BASE_URL}/user001/" 2>/dev/null || echo "000")
+if [ "$USER_CODE" = "200" ] || [ "$USER_CODE" = "301" ] || [ "$USER_CODE" = "302" ]; then
+    pass_test "Nginx user route (/user001/ → HTTP ${USER_CODE})"
+elif [ "$USER_CODE" = "401" ]; then
+    pass_test "Nginx user route (/user001/ → 401, auth required)"
 else
-    warn "Nginx user route" "Got HTTP $USER_ROUTE (user frontends may not be started)"
+    warn "Nginx user route" "Got HTTP ${USER_CODE} (frontends may not be started)"
 fi
 
-# Test 6: File System Permissions
-echo ""
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "6. Testing File System & Volumes"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+# ==========================================================================
+# 6. Storage & Volumes
+# ==========================================================================
+section_header "6" "Storage & Volumes"
 
-# Check required directories
+# Required directories
 REQUIRED_DIRS=("data/models/shared" "data/outputs" "data/inputs" "data/workflows")
-
 for dir in "${REQUIRED_DIRS[@]}"; do
     if [ -d "$PROJECT_DIR/$dir" ]; then
         pass_test "Directory exists: $dir"
     else
-        fail_test "Directory missing: $dir" "Run ./scripts/setup.sh"
+        fail_test "Directory missing: $dir"
     fi
 done
 
-# Check volume mounts
-if docker-compose exec -T worker-1 test -d /models 2>/dev/null; then
-    pass_test "Worker models volume mounted"
-else
-    fail_test "Worker models volume" "Volume not mounted"
-fi
-
-if docker-compose exec -T worker-1 test -d /outputs 2>/dev/null; then
-    pass_test "Worker outputs volume mounted"
-else
-    fail_test "Worker outputs volume" "Volume not mounted"
-fi
-
-# Test 7: GPU Availability (if applicable)
-echo ""
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "7. Testing GPU Availability"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
-if command -v nvidia-smi &> /dev/null; then
-    GPU_COUNT=$(nvidia-smi --query-gpu=count --format=csv,noheader | head -n1)
-    pass_test "GPU detected: $GPU_COUNT GPU(s) available"
-
-    # Check GPU in worker container
-    if docker-compose exec -T worker-1 nvidia-smi 2>/dev/null | grep -q "NVIDIA"; then
-        pass_test "Worker container has GPU access"
+# Workflow templates
+WORKFLOW_DIR="$PROJECT_DIR/data/workflows"
+if [ -d "$WORKFLOW_DIR" ]; then
+    WORKFLOW_COUNT=$(find "$WORKFLOW_DIR" -name "*.json" -type f 2>/dev/null | wc -l)
+    if [ "$WORKFLOW_COUNT" -gt 0 ]; then
+        pass_test "Workflow templates: ${WORKFLOW_COUNT} found"
     else
-        fail_test "Worker GPU access" "Container cannot access GPU"
+        warn "No workflow templates in data/workflows/"
     fi
-else
-    warn "No NVIDIA GPU detected (CPU-only mode)"
 fi
 
-# Test 8: Configuration Validation
-echo ""
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "8. Testing Configuration"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
-# Check critical env vars
-CRITICAL_VARS=("REDIS_PASSWORD" "DOMAIN" "QUEUE_MODE")
-
-for var in "${CRITICAL_VARS[@]}"; do
-    if [ ! -z "${!var}" ]; then
-        pass_test "Environment variable set: $var"
-    else
-        fail_test "Environment variable missing: $var" "Check .env file"
+# Model subdirectories
+MODEL_SUBDIRS=("checkpoints" "text_encoders" "vae" "loras" "latent_upscale_models")
+MODELS_BASE="$PROJECT_DIR/data/models/shared"
+MODEL_DIRS_FOUND=0
+for subdir in "${MODEL_SUBDIRS[@]}"; do
+    if [ -d "$MODELS_BASE/$subdir" ]; then
+        MODEL_DIRS_FOUND=$((MODEL_DIRS_FOUND + 1))
     fi
 done
+if [ "$MODEL_DIRS_FOUND" -eq "${#MODEL_SUBDIRS[@]}" ]; then
+    pass_test "Model subdirectories: all ${#MODEL_SUBDIRS[@]} present"
+elif [ "$MODEL_DIRS_FOUND" -gt 0 ]; then
+    warn "Model subdirectories: ${MODEL_DIRS_FOUND}/${#MODEL_SUBDIRS[@]} present"
+else
+    warn "No model subdirectories found (expected on inference server, not app server)"
+fi
+
+# ==========================================================================
+# 7. Serverless Inference
+# ==========================================================================
+section_header "7" "Serverless Inference"
+
+if [ "${INFERENCE_MODE}" = "serverless" ]; then
+    pass_test "INFERENCE_MODE=serverless"
+
+    # Check SERVERLESS_ACTIVE
+    if [ -n "${SERVERLESS_ACTIVE}" ] && [ "${SERVERLESS_ACTIVE}" != "default" ]; then
+        pass_test "SERVERLESS_ACTIVE=${SERVERLESS_ACTIVE}"
+    elif [ -n "${SERVERLESS_ENDPOINT}" ]; then
+        pass_test "SERVERLESS_ENDPOINT is set (default mode)"
+    else
+        fail_test "No serverless endpoint configured" "Set SERVERLESS_ACTIVE or SERVERLESS_ENDPOINT"
+    fi
+
+    # Check API key
+    if [ -n "${SERVERLESS_API_KEY}" ]; then
+        pass_test "SERVERLESS_API_KEY is configured"
+    else
+        fail_test "SERVERLESS_API_KEY not set" "Required for serverless auth"
+    fi
+
+    # Check endpoint reachability via QM health
+    if [ -n "$QM_HEALTH_JSON" ]; then
+        ENDPOINT_NAME=$(echo "$QM_HEALTH_JSON" | jq -r '.serverless_endpoint // empty')
+        if [ -n "$ENDPOINT_NAME" ]; then
+            pass_test "Serverless endpoint visible in health: ${ENDPOINT_NAME}"
+        else
+            warn "Serverless endpoint not reported in QM health"
+        fi
+    fi
+else
+    info "Inference mode is '${INFERENCE_MODE:-local}' (not serverless)"
+    info "Skipping serverless-specific checks"
+    info "Run ./scripts/test-serverless.sh for serverless E2E testing"
+fi
+
+# ==========================================================================
+# 8. Configuration Validation
+# ==========================================================================
+section_header "8" "Configuration"
+
+# Core required vars
+REQUIRED_VARS=("REDIS_PASSWORD" "DOMAIN" "QUEUE_MODE")
+for var in "${REQUIRED_VARS[@]}"; do
+    if [ -n "${!var}" ]; then
+        pass_test "Env var set: ${var}"
+    else
+        fail_test "Env var missing: ${var}" "Check .env file"
+    fi
+done
+
+# Inference mode vars (conditional)
+if [ "${INFERENCE_MODE}" = "serverless" ]; then
+    SERVERLESS_VARS=("INFERENCE_MODE" "SERVERLESS_API_KEY")
+    for var in "${SERVERLESS_VARS[@]}"; do
+        if [ -n "${!var}" ]; then
+            pass_test "Env var set: ${var}"
+        else
+            fail_test "Env var missing: ${var}" "Required for serverless mode"
+        fi
+    done
+fi
 
 # Validate queue mode
 VALID_MODES=("fifo" "round_robin" "priority")
-if [[ " ${VALID_MODES[@]} " =~ " ${QUEUE_MODE} " ]]; then
-    pass_test "Queue mode valid: $QUEUE_MODE"
+if [[ " ${VALID_MODES[*]} " =~ " ${QUEUE_MODE} " ]]; then
+    pass_test "Queue mode valid: ${QUEUE_MODE}"
 else
-    fail_test "Queue mode invalid: $QUEUE_MODE" "Must be one of: ${VALID_MODES[*]}"
+    fail_test "Queue mode invalid: ${QUEUE_MODE}" "Must be: ${VALID_MODES[*]}"
 fi
 
-# Test 9: WebSocket Connectivity
-echo ""
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "9. Testing WebSocket Support"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+# ==========================================================================
+# 9. Frontend Containers
+# ==========================================================================
+section_header "9" "Frontend Containers"
 
-# Check nginx WebSocket config
-if docker-compose exec -T nginx cat /etc/nginx/nginx.conf 2>/dev/null | grep -q "Upgrade"; then
-    pass_test "Nginx WebSocket support configured"
+# Count running and healthy
+RUNNING_FRONTENDS=0
+HEALTHY_FRONTENDS=0
+UNHEALTHY_LIST=""
+
+for i in $(seq 1 "${NUM_USERS:-20}"); do
+    USER_ID=$(printf "user%03d" "$i")
+    CONTAINER="comfy-${USER_ID}"
+
+    if container_running "$CONTAINER"; then
+        RUNNING_FRONTENDS=$((RUNNING_FRONTENDS + 1))
+        if container_healthy "$CONTAINER"; then
+            HEALTHY_FRONTENDS=$((HEALTHY_FRONTENDS + 1))
+        else
+            UNHEALTHY_LIST="${UNHEALTHY_LIST} ${USER_ID}"
+        fi
+    fi
+done
+
+EXPECTED="${NUM_USERS:-20}"
+if [ "$RUNNING_FRONTENDS" -eq "$EXPECTED" ]; then
+    pass_test "Frontend containers running: ${RUNNING_FRONTENDS}/${EXPECTED}"
+elif [ "$RUNNING_FRONTENDS" -gt 0 ]; then
+    warn "Frontend containers running: ${RUNNING_FRONTENDS}/${EXPECTED}"
 else
-    fail_test "Nginx WebSocket support" "Upgrade header not found in nginx.conf"
+    fail_test "No frontend containers running"
 fi
 
-# Test 10: Logging
-echo ""
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "10. Testing Logging & Monitoring"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-
-# Check if logs are accessible
-if docker-compose logs --tail=10 queue-manager 2>/dev/null | grep -q "Queue Manager"; then
-    pass_test "Queue Manager logs accessible"
-else
-    warn "Queue Manager logs may be empty"
+if [ "$HEALTHY_FRONTENDS" -eq "$RUNNING_FRONTENDS" ] && [ "$RUNNING_FRONTENDS" -gt 0 ]; then
+    pass_test "Frontend containers healthy: ${HEALTHY_FRONTENDS}/${RUNNING_FRONTENDS}"
+elif [ "$HEALTHY_FRONTENDS" -gt 0 ]; then
+    warn "Frontend containers healthy: ${HEALTHY_FRONTENDS}/${RUNNING_FRONTENDS}"
+    if [ -n "$UNHEALTHY_LIST" ]; then
+        info "Unhealthy:${UNHEALTHY_LIST}"
+    fi
+elif [ "$RUNNING_FRONTENDS" -gt 0 ]; then
+    warn "No frontend health data (health checks may still be starting)"
 fi
 
-if docker-compose logs --tail=10 worker-1 2>/dev/null | grep -q "Worker"; then
-    pass_test "Worker logs accessible"
+# ==========================================================================
+# 10. SSL & Domain
+# ==========================================================================
+section_header "10" "SSL & Domain"
+
+if [ -n "${DOMAIN}" ] && [ "${DOMAIN}" != "workshop.example.com" ]; then
+    # HTTPS reachable
+    HTTPS_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 -k "https://${DOMAIN}/" 2>/dev/null || echo "000")
+    if [ "$HTTPS_CODE" != "000" ]; then
+        pass_test "HTTPS reachable: https://${DOMAIN}/ (HTTP ${HTTPS_CODE})"
+    else
+        fail_test "HTTPS not reachable: https://${DOMAIN}/"
+    fi
+
+    # HTTP → HTTPS redirect
+    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 -L "http://${DOMAIN}/" 2>/dev/null || echo "000")
+    REDIRECT_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 10 "http://${DOMAIN}/" 2>/dev/null || echo "000")
+    if [ "$REDIRECT_CODE" = "301" ] || [ "$REDIRECT_CODE" = "308" ]; then
+        pass_test "HTTP → HTTPS redirect (${REDIRECT_CODE})"
+    elif [ "$REDIRECT_CODE" = "200" ]; then
+        warn "HTTP returns 200 (no HTTPS redirect)"
+    else
+        warn "HTTP redirect check" "Got HTTP ${REDIRECT_CODE}"
+    fi
+
+    # Certificate expiry (only if openssl available)
+    if command -v openssl &>/dev/null; then
+        CERT_EXPIRY=$(echo | openssl s_client -servername "${DOMAIN}" -connect "${DOMAIN}:443" 2>/dev/null \
+            | openssl x509 -noout -enddate 2>/dev/null \
+            | sed 's/notAfter=//')
+        if [ -n "$CERT_EXPIRY" ]; then
+            EXPIRY_EPOCH=$(date -d "$CERT_EXPIRY" +%s 2>/dev/null || date -j -f "%b %d %T %Y %Z" "$CERT_EXPIRY" +%s 2>/dev/null || echo "0")
+            NOW_EPOCH=$(date +%s)
+            if [ "$EXPIRY_EPOCH" -gt 0 ]; then
+                DAYS_LEFT=$(( (EXPIRY_EPOCH - NOW_EPOCH) / 86400 ))
+                if [ "$DAYS_LEFT" -gt 30 ]; then
+                    pass_test "SSL certificate valid (${DAYS_LEFT} days remaining)"
+                elif [ "$DAYS_LEFT" -gt 0 ]; then
+                    warn "SSL certificate expiring soon (${DAYS_LEFT} days remaining)"
+                else
+                    fail_test "SSL certificate expired" "Expired: ${CERT_EXPIRY}"
+                fi
+            else
+                warn "Could not parse certificate expiry date"
+            fi
+        else
+            warn "Could not retrieve SSL certificate from ${DOMAIN}:443"
+        fi
+    else
+        info "openssl not available — skipping cert expiry check"
+    fi
 else
-    warn "Worker logs may be empty"
+    info "DOMAIN not set or is example — skipping SSL/domain checks"
+    info "Set DOMAIN in .env to enable these tests"
 fi
 
+# ==========================================================================
 # Summary
-echo ""
-echo "=========================================================="
-echo "  Test Summary"
-echo "=========================================================="
-echo ""
-echo -e "Total tests:   ${BLUE}$TESTS_TOTAL${NC}"
-echo -e "Passed:        ${GREEN}$TESTS_PASSED${NC}"
-echo -e "Failed:        ${RED}$TESTS_FAILED${NC}"
-echo ""
+# ==========================================================================
+print_summary "Integration Tests"
 
-if [ $TESTS_FAILED -eq 0 ]; then
-    echo -e "${GREEN}✅ All tests passed!${NC}"
-    echo ""
-    echo "System is ready for deployment! 🚀"
+if [ "$TESTS_FAILED" -eq 0 ]; then
     exit 0
 else
-    echo -e "${RED}❌ Some tests failed${NC}"
-    echo ""
-    echo "Please fix the failing tests before deploying to production."
     exit 1
 fi
