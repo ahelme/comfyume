@@ -1,121 +1,91 @@
-# ComfyUme - ComfyUI v0.11.0 Multi-User Workshop Platform
+# ComfyuME - ComfyUI v0.11.0 Multi-User Workshop Platform
 
-**Clean rebuild of comfy-multi for ComfyUI v0.11.0**
+Multi-user ComfyUI platform for video generation workshops with professional filmmakers.
 
-🎯 **Workshop-ready multi-user ComfyUI platform** for video generation workshops with professional filmmakers.
-
----
-
-## 🚀 What's Different from comfy-multi?
-
-### Clean Architecture
-- **ComfyUI as immutable dependency** - No core modifications!
-- **v0.11.0 stable** - NOT v0.11.1 (has critical bugs)
-- **Extension API pattern** - app.registerExtension() (STABLE)
-- **Worker API unchanged** - Proven queue-manager copied exactly
-
-### Key Improvements
-- ✅ Custom nodes backup (fixes volume mount trap)
-- ✅ Version-aware paths (/comfyui/user/default/workflows/)
-- ✅ URL-encoded userdata API (workflows%2Ffile.json)
-- ✅ Health checks with /system_stats endpoint
-- ✅ requests in requirements.txt (no manual install!)
-- ✅ COMFYUI_MODE env var (clear deployment intent: frontend-testing vs worker)
+**Production:** [aiworkshop.art](https://aiworkshop.art) (Verda CPU instance)
+**Inference:** Serverless containers on DataCrunch (H200/B300)
 
 ---
 
-## 📦 What We Kept (70% of code!)
+## Architecture
 
-**Unchanged from comfy-multi:**
-- queue-manager/ - Worker API stable across v0.8.2 → v0.11.1
-- admin/ - Dashboard works perfectly
-- nginx/ - Generic service names (no path changes!)
-- scripts/ - Utility scripts preserved
-- docker-compose.yml - Orchestration patterns proven
+```
+[Users] → HTTPS → [Verda CPU Instance]
+                    ├── nginx (SSL, routing)
+                    ├── Redis (job queue)
+                    ├── queue-manager (FastAPI)
+                    ├── admin dashboard
+                    └── 20x user frontends (UI only)
+                            │
+                            ▼ HTTP (serverless)
+                   [DataCrunch GPU Containers]
+                    ├── H200 141GB (spot/on-demand)
+                    └── B300 288GB (spot/on-demand)
+```
+
+- **App server** runs on a Verda CPU instance (no GPU needed)
+- **Inference** via `INFERENCE_MODE=serverless` — direct HTTP to DataCrunch containers
+- **Storage**: SFS for models, block storage for outputs, Cloudflare R2 for backups
 
 ---
 
-## 🔨 What We Rebuilt (30% - Frontend only!)
-
-**comfyui-frontend/** - Completely rebuilt for v0.11.0:
-- Dockerfile - ComfyUI v0.11.0 as immutable base
-- docker-entrypoint.sh - Version-aware initialization
-- custom_nodes/default_workflow_loader/ - v0.11.0 extension API
-- custom_nodes/queue_redirect/ - v0.11.0 extension API
+## Key Features
+- 20 isolated ComfyUI web interfaces with HTTP Basic Auth
+- Central job queue (FIFO/round-robin/priority)
+- Serverless GPU inference (no always-on GPU cost)
+- Admin dashboard for instructor
+- Comprehensive test suite and monitoring scripts
 
 ---
 
-## 📂 Structure
+## Structure
 
 ```
 comfyume/
-├── queue-manager/          ← CPU service (unchanged)
-├── admin/                  ← Dashboard (unchanged)
-├── nginx/                  ← Reverse proxy (unchanged)
-├── scripts/                ← Utilities (preserved)
-├── comfyui-frontend/       ← REBUILT for v0.11.0
-│   ├── Dockerfile
-│   ├── docker-entrypoint.sh
-│   └── custom_nodes/
-│       ├── default_workflow_loader/
-│       └── queue_redirect/
+├── queue-manager/          ← FastAPI job queue + serverless dispatch
+├── admin/                  ← Instructor dashboard
+├── nginx/                  ← Reverse proxy (SSL, routing, auth)
+├── comfyui-frontend/       ← User UI container (v0.11.0)
+├── comfyui-worker/         ← GPU worker (local dev/testing only)
+├── scripts/                ← Operations & testing scripts
 ├── data/
 │   ├── workflows/          ← 5 templates (Flux2 Klein, LTX-2)
-│   ├── models/shared/      ← Model storage
-│   ├── user_data/          ← User settings
+│   ├── models/shared/      ← Model storage (SFS on Verda)
+│   ├── user_data/          ← Per-user settings & custom nodes
 │   ├── inputs/             ← User uploads
 │   └── outputs/            ← Generated files
+├── docs/                   ← Admin & testing guides
 ├── docker-compose.yml      ← Service orchestration
-└── .env.example            ← Configuration template
+└── .env.example            ← Configuration template (v0.3.5)
 ```
 
 ---
 
-## 🏗️ Build Status
+## Status
 
-**Phase:** Phase 1 Frontend COMPLETE ✅
-**Docker Image:** `comfyume-frontend:v0.11.0` (1.85GB)
-**Commits:** 2 pushed to mello-track
-**Issues Closed:** 8/8 (Foundation #9-12 + Frontend #13-16)
-
----
-
-## 🎯 Next Steps
-
-1. ✅ **Workflow Templates** - Update for v0.11.0 validation (Issue #17) COMPLETE
-2. **Integration Testing** - Frontend + queue-manager + worker (Issue #18)
-3. **Multi-User Testing** - 20 users concurrent (Issue #19)
-4. **Workshop Readiness** - Final validation (Issue #20)
+- Serverless inference working (DataCrunch H200/B300)
+- 20 user frontends deployed on Verda CPU instance
+- Admin dashboard v2 with GPU switching
+- Integration test suite, serverless E2E test, connectivity test
+- Production domain: aiworkshop.art with SSL
 
 ---
 
-## ⚙️ Configuration
+## Configuration
 
-**Environment Variables (.env v0.3.2):**
+Uses consolidated `.env` file (v0.3.5). See `.env.example` for all variables.
 
-This project uses a consolidated `.env` file structure. For production deployments:
-- Use consolidated `.env` from [comfymulti-scripts](https://github.com/ahelme/comfymulti-scripts) repo (private)
-- See `.env.example` in this repo for variable reference
+**Key settings:**
 
-**Key Variables:**
+| Variable | Value | Purpose |
+|----------|-------|---------|
+| `INFERENCE_MODE` | `serverless` | Serverless GPU inference (production) |
+| `SERVERLESS_ACTIVE` | `h200-spot` | Active GPU endpoint selector |
+| `SERVER_MODE` | `dual` | Split app/inference servers |
+| `COMFYUI_MODE` | `frontend-testing` | UI only on app server |
+| `DOMAIN` | `aiworkshop.art` | Production domain |
 
-**Deployment Mode:**
-- `SERVER_MODE=dual` - Split app/inference servers (default for workshop)
-- `SERVER_MODE=single` - All-in-one deployment
-
-**Redis Connection (Dual-Server Mode):**
-- `APP_SERVER_REDIS_HOST=redis` - App containers use Docker network
-- `INFERENCE_SERVER_REDIS_HOST=100.99.216.71` - GPU worker uses Tailscale VPN
-
-**ComfyUI Deployment:**
-- `COMFYUI_MODE=frontend-testing` - UI only, no inference (app server)
-- `COMFYUI_MODE=worker` - Full inference with GPU (inference server)
-
-**Storage (Cloudflare R2 - v0.11.0):**
-- `comfyume-model-vault-backups` - Models (~45GB)
-- `comfyume-cache-backups` - Container images & config (~3GB)
-- `comfyume-user-files-backups` - User data from app server (~1GB)
-- `comfyume-worker-container-backups` - Worker images (~2.5GB)
+For production `.env`, use the consolidated file from [comfymulti-scripts](https://github.com/ahelme/comfymulti-scripts) (private repo).
 
 See [docs/admin-backup-restore.md](docs/admin-backup-restore.md) for deployment guides
 
@@ -130,17 +100,8 @@ See [docs/admin-backup-restore.md](docs/admin-backup-restore.md) for deployment 
 
 ---
 
-## 🤝 Credits
-
-Built with systematic precision, documented with love.
-
-**Research Foundation:** 14 AI agents, 11,320 lines of analysis
-**Key Insight:** Worker API stable (focus rebuild on frontend!)
-**Timeline:** Ahead of schedule (2 hours vs 6-8 hour estimate)
-
 ---
 
 **Main Branch:** main
 **Created:** 2026-01-31
-**Updated:** 2026-02-01
-**Status:** 🟢 Ready for integration testing!
+**Updated:** 2026-02-07
