@@ -26,12 +26,12 @@
 
 ### SCENARIO 1: First Deployment (No Backups Exist)
 
-**Problem:** setup-verda-solo-script.sh expects backups, but none exist yet!
+**Problem:** restore-verda-instance.sh expects backups, but none exist yet!
 
 **Flow:**
 ```
 1. Provision Verda instance
-2. setup-verda-solo-script.sh runs
+2. restore-verda-instance.sh runs
 3. Checks SFS for comfyume backup → ❌ NOT FOUND
 4. Checks R2 for comfyume backup → ❌ NOT FOUND
 5. MISSING: Fallback to git clone OR copy from mello
@@ -40,7 +40,7 @@
 
 **Solution Needed:**
 ```bash
-# In setup-verda-solo-script.sh
+# In restore-verda-instance.sh
 if [ ! -d /home/dev/$PROJECT_NAME ]; then
     # No backup found - first deployment
     if [ -n "$GITHUB_TOKEN" ]; then
@@ -60,7 +60,7 @@ fi
 **Flow:**
 ```
 1. Provision Verda instance
-2. setup-verda-solo-script.sh runs
+2. restore-verda-instance.sh runs
 3. Checks SFS for comfyume backup → ✅ FOUND (from previous session)
 4. Restores comfyume codebase
 5. Restores Tailscale identity (preserves IP)
@@ -159,14 +159,14 @@ fi
 ## Issues Identified
 
 ### Issue 1: First Deployment Fallback
-**Problem:** setup-verda-solo-script.sh has no fallback if backups don't exist
+**Problem:** restore-verda-instance.sh has no fallback if backups don't exist
 **Solution:** Add git clone or scp fallback for first deployment
 
 ### Issue 2: Environment Variables
 **Problem:** .env file not in comfyume repo (contains secrets)
 **Solution:**
 - Create `.env.example` in repo
-- setup-verda-solo-script.sh creates .env from template + secrets
+- restore-verda-instance.sh creates .env from template + secrets
 
 ### Issue 3: Workflows Location
 **Problem:** Unclear if workflows needed on verda
@@ -175,7 +175,7 @@ fi
 
 ### Issue 4: Data Directory Structure
 **Problem:** /home/dev/comfyume/data/ doesn't exist in repo
-**Solution:** Created by setup-verda-solo-script.sh as symlinks (already implemented)
+**Solution:** Created by restore-verda-instance.sh as symlinks (already implemented)
 
 ---
 
@@ -190,8 +190,8 @@ fi
 4. ❌ Test backup-mello.sh (backs up comfy-multi user data)
 
 **On Verda (first deployment):**
-1. ❌ Add git clone fallback to setup-verda-solo-script.sh
-2. ❌ Test setup-verda-solo-script.sh with NO existing backups
+1. ❌ Add git clone fallback to restore-verda-instance.sh
+2. ❌ Test restore-verda-instance.sh with NO existing backups
 3. ❌ Verify symlinks created: data/models, data/outputs, data/inputs
 4. ❌ Test worker container build and startup
 5. ❌ Test backup-verda.sh creates proper backups
@@ -206,7 +206,7 @@ fi
 ## Next Steps
 
 1. **Create .env.example** in comfyume repo
-2. **Update setup-verda-solo-script.sh** with git clone fallback
+2. **Update restore-verda-instance.sh** with git clone fallback
 3. **Create GitHub issue** for first deployment testing
 4. **Test locally** with Docker build before deploying to Verda
 

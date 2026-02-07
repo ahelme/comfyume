@@ -19,7 +19,7 @@ CLAUDE RESUME - COMFY-MULTI (ASSUMES WELCOME HAS BEEN COMPLETED)
     - `./CLAUDE.md` - OUR custom deployment on Hetzner / Verda GPU Cloud
     - [Admin Guide](.docs/admin-guide.md) - Admin docs index
     - [Admin Backup & Restore Guide](./docs/admin-backup-restore.md) 
-        - NOTE setup-verda-solo-script.sh now in use (refactored from 2x setup scripts) 
+        - NOTE restore-verda-instance.sh v0.4.0 now in use (replaces setup-verda-solo-script.sh v0.3.3) 
                                                                  
   - read top ~450 lines:
     - `./progress-02.md` - progress log

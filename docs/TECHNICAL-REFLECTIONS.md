@@ -27,7 +27,7 @@ This isn't a microservices architecture that evolved from a monolith. It's a *di
 
 ### 2. The Backup Strategy is the Deployment Strategy
 
-Most projects treat backups as an afterthought. Here, the backup scripts (`backup-verda.sh`, `setup-verda-solo-script.sh`) are first-class deployment tools.
+Most projects treat backups as an afterthought. Here, the backup scripts (`backup-verda.sh`, `restore-verda-instance.sh`) are first-class deployment tools.
 
 **Why this is clever:**
 - Verda instances are ephemeral (spot instances, workshop periods)

@@ -89,7 +89,7 @@ THEN: we delete Verda GPU instance END OF DAY to save highest cost GPU instance 
 **READ TASKS DASHBOARD in: `.claude/progress-verda-dev.md`
 
 ## **Critical Constraints:**
-- Preserve setup-verda-solo-script.sh compatibility
+- Preserve restore-verda-instance.sh compatibility (was setup-verda-solo-script.sh)
 - Never rewrite existing code from scratch
 
 ## NEXT STEPS

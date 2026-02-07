@@ -1,5 +1,5 @@
 **Project:** ComfyuME | **Repo:** github.com/ahelme/comfyume
-**Doc Updated:** 2026-02-06
+**Doc Updated:** 2026-02-07
 
 # All-Teams Progress (Ultra-Concise Commit Log)
 
@@ -16,6 +16,8 @@ Newest at top. One line per commit. No fluff. Link issues.
 
 ## 2026-02-07
 
+- [MELLO] 28eda1c docs: update refs for restore-verda-instance.sh v0.4.0 (#64, #71) - PR #72
+- [MELLO] ea6549b feat: add restore-verda-instance.sh v0.4.0 for production app server (#64, #71) [private scripts repo]
 - [MELLO] 38a28da docs: session 34 - Verda instance setup, central progress log in CLAUDE.md (#64, #71)
 - [MELLO] 05eb063 feat: add production nginx configs from old Verda instance (#64) [private scripts repo]
 - [MELLO] -- backed up old OS drive to scratch: nginx, SSL, .env, tarballs, worker image
