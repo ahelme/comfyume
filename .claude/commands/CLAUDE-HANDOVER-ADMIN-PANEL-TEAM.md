@@ -7,6 +7,9 @@
   - .claude/progress-admin-panel-team-dev.md
     - update this doc so that it references CURRENT PENDING work at the bottom
 
+  - .claude/progress-all-teams.md
+    - add 1-line commit log entries for work done this session
+
   - .claude/CLAUDE-RESUME-ADMIN-PANEL-TEAM.md
     - (replace stale instructions)
 

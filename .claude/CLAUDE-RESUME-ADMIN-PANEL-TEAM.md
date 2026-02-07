@@ -40,10 +40,11 @@ Please read:
 
 1. **`./CLAUDE.md`** - Project instructions
 2. **`.claude/progress-admin-panel-team-dev.md`** (top ~250 lines) - Recent progress
-3. **`admin/app.py`** - Admin dashboard backend
-4. **`admin/dashboard.html`** - Admin dashboard frontend
-5. **`queue-manager/config.py`** - Serverless configuration
-6. **`git status && git log --oneline -10`** - Check for pending work
+3. **`.claude/progress-all-teams.md`** - Ultra-concise all-teams commit log
+4. **`admin/app.py`** - Admin dashboard backend
+5. **`admin/dashboard.html`** - Admin dashboard frontend
+6. **`queue-manager/config.py`** - Serverless configuration
+7. **`git status && git log --oneline -10`** - Check for pending work
 
 ---
 

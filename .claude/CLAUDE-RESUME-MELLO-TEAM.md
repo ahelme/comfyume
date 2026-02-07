@@ -69,8 +69,9 @@ Please read:
 
 1. **`./CLAUDE.md`** - Project instructions (note CRITICAL section about Verda = PRODUCTION)
 2. **`.claude/progress-mello-dev.md`** (top ~100 lines) - Recent progress
-3. **`./SERVERLESS_UPDATE.md`** - Serverless deployment details
-4. **`git status && git log --oneline -10`** - Check for pending work
+3. **`.claude/progress-all-teams.md`** - Ultra-concise all-teams commit log
+4. **`./SERVERLESS_UPDATE.md`** - Serverless deployment details
+5. **`git status && git log --oneline -10`** - Check for pending work
 
 ---
 
