@@ -44,18 +44,18 @@
 ## 1. PRIORITY TASKS
 
 🔴 **(CURRENT) - comfyume #64 - Set up Verda CPU instance as production app server**
-    - Created: 2026-02-05 | Updated: 2026-02-06
+    - Created: 2026-02-05 | Updated: 2026-02-07
     - New instance: soft-wolf-shines-fin-01 (CPU.8V.32G, 8CPU/32GB, 100GB SSD)
     - IP: 95.216.229.236 | Tailscale: 100.89.38.43 (restore identity!)
-    - OS + scratch volumes restored from previous GPU instance
-    - NEXT: SSH in, run setup script, deploy app, capture nginx configs
-    - CRITICAL: aiworkshop.art is PRODUCTION - must get this running
+    - Volumes mounted: scratch (50GB), old OS drive (read-only), fstab updated
+    - Backed up from old OS → scratch: nginx, SSL, .env, tarballs, worker image
+    - Production nginx configs committed to private scripts repo (05eb063)
+    - **BLOCKER:** SFS unreachable - no private network interface on CPU instance
+    - NEXT: Contact Verda support re SFS, then copy scratch→SFS→R2, run restore script
 
-🔴 **(CURRENT) - Back up production frontend code to git**
-    - Verda runs production aiworkshop.art (NOT Mello)
-    - Need to verify git repo has all code needed to recreate production
-    - Create branch `verda-instance-frontend` if live code differs from git
-    - Back up all configs to SFS + R2
+🟡 **(BLOCKED) - comfyume #71 - Downgrade Mello VPS after Verda stable**
+    - Created: 2026-02-07
+    - Blocked until Verda CPU instance fully operational
 
 ✅ **(COMPLETE) - comfyume #54 - Workflow Save/Load 405 Error FIXED**
     - Completed: 2026-02-05
@@ -82,22 +82,37 @@
 **Branch:** main
 **Phase:** Verda CPU Instance Setup + Production Backup
 
-## Progress Report 34 - 2026-02-07 - Verda Instance Setup & Backup Prep
+## Progress Report 34 - 2026-02-07 - Verda Instance Setup, Backup & SFS Blocker
 
 **Date:** 2026-02-07 | **Issues:** #64, #71
 
 **Done:**
 - Mounted volumes on new Verda CPU instance:
   - Scratch disk (50GB) at /mnt/scratch
-  - Old OS drive (100GB) at /mnt/old-instance-os-drive (contains previous nginx, .env, certs, etc.)
+  - Old OS drive (100GB) at /mnt/old-instance-os-drive (read-only)
 - Fixed boot partition mismatch: old OS drive's boot partitions (vdc2/vdc3) were auto-mounted over current OS disk's - updated fstab to use device paths instead of labels (both disks had identical UUIDs/labels as clones)
-- Ran apt update && upgrade on new instance (required for SFS/NFS connectivity)
-- Updated issue #64 with complete backup/restore task list (all app containers, nginx, SSL, etc.)
-- Created issue #71: downgrade Mello VPS after Verda is stable
-- Added Verda post-provisioning note to CLAUDE.md (apt update required)
-- Added central progress log (progress-all-teams.md) references to CLAUDE.md
+- Added all mounts to fstab with nofail (survive reboots)
+- Ran apt update && upgrade on new instance
+- Backed up from old OS drive to scratch disk:
+  - nginx configs (aiworkshop.art, subdomains, nginx.conf, .htpasswd)
+  - Let's Encrypt certs and renewal config
+  - All config tarballs (tailscale identity, SSH keys, ufw, fail2ban)
+  - Worker image (5.9GB), comfyume .env (v0.3.2)
+- Committed production nginx configs to private scripts repo (05eb063)
+- Updated issue #64 with complete backup/restore task list
+- Created issue #71: downgrade Mello VPS after Verda stable
+- Added Verda post-provisioning note + central progress log refs to CLAUDE.md
 
-**SFS mount issue:** NFS endpoint on private network (10.1.78.10) unreachable - no private interface on new instance. Investigating after apt upgrade + reboot.
+**Key findings from old instance:**
+- Production nginx runs natively (not containerized) with Let's Encrypt/certbot
+- 20 user locations proxy to ports 8301-8320, admin on 8080
+- Subdomain configs exist (userXXX.aiworkshop.art)
+- Old instance startup.sh also failed SFS mount initially (same networking issue)
+
+**BLOCKER: SFS mount**
+- NFS endpoint (10.1.78.10) unreachable - CPU instance has no private network interface
+- Tried: apt upgrade + reboot, manual routes, different mount options - all failed
+- Need to contact Verda support to enable private networking for CPU instances
 
 ---
 ## Progress Report 33 - 2026-02-06 - Verda CPU Instance Provisioned

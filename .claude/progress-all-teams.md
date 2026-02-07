@@ -16,9 +16,11 @@ Newest at top. One line per commit. No fluff. Link issues.
 
 ## 2026-02-07
 
-- [MELLO] -- Verda instance setup: mounted volumes, fixed boot partitions, apt upgrade (#64)
+- [MELLO] 38a28da docs: session 34 - Verda instance setup, central progress log in CLAUDE.md (#64, #71)
+- [MELLO] 05eb063 feat: add production nginx configs from old Verda instance (#64) [private scripts repo]
+- [MELLO] -- backed up old OS drive to scratch: nginx, SSL, .env, tarballs, worker image
+- [MELLO] -- SFS mount BLOCKED: CPU instance has no private network to reach NFS (10.1.78.10)
 - [MELLO] -- created #71 (Mello VPS downgrade), updated #64 with full backup/restore tasks
-- [MELLO] -- added central progress log to CLAUDE.md, Verda post-provisioning note
 
 ## 2026-02-06
 
