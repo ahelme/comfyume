@@ -35,3 +35,6 @@ Thumbs.db
 # Temporary files
 *.tmp
 temp/
+
+# Prevent nested .claude (Claude Code auto-creates this - ignore it)
+.claude/.claude/
