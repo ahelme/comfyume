@@ -222,7 +222,8 @@ latent_upscale_models/ltx-2-spatial-upscaler-x2-1.0.safetensors
 /home/dev/projects/comfymulti-scripts/  # ⚠️ PRIVATE REPO FOR SCRIPTS & SECRETS ⚠️
 ├── .env                           # ⚠️ <- HOW SECRET/PRIVATE .env IS SHARED BETWEEN DEVS ⚠️
 ├── README-RESTORE.md              # Basic backup/restore doc (may need updating since comfy-multi > comfyume
-├── setup-verda-solo-script.sh     # Single consolidated setup/restore script
+├── restore-verda-instance.sh       # Production app server restore script (v0.4.0)
+├── setup-verda-solo-script.sh     # Legacy GPU worker setup script (v0.3.3)
 ├── backup-cron.sh                 # Hourly backups: Verda→SFS + triggers mello→R2
 ├── backup-mello.sh                # Backs up user files on mello e.g. workflows
 ├── backup-verda.sh                # Backs up all data to R2 before instance deleted
@@ -453,7 +454,8 @@ See .env
   scripts/stop.sh                                   │ Stop all services
 
   ~/comfymulti-scripts/                       │ Backup/Restore/Deploy scripts for Verda GPU Cloud
-  ~/comfymulti-scripts/setup-verda-solo-script.sh │ Single setup/restore script for Verda
+  ~/comfymulti-scripts/restore-verda-instance.sh  │ Production app server restore (v0.4.0)
+  ~/comfymulti-scripts/setup-verda-solo-script.sh │ Legacy GPU worker setup (v0.3.3)
   ~/comfymulti-scripts/README-RESTORE.md      │ README for restoring Verda
 
  *(NOTE: restore scripts have their own private gh repo: https://github.com/ahelme/comfymulti-scripts)*
@@ -540,7 +542,8 @@ sudo ufw status
 - **Local path on mello:** `/home/dev/comfymulti-scripts/`
 - **Purpose:** Version-controlled setup/restore scripts for Verda instances
 - **Contents:**
-  - `setup-verda-solo-script.sh` - Single consolidated setup/restore script
+  - `restore-verda-instance.sh` - Production app server restore script (v0.4.0)
+  - `setup-verda-solo-script.sh` - Legacy GPU worker setup (v0.3.3, archived)
   - `backup-cron.sh`, `backup-mello.sh`, `backup-verda.sh` - Backup scripts
   - `README-RESTORE.md` - Quick reference for restore scenarios
   - `archive/` - Legacy scripts (quick-start.sh, RESTORE-SFS.sh, etc.)
@@ -626,7 +629,7 @@ docker start comfy-worker-1
 This stops all ComfyUI containers to prevent resource exhaustion on startup.
 
 ### Disk Space Monitoring: disk-check.sh
-Run `disk-check.sh` before builds/backups. Use `--block` to abort if >90% full. Auto-runs (blocking) in: start.sh, build.sh, backup scripts, setup-verda-solo-script.sh.
+Run `disk-check.sh` before builds/backups. Use `--block` to abort if >90% full. Auto-runs (blocking) in: start.sh, build.sh, backup scripts, restore-verda-instance.sh.
 
 ### CRITICAL: Silent Failures on Large File Operations
 
@@ -861,16 +864,16 @@ Before starting, verify:
 - [ ] R2: **Worker container bucket** (`comfyume-worker-container-backups`)
 - [ ] R2: **User files bucket** (`comfyume-user-files-backups`) - available to receive backups
 - [ ] GitHub: **Private Scripts Repo** (`ahelme/comfymulti-scripts`) contains:
-  - [ ] `setup-verda-solo-script.sh`
+  - [ ] `restore-verda-instance.sh`
 - [ ] User's Mac: **SSH Keys and Setup Script** added to Verda console during provisioning
   - [ ] `dev@vps-for-verda` (Mello's key) & `developer@annahelme.com` (User's key) - paste into console
-  - [ ] `setup-verda-solo-script.sh` (latest version from GitHub!) - paste into console
+  - [ ] `restore-verda-instance.sh` (latest version from GitHub!) - paste into console
 
 ### Step-by-Step Deployment Process
 
 See [Admin Backup & Restore Guide](./docs/admin-backup-restore.md) for complete step-by-step instructions including:
 - Provisioning SFS and GPU instance and block storage (scratch disk) on Verda
-- Running setup-verda-solo-script.sh on Verda (runs automatically on first boot)
+- Running restore-verda-instance.sh on Verda (runs automatically on first boot)
 - Script downloads models from R2 (unless available on SFS already)
 - Backup cron jobs are set up automatically by the script
 
