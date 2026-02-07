@@ -233,8 +233,10 @@ latent_upscale_models/ltx-2-spatial-upscaler-x2-1.0.safetensors
 ## Project Management
 
 ### 📋 Progress Tracking
+- **[ALL TEAMS Central Log](.claude/progress-all-teams.md)** - 1-line-per-commit across all teams ==UPDATE EVERY COMMIT==
 - [MELLO TEAM's Progress Log](.claude/progress-mello-dev.md) - Mello's Session log
 - [VERDA TEAM's Progress Log](.claude/progress-verda-dev.md) - Verda's Session log
+- [ADMIN PANEL TEAM's Progress Log](.claude/progress-admin-panel-team-dev.md) - Admin Panel Session log
     - ==MUST UPDATE ON COMMIT OF CODE CHANGES==
 
 ### 📋 Issue Tracking
@@ -294,13 +296,12 @@ Ensure these details are listed the top of ALL .md documentation files:
 
 ## 🔄 Update Progress on Commit: Instructions
 
-### At EVERY GIT COMMIT update `.claude/progress-mello-dev.md` OR `.claude/progress-verda-dev.md`:
+### At EVERY GIT COMMIT:
 
-   1. **PRIORITY TASKS:**
-      - What to do next
-   2. **PROGRESS REPORT**
-      - What was done
-      - NO BOASTING!!
+   1. **`.claude/progress-all-teams.md`** - Add 1-line entry: `- [TEAM] [HASH] [type]: [description] (#issue)`
+   2. **`.claude/progress-{team}-dev.md`** (your team's log):
+      - **PRIORITY TASKS:** What to do next
+      - **PROGRESS REPORT:** What was done - NO BOASTING!!
 
 ---
 
@@ -759,6 +760,7 @@ Run `disk-check.sh` before builds/backups. Use `--block` to abort if >90% full. 
 - `Volume-*` = Data volumes (your actual block storage)
 
 ### Other Verda Notes
+- **After provisioning:** Run `apt update && apt upgrade -y` before anything else - required for SFS/NFS connectivity and other operations
 - Verda images have Docker pre-installed (don't try to install docker.io - conflicts with containerd)
 - Ubuntu 24.04 uses `ssh` service name, not `sshd`
 - Spot instances can be terminated anytime - always use persistent storage (SFS or Block)

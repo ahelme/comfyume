@@ -82,6 +82,24 @@
 **Branch:** main
 **Phase:** Verda CPU Instance Setup + Production Backup
 
+## Progress Report 34 - 2026-02-07 - Verda Instance Setup & Backup Prep
+
+**Date:** 2026-02-07 | **Issues:** #64, #71
+
+**Done:**
+- Mounted volumes on new Verda CPU instance:
+  - Scratch disk (50GB) at /mnt/scratch
+  - Old OS drive (100GB) at /mnt/old-instance-os-drive (contains previous nginx, .env, certs, etc.)
+- Fixed boot partition mismatch: old OS drive's boot partitions (vdc2/vdc3) were auto-mounted over current OS disk's - updated fstab to use device paths instead of labels (both disks had identical UUIDs/labels as clones)
+- Ran apt update && upgrade on new instance (required for SFS/NFS connectivity)
+- Updated issue #64 with complete backup/restore task list (all app containers, nginx, SSL, etc.)
+- Created issue #71: downgrade Mello VPS after Verda is stable
+- Added Verda post-provisioning note to CLAUDE.md (apt update required)
+- Added central progress log (progress-all-teams.md) references to CLAUDE.md
+
+**SFS mount issue:** NFS endpoint on private network (10.1.78.10) unreachable - no private interface on new instance. Investigating after apt upgrade + reboot.
+
+---
 ## Progress Report 33 - 2026-02-06 - Verda CPU Instance Provisioned
 
 **Date:** 2026-02-06 | **Issues:** #64, #62

@@ -14,6 +14,12 @@ Newest at top. One line per commit. No fluff. Link issues.
 
 ---
 
+## 2026-02-07
+
+- [MELLO] -- Verda instance setup: mounted volumes, fixed boot partitions, apt upgrade (#64)
+- [MELLO] -- created #71 (Mello VPS downgrade), updated #64 with full backup/restore tasks
+- [MELLO] -- added central progress log to CLAUDE.md, Verda post-provisioning note
+
 ## 2026-02-06
 
 - [ADMIN] e8787bf feat: admin dashboard v2 - system status, GPU switching, storage mgmt (#65, #66, #67)
