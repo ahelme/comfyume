@@ -243,6 +243,7 @@ latent_upscale_models/ltx-2-spatial-upscaler-x2-1.0.safetensors
 ### 📋 Issue Tracking
 - **ComfyuME Project**: https://github.com/ahelme/comfyume/issues
 - **Private Scripts Repo**: https://github.com/ahelme/comfymulti-scripts/issues
+- **gh CLI gotcha:** `gh issue view` fails with "Projects (classic) deprecated" error. Use `--json` flag instead: `gh issue view 8 --json title,body,state`
 
 ### 📋 Task Management
 - **ALWAYS reference GitHub issue numbers** (e.g., #15, #22, #13)
