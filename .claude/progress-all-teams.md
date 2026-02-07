@@ -1,0 +1,64 @@
+**Project:** ComfyuME | **Repo:** github.com/ahelme/comfyume
+**Doc Updated:** 2026-02-06
+
+# All-Teams Progress (Ultra-Concise Commit Log)
+
+## How to Update
+**EVERY COMMIT** add one line: `- [TEAM] [HASH] [type]: [description] (#issue)`
+Newest at top. One line per commit. No fluff. Link issues.
+
+## Team Progress Files (FULL DETAIL)
+- **Mello:** [progress-mello-dev.md](./progress-mello-dev.md) | Branch: `main`
+- **Verda:** [progress-verda-dev.md](./progress-verda-dev.md) | Branch: `main`
+- **Admin Panel:** [progress-admin-panel-team-dev.md](./progress-admin-panel-team-dev.md) | Branch: `admin-panel-team`
+
+---
+
+## 2026-02-06
+
+- [ADMIN] e8787bf feat: admin dashboard v2 - system status, GPU switching, storage mgmt (#65, #66, #67)
+- [ADMIN] -- team initialized: progress file, handover, resume context, onboarding
+- [MELLO] f134ff5 docs: session 33 - Verda CPU instance provisioned, handover update
+- [MELLO] d0fd975 docs: CRITICAL - aiworkshop.art PRODUCTION is on Verda, not Mello
+- [MELLO] -- provisioned Verda CPU instance soft-wolf-shines-fin-01 (CPU.8V.32G, €34/mth) (#64)
+- [MELLO] -- restructured nginx configs: staging vs production in private scripts repo
+
+## 2026-02-05
+
+- [MELLO] 060e0c4 fix: resolve workflow save/load 405 error (#54)
+- [MELLO] -- root cause: nginx proxy_pass trailing slash decodes %2F in userdata API
+- [MELLO] -- created comfyui-userdata-maps.conf, updated 20 user proxy_pass lines
+
+## 2026-02-04
+
+- [MELLO] 4706846 docs: session handover - all 4 serverless deployments complete
+- [MELLO] 02e8043 docs: add Verda console deployment steps for serverless
+- [MELLO] 00f6571 docs: update progress log - phase 11 serverless complete
+- [MELLO] 9475024 feat: add serverless API key authentication support (#62)
+- [MELLO] -- created 4 DataCrunch deployments: H200/B300 x spot/on-demand
+- [MELLO] -- terraform configs + GitHub Actions workflow for mobile GPU switching
+- [VERDA] 9475024 feat: serverless inference WORKING on Verda (#62)
+- [VERDA] -- fixed: API key auth, python→python3 CMD, SERVERLESS_API_KEY config
+
+## 2026-02-03
+
+- [MELLO] -- #62 serverless multi-GPU implementation: config.py, switch-gpu.sh, h200.env, b300.env
+
+## 2026-02-02
+
+- [MELLO] -- fix: add ComfyUI favicon and frontend assets for presentation (247 files)
+- [MELLO] -- #54 workaround: disabled broken custom nodes for boss meeting
+- [MELLO] -- #40 backup: worker container built, config backup to SFS, silent failures discovered
+- [VERDA] -- #40 downloaded 7 models (77GB) + gemma (8.8GB), R2 upload 98GB total
+- [VERDA] -- fixed R2 endpoint: .r2. → .eu.r2.
+
+## 2026-02-01
+
+- [MELLO] ea844ee test: complete infrastructure test for #39 (4/5 passing, 20 containers)
+- [MELLO] 17cea21 feat: add multi-user load testing framework (#19)
+- [MELLO] 67afebe feat: validate 5 workflow templates for v0.11.0 (#17) - 49% JSON reduction
+- [MELLO] -- #21 COMFYUI_MODE implementation, .env v0.3.2
+- [MELLO] -- PR #37, PR #31 merged to main
+- [VERDA] -- .env v0.3.2 migration across both repos (#22, #14)
+- [VERDA] -- CLAUDE.md cleanup, R2 buckets update (3→7), file organization
+- [VERDA] -- PR #32 merged to main

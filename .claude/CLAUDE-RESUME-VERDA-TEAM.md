@@ -103,6 +103,9 @@ THEN: we delete Verda GPU instance END OF DAY to save highest cost GPU instance 
     - `./CLAUDE.md` - OUR custom deployment on Hetzner / Verda GPU Cloud
     - `.claude/ARCHITECTURE-ASCII.md` - CRITICAL CONTEXT
 
+  - read IN FULL:
+    - `.claude/progress-all-teams.md` - Ultra-concise all-teams commit log
+
   - read top ~250 lines:
     - `./progress-verda-dev.md` - CURRENT TASKS & RECENT progress log
 

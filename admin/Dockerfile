@@ -1,7 +1,7 @@
 FROM python:3.11-slim
 
 LABEL maintainer="admin@ahelme.net"
-LABEL description="Admin Dashboard for ComfyUI Multi-User Queue"
+LABEL description="Admin Dashboard V2 for ComfyUI Multi-User Workshop"
 
 # Set working directory
 WORKDIR /app
@@ -17,6 +17,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY app.py .
+COPY dashboard.html .
 
 # Expose port
 EXPOSE 8080

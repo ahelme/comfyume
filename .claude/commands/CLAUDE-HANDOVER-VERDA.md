@@ -9,6 +9,8 @@
             - Add current work with correct issue numbers
             - Verify all issue references are accurate
             - Discuss with user before finalizing
+    - .claude/progress-all-teams.md
+        - add 1-line commit log entries for work done this session
     - COLLABORATION gh issue: https://github.com/ahelme/comfyume/issues/7
         - short update of work performed & any questions / info needed
     - check code has been commented effectively
