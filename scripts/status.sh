@@ -26,7 +26,7 @@ set +a
 
 # Container status
 echo "🐳 Docker Containers:"
-docker-compose ps
+docker compose ps
 echo ""
 
 # Service health checks
@@ -35,7 +35,7 @@ echo ""
 
 # Check Redis
 echo -n "   Redis: "
-if docker-compose exec -T redis redis-cli -a "$REDIS_PASSWORD" ping 2>/dev/null | grep -q "PONG"; then
+if docker compose exec -T redis redis-cli -a "$REDIS_PASSWORD" ping 2>/dev/null | grep -q "PONG"; then
     echo "✅ Healthy"
 else
     echo "❌ Unhealthy"
@@ -72,7 +72,7 @@ echo ""
 
 # Resource usage
 echo "💾 Resource Usage:"
-docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}" $(docker-compose ps -q)
+docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}" $(docker compose ps -q)
 
 echo ""
 echo "=========================================="
