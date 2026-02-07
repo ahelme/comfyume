@@ -43,14 +43,15 @@
 ---
 ## 1. PRIORITY TASKS
 
-🔴 **(CURRENT) - comfyume #64 - Set up Verda CPU instance as production app server**
+🟢 **(DONE) - comfyume #64 - Set up Verda CPU instance as production app server**
     - Created: 2026-02-05 | Updated: 2026-02-07
-    - restore-verda-instance.sh v0.4.0 DONE (ea6549b, private scripts repo)
-    - All doc refs updated across repo (PR #72 merged, PR #73 merged)
-    - Stale .claude files archived (#22)
-    - Issue #22 re-assessed: 2 scripts to archive, .env.example + READMEs to update
-    - **NEXT:** Run restore script on Verda (`--skip-sfs` if SFS still blocked)
-    - **NEXT:** Verify aiworkshop.art, /admin/, /user001-020/ all respond
+    - Restore script ran with --skip-sfs, rebuilt from GitHub clone
+    - 24/24 containers healthy on comfyume v0.11.0 (shared frontend image)
+    - DNS updated: aiworkshop.art → 95.216.229.236
+    - HTTP Basic Auth enabled (htpasswd from old instance backup)
+    - nginx fixes: include user-maps.conf (#54), hardcode CORS domain, auth_basic
+    - REDIS_HOST fixed to local container, host nginx disabled
+    - **REMAINING:** Admin /admin/ returns 404 (minor routing), disk cleanup done
 
 🟡 **(BLOCKED) - comfyume #71 - Downgrade Mello VPS after Verda stable**
     - Created: 2026-02-07
