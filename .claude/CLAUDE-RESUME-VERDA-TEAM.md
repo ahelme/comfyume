@@ -86,7 +86,7 @@ THEN: we delete Verda GPU instance END OF DAY to save highest cost GPU instance 
 
 ## CURRENT PENDING WORK
 
-**READ TASKS DASHBOARD in: `.claude/progress-verda-dev.md`
+**READ TASKS DASHBOARD in:** `.claude/progress-verda-dev.md`
 
 ## **Critical Constraints:**
 - Preserve restore-verda-instance.sh compatibility (was setup-verda-solo-script.sh)
@@ -101,16 +101,15 @@ THEN: we delete Verda GPU instance END OF DAY to save highest cost GPU instance 
  - read IN FULL:
     - `./README.md` - open source project (deployment agnostic)
     - `./CLAUDE.md` - OUR custom deployment on Hetzner / Verda GPU Cloud
-    - `.claude/ARCHITECTURE-ASCII.md` - CRITICAL CONTEXT
 
   - read IN FULL:
     - `.claude/progress-all-teams.md` - Ultra-concise all-teams commit log
 
   - read top ~250 lines:
-    - `./progress-verda-dev.md` - CURRENT TASKS & RECENT progress log
+    - `.claude/progress-verda-dev.md` - CURRENT TASKS & RECENT progress log
 
   - read top 70 lines:
-    - [Admin Guide](.docs/admin-guide.md) - Admin docs index
+    - [Admin Guide](docs/admin-backup-restore.md) - Admin backup/restore docs
 
   - perform git status & check commit history
     - REPORT: any pending commits/pushes ?

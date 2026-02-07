@@ -11,8 +11,8 @@
             - Discuss with user before finalizing
     - .claude/progress-all-teams.md
         - add 1-line commit log entries for work done this session
-    - COLLABORATION gh issue: https://github.com/ahelme/comfyume/issues/7
-        - short update of work performed & any questions / info needed
+    - .claude/CLAUDE-RESUME-VERDA-TEAM.md
+        - (replace stale instructions)
     - check code has been commented effectively
     - add, commit, push
     - PR at end of any major block of work
