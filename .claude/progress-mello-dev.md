@@ -43,14 +43,15 @@
 ---
 ## 1. PRIORITY TASKS
 
-🔴 **(CURRENT) - comfyume #64 - Set up Verda CPU instance as production app server**
+🟢 **(DONE) - comfyume #64 - Set up Verda CPU instance as production app server**
     - Created: 2026-02-05 | Updated: 2026-02-07
-    - restore-verda-instance.sh v0.4.0 DONE (ea6549b, private scripts repo)
-    - All doc refs updated across repo (PR #72 merged, PR #73 merged)
-    - Stale .claude files archived (#22)
-    - Issue #22 re-assessed: 2 scripts to archive, .env.example + READMEs to update
-    - **NEXT:** Run restore script on Verda (`--skip-sfs` if SFS still blocked)
-    - **NEXT:** Verify aiworkshop.art, /admin/, /user001-020/ all respond
+    - Restore script ran with --skip-sfs, rebuilt from GitHub clone
+    - 24/24 containers healthy on comfyume v0.11.0 (shared frontend image)
+    - DNS updated: aiworkshop.art → 95.216.229.236
+    - HTTP Basic Auth enabled (htpasswd from old instance backup)
+    - nginx fixes: include user-maps.conf (#54), hardcode CORS domain, auth_basic
+    - REDIS_HOST fixed to local container, host nginx disabled
+    - **REMAINING:** Admin /admin/ returns 404 (minor routing), disk cleanup done
 
 🟡 **(BLOCKED) - comfyume #71 - Downgrade Mello VPS after Verda stable**
     - Created: 2026-02-07
@@ -79,24 +80,23 @@
 
 ## Progress Report 36 - 2026-02-07 - Resume/handover file cleanup + smart hooks
 
-**Date:** 2026-02-07 | **Issues:** #22, #8 | **PRs:** #76, #78
+**Date:** 2026-02-07 | **Issues:** #22, #8 | **PRs:** #76, #78, #79, #80, #81, #82
 
 **Done:**
-- Fixed broken file paths in all resume-context commands (missing `.claude/` prefix)
-- Fixed broken paths in Verda resume (progress file, admin guide, ARCHITECTURE-ASCII)
-- Archived outdated `docs/ARCHITECTURE-ASCII.md` to `docs/archive/`
-- Removed stale issue #7 refs from Verda handover + resume
-- Slimmed all 4 resume files from ~80-130 lines to ~45 lines (removed duplicated arch/deployment content)
-- Standardised KEY FILES across all teams to: CLAUDE.md, progress file, all-teams log
-- Fixed testing-scripts resume-context (missing `.claude/` prefix, created by another team)
-- Created `~/.claude/team-detect.sh` — smart hook that maps project dir to team resume/handover
-- Updated `~/.claude/settings.json` hooks to use team-detect.sh (auto-detects team on SessionStart/PreCompact)
+- Fixed broken file paths in all resume-context + handover commands
+- Archived `docs/ARCHITECTURE-ASCII.md`, removed stale issue #7 refs
+- Slimmed all 4 resume files to ~45 lines (removed duplicated arch/deployment content)
+- Created `~/.claude/team-detect.sh` — auto-detects team from project dir for SessionStart hook
+- Removed PreCompact hook (doesn't work — runs during compact, not before it)
+- Created `/update-progress` and `/pull-main` slash commands
 - Added gh CLI Projects Classic workaround to CLAUDE.md
 - Updated issue #8 with hook changes
+- Private scripts repo (PR #30): daily R2 upload at 2am, rotation (max 10 dated copies), fix `.eu.` endpoint in backup-verda.sh, restore script prompts for R2 backup
 
 **NEXT:**
-- Add daily R2 upload + rotation to backup scripts (private scripts repo)
-- Run restore-verda-instance.sh on Verda
+- Run restore-verda-instance.sh on Verda (#64)
+- Merge private scripts PR #30
+- Issue #22 cleanup: archive 2 obsolete scripts, update .env.example + READMEs
 
 ---
 
