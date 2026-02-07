@@ -1,7 +1,7 @@
 # CLAUDE RESUME - COMFYUME (MELLO TEAM)
 
-**PHASE**: VERDA CPU INSTANCE SETUP + PRODUCTION BACKUP
-**DATE**: 2026-02-06
+**PHASE**: RUN RESTORE SCRIPT ON VERDA + PRODUCTION VERIFICATION
+**DATE**: 2026-02-07
 
 ---
 
@@ -9,57 +9,74 @@
 
 **aiworkshop.art is PRODUCTION and it runs on VERDA, not Mello!**
 
-The previous Verda GPU instance (wide-tree-opens-fin-01) was terminated (credits ran out). A new CPU instance has been provisioned but NOT YET SET UP.
+New `restore-verda-instance.sh` (v0.4.0) was created this session. It needs to be RUN on Verda to bring the production app server online.
 
 ---
 
-## CURRENT STATUS
+## WHAT WAS DONE THIS SESSION
 
-**New Verda CPU Instance (provisioned, not yet configured):**
-
-| Detail | Value |
-|--------|-------|
-| Hostname | soft-wolf-shines-fin-01 |
-| IP | 95.216.229.236 |
-| Tailscale IP | 100.89.38.43 (MUST restore identity!) |
-| Instance ID | bb48b2c2-0414-407b-8f27-77b8867818a3 |
-| Spec | CPU.8V.32G (8 CPU / 32GB RAM / 100GB SSD) |
-| Contract | 1 month prepaid (~€34/mth, expires 2026-03-06) |
-| Role | Production app server: nginx + 20 frontends + queue-manager + Redis + admin |
-| Inference | Serverless via DataCrunch containers (unchanged) |
-
-**Storage (all restored/available):**
-- OS volume from previous instance (may contain nginx configs for aiworkshop.art)
-- Scratch volume (user inputs/outputs)
-- SFS network drive (models, cache, scripts)
-
-**Mello (comfy.ahelme.net) - running but secondary:**
-- 20 frontends + queue-manager + admin + Redis all healthy
-- Serving comfy.ahelme.net (staging)
-- RAM: 14GB/15GB used (near capacity)
+1. Created `restore-verda-instance.sh` v0.4.0 (private scripts repo, committed to `main` ea6549b)
+   - Full app stack restore: containerized nginx, 20x frontends, queue-manager, Redis, admin
+   - Serverless inference (no GPU worker)
+   - `--skip-sfs` flag, certbot SSL, git clone fallback, endpoint verification
+   - R2 endpoint fixed to `.eu.` domain
+2. Updated README-RESTORE.md in private scripts repo
+3. Updated all active docs in comfyume repo (PR #72, branch `restore-script-v040`)
+4. Old `setup-verda-solo-script.sh` v0.3.3 archived (not deleted)
 
 ---
 
 ## IMMEDIATE PRIORITIES
 
-1. **SSH into Verda** (`ssh root@95.216.229.236`) and set up:
-   - Restore Tailscale identity (BEFORE starting Tailscale!)
-   - Install/configure nginx for aiworkshop.art
-   - Deploy app (Docker, 20 frontends, queue-manager, Redis, admin)
-   - SSL certs for aiworkshop.art (Let's Encrypt)
+1. **Merge PR #72** on comfyume repo (doc updates for new script name)
+   - URL: https://github.com/ahelme/comfyume/pull/72
+   - Branch: `restore-script-v040`
 
-2. **Capture production nginx configs** from restored OS volume
-   - Mount old OS volume, find `/etc/nginx/` configs
-   - Copy aiworkshop.art config to `nginx-production/nginx/` in private scripts repo
+2. **Run restore script on Verda** - SSH in and run:
+   ```bash
+   ssh root@95.216.229.236
+   # Copy restore-verda-instance.sh to /root/ (or download from GitHub)
+   # Option A (with SFS): ./restore-verda-instance.sh "<MOUNT_COMMAND>"
+   # Option B (no SFS):   ./restore-verda-instance.sh --skip-sfs
+   ```
+   - SFS was BLOCKED last session (no private network interface on CPU instance)
+   - Contact Verda support, or use `--skip-sfs` to proceed without it
 
-3. **Verify git repo completeness** for production deployment
-   - All service code IS in git (confirmed)
-   - Verda-specific nginx config (aiworkshop.art) NOT yet in git
-   - May need branch `verda-instance-frontend` if live code differs
+3. **Verify production endpoints** after restore:
+   - https://aiworkshop.art/ (main app)
+   - https://aiworkshop.art/admin/ (admin dashboard)
+   - https://aiworkshop.art/user001/ (user frontend)
 
-4. **Back up everything** to SFS + R2
+4. **Then resume**: Issue #18 (end-to-end test), Issue #20 (workshop readiness)
 
-5. **Then resume**: Issue #18 (end-to-end test), Issue #20 (workshop readiness)
+---
+
+## VERDA INSTANCE DETAILS
+
+| Detail | Value |
+|--------|-------|
+| Hostname | soft-wolf-shines-fin-01 |
+| Public IP | 95.216.229.236 |
+| Tailscale IP | 100.89.38.43 (MUST restore identity!) |
+| Instance ID | bb48b2c2-0414-407b-8f27-77b8867818a3 |
+| Spec | CPU.8V.32G (8 CPU / 32GB RAM / 100GB SSD) |
+| Contract | 1 month prepaid (~€34/mth, expires 2026-03-06) |
+| Role | Production app server: nginx + 20 frontends + queue-manager + Redis + admin |
+| Inference | Serverless via DataCrunch containers |
+
+---
+
+## KEY FILES
+
+**Private Scripts Repo** (`comfymulti-scripts`):
+- `restore-verda-instance.sh` (v0.4.0) - CURRENT production restore script
+- `setup-verda-solo-script.sh` (v0.3.3) - ARCHIVED GPU worker script
+- `.env` (v0.3.5) - master secrets
+- Branch: `mello-team-new-restore` (clean, no pending changes)
+
+**Comfyume Repo:**
+- Branch `restore-script-v040` has PR #72 (doc updates) - MERGE THIS
+- Branch `main` is clean
 
 ---
 
@@ -67,36 +84,18 @@ The previous Verda GPU instance (wide-tree-opens-fin-01) was terminated (credits
 
 Please read:
 
-1. **`./CLAUDE.md`** - Project instructions (note CRITICAL section about Verda = PRODUCTION)
+1. **`./CLAUDE.md`** - Project instructions (note CRITICAL section: Verda = PRODUCTION)
 2. **`.claude/progress-mello-dev.md`** (top ~100 lines) - Recent progress
 3. **`.claude/progress-all-teams.md`** - Ultra-concise all-teams commit log
-4. **`./SERVERLESS_UPDATE.md`** - Serverless deployment details
-5. **`git status && git log --oneline -10`** - Check for pending work
-
----
-
-## KEY INFRASTRUCTURE
-
-**Serverless (DataCrunch):**
-- Endpoints: `https://containers.datacrunch.io/comfyume-vca-ftv-{gpu}-{mode}/`
-- Auth: `SERVERLESS_API_KEY` in .env (Bearer token)
-- Models on SFS volume
-- Switch: `./scripts/switch-gpu.sh h200-spot` (or h200-on-demand, b300-spot, b300-on-demand)
-
-**Private Scripts Repo:** https://github.com/ahelme/comfymulti-scripts
-- `.env` v0.3.5 - updated with new instance details
-- `nginx-staging/nginx/` - Mello configs (comfy.ahelme.net)
-- `nginx-production/nginx/` - Verda configs (aiworkshop.art) - TO BE POPULATED
-- Setup/backup scripts
-
-**Credentials:** All in `.env` (comfyume + comfymulti-scripts repos)
+4. **`git status && git log --oneline -10`** - Check for pending work
 
 ---
 
 ## TEAM COORDINATION
 
 **GitHub Issues:** https://github.com/ahelme/comfyume/issues
-**Key Issues:** #64 (Verda setup), #18 (e2e test), #20 (workshop readiness)
+**Key Issues:** #64 (Verda setup), #71 (Mello downgrade), #18 (e2e test), #20 (workshop readiness)
+**Open PR:** #72 (doc updates for restore script)
 **Private Scripts:** https://github.com/ahelme/comfymulti-scripts
 
 ---
@@ -104,7 +103,8 @@ Please read:
 ## SESSION START CHECKLIST
 
 - [ ] Check today's date
-- [ ] `git status` - any uncommitted changes?
+- [ ] `git status` on both repos - any uncommitted changes?
+- [ ] Merge PR #72 if not yet merged
 - [ ] Can you SSH to Verda? `ssh root@95.216.229.236`
 - [ ] Read `.claude/progress-mello-dev.md` top section
 - [ ] Discuss priorities with user
