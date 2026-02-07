@@ -26,6 +26,8 @@ Newest at top. One line per commit. No fluff. Link issues.
 - [TEST] ddda4e0 test: rewrite integration test suite for serverless architecture (#6)
 - [TEST] bd49f8c test: add shared test helper library (#6)
 - [TEST] f7a9574 docs: add testing-scripts-team onboarding files
+- [MELLO] 4212e0f docs: archive stale .claude files (#22) - PR #73
+- [MELLO] dcd0e96 docs: update all references setup-verda-solo-script → restore-verda-instance (#64, #71) - PR #72
 - [MELLO] 28eda1c docs: update refs for restore-verda-instance.sh v0.4.0 (#64, #71) - PR #72
 - [MELLO] ea6549b feat: add restore-verda-instance.sh v0.4.0 for production app server (#64, #71) [private scripts repo]
 - [MELLO] 38a28da docs: session 34 - Verda instance setup, central progress log in CLAUDE.md (#64, #71)

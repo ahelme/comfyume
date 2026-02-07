@@ -45,13 +45,12 @@
 
 🔴 **(CURRENT) - comfyume #64 - Set up Verda CPU instance as production app server**
     - Created: 2026-02-05 | Updated: 2026-02-07
-    - New instance: soft-wolf-shines-fin-01 (CPU.8V.32G, 8CPU/32GB, 100GB SSD)
-    - IP: 95.216.229.236 | Tailscale: 100.89.38.43 (restore identity!)
-    - Volumes mounted: scratch (50GB), old OS drive (read-only), fstab updated
-    - Backed up from old OS → scratch: nginx, SSL, .env, tarballs, worker image
-    - Production nginx configs committed to private scripts repo (05eb063)
-    - **BLOCKER:** SFS unreachable - no private network interface on CPU instance
-    - NEXT: Contact Verda support re SFS, then copy scratch→SFS→R2, run restore script
+    - restore-verda-instance.sh v0.4.0 DONE (ea6549b, private scripts repo)
+    - All doc refs updated across repo (PR #72 merged, PR #73 merged)
+    - Stale .claude files archived (#22)
+    - Issue #22 re-assessed: 2 scripts to archive, .env.example + READMEs to update
+    - **NEXT:** Run restore script on Verda (`--skip-sfs` if SFS still blocked)
+    - **NEXT:** Verify aiworkshop.art, /admin/, /user001-020/ all respond
 
 🟡 **(BLOCKED) - comfyume #71 - Downgrade Mello VPS after Verda stable**
     - Created: 2026-02-07
@@ -99,7 +98,12 @@
   - Endpoint verification after startup
 - Updated CLAUDE.md, admin-backup-restore.md, README-RESTORE.md with new script refs
 - Committed to private scripts repo (ea6549b), pushed
-- Created PR #72 on comfyume for doc updates
+- Created PR #72 on comfyume for doc updates - MERGED
+- Updated all 12 active docs with new script name (dcd0e96) - PR #72
+- Archived 4 stale .claude files (PR #73 merged)
+- Re-assessed issue #22: posted comment with analysis of remaining Phase 3 tasks
+  - 2 scripts obsolete (create-gpu-quick-deploy.sh, verda-startup-script.sh) → archive
+  - .env.example needs v0.3.5 update, README.md + worker README need arch update
 
 **NEXT:**
 - Merge PR #72
