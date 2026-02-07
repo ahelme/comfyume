@@ -43,29 +43,19 @@
 ---
 ## 1. PRIORITY TASKS
 
-🔴 **(CURRENT) - comfyume #64 - Admin /admin/ 404 + restore script fixes**
+🟡 **(CURRENT) - comfyume #64 - Restore script fixes**
     - Created: 2026-02-05 | Updated: 2026-02-07
-    - Verda restore DONE: 24/24 containers healthy, auth enabled, DNS live
-    - **REMAINING:** Admin /admin/ returns 404 through nginx (container healthy on :8080)
+    - Admin 404 FIXED, QM health FIXED, security audit PASSED
     - **REMAINING:** Update restore-verda-instance.sh for issues found (see GH #64 comments)
+    - **REMAINING:** Set INFERENCE_MODE=serverless in Verda .env (currently defaults to local)
+
+🟡 **(NEXT) - comfyume #18 - End-to-end job submission test**
+    - Tests: frontend → queue-manager → serverless → output
+    - Verda is live, need INFERENCE_MODE=serverless first
 
 🟡 **(NEXT) - comfyume #71 - Downgrade Mello VPS after Verda stable**
     - Created: 2026-02-07
     - Verda is stable now, can proceed
-
-🟡 **(NEXT) - comfyume #18 - End-to-end job submission test**
-    - Tests: frontend → queue-manager → serverless → output
-    - Verda is live, can test now
-
-✅ **(COMPLETE) - comfyume #54 - Workflow Save/Load 405 Error FIXED**
-    - Completed: 2026-02-05
-
-✅ **(COMPLETE) - comfyume #62 - Serverless Inference - ALL 4 GPU DEPLOYMENTS**
-    - Completed: 2026-02-04
-
-🟡 **(AFTER VERDA SETUP) - comfyume #18 - End-to-end job submission test**
-    - Tests: frontend → queue-manager → serverless → output
-    - Blocked until Verda CPU instance is running
 
 🔵 **(PENDING) - comfyume #20 - Workshop readiness checklist**
     - Final validation before workshop
@@ -75,6 +65,22 @@
 ---
 
 # Progress Reports
+
+---
+
+## Progress Report 38 - 2026-02-07 - Admin routing, QM event loop, security audit
+
+**Date:** 2026-02-07 | **Issues:** #64
+
+**Done:**
+- Fixed admin /admin/ 404: nginx `proxy_pass` needed trailing slash to strip prefix
+- Fixed queue-manager unhealthy: `pubsub.listen()` blocked async event loop → replaced with non-blocking `get_message()` polling
+- Fixed docker-compose health check: `localhost` → `127.0.0.1` (IPv6 avoidance)
+- Fixed admin auth: updated ADMIN_PASSWORD in Verda .env (was `dummy`)
+- Security audit PASSED: all endpoints locked behind auth, only /health open
+- Updated GH issue #64 with session 38 details
+
+**Note:** INFERENCE_MODE not set in Verda .env → defaults to `local`. Need `serverless` for production.
 
 ---
 

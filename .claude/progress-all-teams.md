@@ -17,6 +17,7 @@ Newest at top. One line per commit. No fluff. Link issues.
 
 ## 2026-02-07
 
+- [MELLO] a9d7cd2 fix: admin routing, QM event loop block, health check IPv6 (#64)
 - [MELLO] bc647b2 fix: nginx auth, CORS domain, user-maps include for Verda restore (#64)
 - [MELLO] 367c36f feat: add /pull-main command (#22) - PR #82
 - [MELLO] bb838ce feat: add /update-progress command (#22) - PR #81
