@@ -17,6 +17,9 @@ Newest at top. One line per commit. No fluff. Link issues.
 
 ## 2026-02-07
 
+- [MELLO] 7664d83 docs: add gh CLI Projects Classic workaround to CLAUDE.md (#22) - PR #79
+- [MELLO] 5ba904e chore: slim down all resume files, fix testing-scripts paths (#22) - PR #78
+- [MELLO] 66a6fe0 chore: fix file paths in resume/handover files, archive ARCHITECTURE-ASCII (#22) - PR #76
 - [TEST] -- PR #75 created, issue #6 updated and closed
 - [TEST] 421e989 docs: update testing-scripts-team progress (#6)
 - [TEST] 0731e29 fix: update docker-compose references across scripts (#6)
