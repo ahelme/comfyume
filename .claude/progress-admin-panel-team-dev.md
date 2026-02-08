@@ -61,14 +61,40 @@
     - R2 bucket overview (objects count + sizes via boto3)
     - Directory browser with breadcrumb navigation (restricted to /outputs, /inputs, /models, /workflows)
 
-🟡 **(PENDING) - Deploy & test on staging (comfy.ahelme.net)**
-    - Rebuild admin container: `docker compose build admin`
-    - Verify nginx has /admin route configured
-    - Test all 4 tabs with live data
+🔄 **(IN PROGRESS) - comfyume #88 - Templates & Models Management (Phase 4)**
+    - Created: 2026-02-08
+    - Templates tab: scan workflow JSONs, extract model deps, show on-disk status
+    - Copy wget commands for missing models
+    - 2 new endpoints: GET /api/templates/scan, GET /api/templates/models
+
+🟡 **(PENDING) - Deploy & test on Verda (aiworkshop.art)**
+    - Rebuild admin container on Verda
+    - Test all 5 tabs with live data
 
 ---
 
 # Progress Reports
+
+---
+## Progress Report 5 - 2026-02-08 - Templates & Models Management Tab (#88)
+
+**Date:** 2026-02-08 | **Issue:** #88
+
+**Done:**
+- Implemented Phase 4: Templates & Models Management tab in admin panel
+- Backend: 2 new endpoints + 2 helper functions (~182 lines added to app.py)
+  - `_extract_models_from_workflow()` - parses workflow JSON, extracts models from `properties.models` + widget value fallbacks for UNETLoader/CheckpointLoaderSimple
+  - `_check_model_on_disk()` - checks `/models/{dir}/{file}` existence and size
+  - `GET /api/templates/scan` - per-workflow model status + disk info
+  - `GET /api/templates/models` - deduplicated cross-workflow model list
+- Frontend: 5th "Templates" tab (~253 lines added to dashboard.html)
+  - 4 summary cards (Workflows, On Disk, Missing, Disk Free)
+  - Per-workflow cards with subgraph names + model rows
+  - ON DISK (green) / MISSING (red) badges with file sizes
+  - "Copy wget" button generates `wget -c -P /mnt/sfs/models/shared/{dir}/ "{url}"`
+  - Disk usage bar
+- Tested model extraction against all 5 workflow files - correct results
+- No new dependencies, no Docker changes needed
 
 ---
 ## Progress Report 4 - 2026-02-08 - Verda debugging, restore script improvements, CLAUDE.md updates

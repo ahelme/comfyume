@@ -17,6 +17,7 @@ Newest at top. One line per commit. No fluff. Link issues.
 
 ## 2026-02-08
 
+- [ADMIN] PENDING feat: add Templates & Models management tab to admin panel (#88)
 - [ADMIN] 3ac3f56 docs: move user prefs to bottom of CLAUDE.md, add branch rule (#22)
 - [ADMIN] cd89b53 docs: update progress files - sync with main, close issues (#65, #66, #67)
 - [ADMIN] -- debugged admin auth on Verda (URL-encoded password), generated corrected user magic links

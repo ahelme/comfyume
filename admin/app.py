@@ -4,6 +4,7 @@ Admin Dashboard V2 - Comprehensive Management UI for ComfyUI Workshop
 Phase 1: System Status, Container Management (Issue #65)
 Phase 2: GPU Deployment Switching (Issue #66)
 Phase 3: Storage & R2 Management (Issue #67)
+Phase 4: Templates & Models Management (Issue #88)
 """
 import logging
 import secrets
@@ -683,6 +684,188 @@ async def proxy_update_priority(job_id: str, body: dict, username: str = Depends
         return response.json()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================================
+# Templates & Models Management (Phase 4 - Issue #88)
+# ============================================================================
+
+# Node types that use specific model directories when properties.models is absent
+_FALLBACK_DIRS = {
+    "UNETLoader": "diffusion_models",
+    "CheckpointLoaderSimple": "checkpoints",
+}
+
+
+def _extract_models_from_workflow(data: dict) -> dict:
+    """Extract template names and model dependencies from a workflow JSON."""
+    templates = []
+    models_seen = set()  # (directory, filename) for dedup
+    models = []
+
+    # Collect all nodes: top-level + subgraph nodes
+    all_nodes = list(data.get("nodes", []))
+    subgraphs = data.get("definitions", {}).get("subgraphs", [])
+    for sg in subgraphs:
+        templates.append({"name": sg.get("name", "Unnamed")})
+        all_nodes.extend(sg.get("nodes", []))
+
+    for node in all_nodes:
+        node_type = node.get("type", "")
+        props = node.get("properties", {})
+        prop_models = props.get("models")
+
+        if prop_models and isinstance(prop_models, list):
+            for m in prop_models:
+                key = (m.get("directory", ""), m.get("name", ""))
+                if key not in models_seen and key[1]:
+                    models_seen.add(key)
+                    models.append({
+                        "filename": m["name"],
+                        "directory": m.get("directory", ""),
+                        "url": m.get("url"),
+                    })
+        elif node_type in _FALLBACK_DIRS:
+            wv = node.get("widgets_values", [])
+            if wv and isinstance(wv, list) and isinstance(wv[0], str) and wv[0]:
+                directory = _FALLBACK_DIRS[node_type]
+                key = (directory, wv[0])
+                if key not in models_seen:
+                    models_seen.add(key)
+                    models.append({
+                        "filename": wv[0],
+                        "directory": directory,
+                        "url": None,
+                    })
+
+    return {"templates": templates, "models": models}
+
+
+def _check_model_on_disk(directory: str, filename: str) -> tuple:
+    """Check if a model file exists on disk; return (exists, size_bytes)."""
+    model_path = Path("/models") / directory / filename
+    if model_path.is_file():
+        try:
+            size = model_path.stat().st_size
+            return True, size
+        except OSError:
+            return True, None
+    return False, None
+
+
+@app.get("/api/templates/scan")
+async def templates_scan(username: str = Depends(verify_admin)):
+    """Scan workflow JSONs, extract model deps, check disk presence."""
+    workflows_dir = Path("/workflows")
+    results = []
+
+    if not workflows_dir.is_dir():
+        return {"workflows": [], "disk": {}, "error": "/workflows not mounted"}
+
+    for wf_path in sorted(workflows_dir.glob("*.json")):
+        if wf_path.name.startswith("."):
+            continue
+        try:
+            with open(wf_path) as f:
+                data = json.load(f)
+        except (json.JSONDecodeError, OSError) as e:
+            results.append({
+                "filename": wf_path.name,
+                "error": str(e),
+                "templates": [],
+                "models": [],
+                "models_total": 0,
+                "models_on_disk": 0,
+                "models_missing": 0,
+            })
+            continue
+
+        extracted = _extract_models_from_workflow(data)
+        enriched_models = []
+        on_disk_count = 0
+
+        for m in extracted["models"]:
+            on_disk, size = _check_model_on_disk(m["directory"], m["filename"])
+            if on_disk:
+                on_disk_count += 1
+            enriched_models.append({
+                **m,
+                "on_disk": on_disk,
+                "file_size": size,
+                "file_size_human": _human_size(size) if size else None,
+            })
+
+        total = len(enriched_models)
+        results.append({
+            "filename": wf_path.name,
+            "templates": extracted["templates"],
+            "models": enriched_models,
+            "models_total": total,
+            "models_on_disk": on_disk_count,
+            "models_missing": total - on_disk_count,
+        })
+
+    # Disk usage for /models mount
+    disk_info = {}
+    try:
+        usage = shutil.disk_usage("/models")
+        disk_info = {
+            "total_gb": round(usage.total / (1024**3), 1),
+            "used_gb": round(usage.used / (1024**3), 1),
+            "free_gb": round(usage.free / (1024**3), 1),
+        }
+    except OSError:
+        try:
+            usage = shutil.disk_usage("/")
+            disk_info = {
+                "total_gb": round(usage.total / (1024**3), 1),
+                "used_gb": round(usage.used / (1024**3), 1),
+                "free_gb": round(usage.free / (1024**3), 1),
+            }
+        except OSError:
+            pass
+
+    return {"workflows": results, "disk": disk_info}
+
+
+@app.get("/api/templates/models")
+async def templates_models(username: str = Depends(verify_admin)):
+    """Deduplicated list of all models across all workflows with on-disk status."""
+    workflows_dir = Path("/workflows")
+    all_models = {}  # key: (directory, filename) -> model info
+
+    if not workflows_dir.is_dir():
+        return {"models": [], "error": "/workflows not mounted"}
+
+    for wf_path in sorted(workflows_dir.glob("*.json")):
+        if wf_path.name.startswith("."):
+            continue
+        try:
+            with open(wf_path) as f:
+                data = json.load(f)
+        except (json.JSONDecodeError, OSError):
+            continue
+
+        extracted = _extract_models_from_workflow(data)
+        for m in extracted["models"]:
+            key = (m["directory"], m["filename"])
+            if key not in all_models:
+                on_disk, size = _check_model_on_disk(m["directory"], m["filename"])
+                all_models[key] = {
+                    **m,
+                    "on_disk": on_disk,
+                    "file_size": size,
+                    "file_size_human": _human_size(size) if size else None,
+                    "used_by": [wf_path.name],
+                }
+            else:
+                if wf_path.name not in all_models[key]["used_by"]:
+                    all_models[key]["used_by"].append(wf_path.name)
+                # Prefer a URL if one is found and existing entry has none
+                if not all_models[key].get("url") and m.get("url"):
+                    all_models[key]["url"] = m["url"]
+
+    return {"models": list(all_models.values())}
 
 
 if __name__ == "__main__":
