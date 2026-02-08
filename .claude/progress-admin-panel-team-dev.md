@@ -61,18 +61,54 @@
     - R2 bucket overview (objects count + sizes via boto3)
     - Directory browser with breadcrumb navigation (restricted to /outputs, /inputs, /models, /workflows)
 
-🔄 **(IMPLEMENTED - AWAITING FULL TEST) - comfyume #88 - Templates & Models Management (Phase 4)**
+✅ **(COMPLETE - VERIFIED ON VERDA) - comfyume #88 - Templates & Models Management (Phase 4)**
     - Created: 2026-02-08 | Updated: 2026-02-08
     - Templates tab: scan workflow JSONs, extract model deps, show on-disk status
     - Copy wget commands for missing models
     - 2 new endpoints: GET /api/templates/scan, GET /api/templates/models
-    - Deployed to Verda, admin container healthy, API verified working
-    - Initial browser testing looks great
-    - Need to connect models on block storage (mounted at /mnt/sfs) to verify on-disk detection
+    - Deployed to Verda, all 22 containers running with correct /mnt/sfs/models mount
+    - On-disk detection verified: 21 model files (172GB) across all 5 workflows
+    - Downloaded all 7 camera control LoRAs, LTX-2 distilled checkpoint, Flux 4B models
+    - Only missing: flux-2-klein-9b-fp8.safetensors (distilled 9B, HF gated)
 
 ---
 
 # Progress Reports
+
+---
+## Progress Report 6 - 2026-02-08 - Models Connected, All Camera LoRAs Downloaded (#88)
+
+**Date:** 2026-02-08 | **Issue:** #88
+
+**Done:**
+- Fixed storage architecture: replaced symlinks with direct .env paths
+  - `MODELS_PATH=/mnt/sfs/models`, `OUTPUTS_PATH=/mnt/scratch/outputs`, `INPUTS_PATH=/mnt/scratch/inputs`
+  - Updated restore script v0.4.2: Step 15 now verifies paths instead of creating symlinks
+  - Updated Step 11 to set storage paths dynamically based on available mounts
+  - Fixed embedded Redis IPs in restore script (were still Mello's, now Verda Tailscale)
+- Downloaded 3 missing Flux Klein 9B models to Verda /mnt/sfs:
+  - `diffusion_models/flux-2-klein-base-9b-fp8.safetensors` (9GB) - HF gated, required license acceptance
+  - `text_encoders/qwen_3_8b_fp8mixed.safetensors` (8.1GB)
+  - `vae/flux2-vae.safetensors` (321MB)
+- Downloaded ALL 7 LTX-2 camera control LoRAs for filmmakers:
+  - static (2.1GB), dolly-in/out/left/right (313MB each), jib-up/down (2.1GB each)
+- Downloaded remaining models for full workflow coverage:
+  - `checkpoints/ltx-2-19b-distilled.safetensors` (41GB) for distilled video workflow
+  - `diffusion_models/flux-2-klein-base-4b.safetensors` + `flux-2-klein-4b.safetensors` (7.3GB each)
+  - `text_encoders/qwen_3_4b.safetensors` (7.5GB) for 4B workflow
+- Recreated all 22 containers with correct /mnt/sfs/models mount
+- Templates tab verified: on-disk detection working across all 5 workflows
+- Added comprehensive workflow template docs to CLAUDE.md:
+  - All 5 workflows documented with subgraph explanations
+  - Complete model inventory table (21 files, 172GB) with HF download URLs
+  - Camera control LoRA table for filmmakers
+- Deployed restore script v0.4.2 to Verda (root + dev) via SCP
+
+**Model inventory: 21 files, 172GB on /mnt/sfs (33GB free, 85% usage)**
+- Only missing: `flux-2-klein-9b-fp8.safetensors` (distilled 9B variant, HF gated)
+- Potential cleanup: `gemma_3_12B_it.safetensors` (19GB full-precision, have fp4_mixed) and legacy checkpoints
+
+**Private scripts repo:** commit 2a3d444 - restore script v0.4.2 pushed to main
 
 ---
 ## Progress Report 5 - 2026-02-08 - Templates & Models Management Tab (#88)

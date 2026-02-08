@@ -446,7 +446,7 @@ Each workflow uses subgraphs (reusable node groups) as selectable pipelines.
 **4. `ltx2_text_to_video_distilled.json` - FAST VIDEO GENERATION**
 - 1 subgraph: "Text to Video (LTX 2 Distilled)" - 36 nodes, fewer steps
 - Same features as #3 but uses distilled checkpoint for faster inference
-- Models: `checkpoints/ltx-2-19b-distilled.safetensors` (NOT on disk yet)
+- Models: `checkpoints/ltx-2-19b-distilled.safetensors` (15GB)
           `text_encoders/gemma_3_12B_it_fp4_mixed.safetensors` (shared)
           `latent_upscale_models/ltx-2-spatial-upscaler-x2-1.0.safetensors` (shared)
           `loras/ltx-2-19b-lora-camera-control-dolly-left.safetensors` (shared, camera moves)
@@ -481,7 +481,7 @@ Each workflow uses subgraphs (reusable node groups) as selectable pipelines.
 | `gemma_3_12B_it_fp4_mixed.safetensors` | text_encoders | 8.8GB | ON DISK | [HF](https://huggingface.co/Comfy-Org/ltx-2/resolve/main/split_files/text_encoders/gemma_3_12B_it_fp4_mixed.safetensors) |
 | `flux2-vae.safetensors` | vae | 321MB | ON DISK | [HF](https://huggingface.co/Comfy-Org/flux2-dev/resolve/main/split_files/vae/flux2-vae.safetensors) |
 | `ltx-2-19b-dev-fp8.safetensors` | checkpoints | 25GB | ON DISK | [HF](https://huggingface.co/Lightricks/LTX-2/resolve/main/ltx-2-19b-dev-fp8.safetensors) |
-| `ltx-2-19b-distilled.safetensors` | checkpoints | 41GB | ON DISK | [HF](https://huggingface.co/Lightricks/LTX-2/resolve/main/ltx-2-19b-distilled.safetensors) |
+| `ltx-2-19b-distilled.safetensors` | checkpoints | 15GB | ON DISK | [HF](https://huggingface.co/Lightricks/LTX-2/resolve/main/ltx-2-19b-distilled.safetensors) |
 | `flux2_klein_9b.safetensors` | checkpoints | 17GB | ON DISK | legacy full checkpoint |
 | `flux2_klein_4b.safetensors` | checkpoints | 7.3GB | ON DISK | legacy full checkpoint |
 | `ltx-2-spatial-upscaler-x2-1.0.safetensors` | latent_upscale_models | 950MB | ON DISK | [HF](https://huggingface.co/Lightricks/LTX-2/resolve/main/ltx-2-spatial-upscaler-x2-1.0.safetensors) |
