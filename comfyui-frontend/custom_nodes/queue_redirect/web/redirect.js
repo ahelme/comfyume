@@ -13,15 +13,18 @@ app.registerExtension({
     async setup() {
         console.log("[QueueRedirect] Extension loaded (v0.11.0 API)");
 
-        // Get user ID from container environment (set by docker-compose)
-        // Each user container has USER_ID env variable (user001, user002, etc.)
-        const USER_ID = window.USER_ID || 'unknown';
+        // Extract user ID from URL path (e.g. /user001/ → user001)
+        // Falls back to window.USER_ID or 'unknown'
+        const pathMatch = window.location.pathname.match(/\/(user\d+)\//);
+        const USER_ID = (pathMatch && pathMatch[1]) || window.USER_ID || 'unknown';
         console.log(`[QueueRedirect] User ID: ${USER_ID}`);
 
         // Store original queuePrompt function
         const originalQueuePrompt = app.queuePrompt;
 
         // Override queuePrompt to redirect to queue-manager
+        // Queue manager endpoint: POST /api/jobs (via nginx /api/ → queue-manager:3000/)
+        // nginx strips /api/ prefix, so /api/jobs → queue-manager:3000/api/jobs
         app.queuePrompt = async function(number, batchCount = 1) {
             console.log(`[QueueRedirect] Intercepting job submission (${batchCount} jobs)`);
 
@@ -29,32 +32,36 @@ app.registerExtension({
                 // Serialize current workflow graph
                 const workflow = app.graph.serialize();
 
-                // Submit to queue-manager via /api/queue/submit
-                const response = await fetch('/api/queue/submit', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        workflow: workflow,
-                        user: USER_ID,
-                        batchCount: batchCount
-                    })
-                });
+                // Submit each batch item as a separate job
+                let lastResult = null;
+                for (let i = 0; i < batchCount; i++) {
+                    const response = await fetch('/api/jobs', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            user_id: USER_ID,
+                            workflow: workflow,
+                            priority: 5,
+                            metadata: { batch_index: i, batch_total: batchCount }
+                        })
+                    });
 
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error(`Queue submission failed (${response.status}): ${errorText}`);
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(`Queue submission failed (${response.status}): ${errorText}`);
+                    }
+
+                    lastResult = await response.json();
+                    console.log(`[QueueRedirect] Job ${i+1}/${batchCount} submitted:`, lastResult);
                 }
 
-                const result = await response.json();
-                console.log(`[QueueRedirect] ✅ Job submitted to queue:`, result);
-
-                // Return result to caller (maintains compatibility with ComfyUI expectations)
-                return result;
+                console.log(`[QueueRedirect] All ${batchCount} job(s) submitted`);
+                return lastResult;
 
             } catch (error) {
-                console.error("[QueueRedirect] ❌ Failed to submit job:", error);
+                console.error("[QueueRedirect] Failed to submit job:", error);
 
                 // Show user-friendly error in ComfyUI UI
                 app.ui.dialog.show(`Job submission failed: ${error.message}`);
