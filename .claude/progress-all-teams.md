@@ -23,11 +23,17 @@ Newest at top. One line per commit. No fluff. Link issues.
 
 ## 2026-02-07
 
+- [MELLO] a9d7cd2 fix: admin routing, QM event loop block, health check IPv6 (#64)
+- [MELLO] bc647b2 fix: nginx auth, CORS domain, user-maps include for Verda restore (#64)
+- [MELLO] 367c36f feat: add /pull-main command (#22) - PR #82
+- [MELLO] bb838ce feat: add /update-progress command (#22) - PR #81
+- [MELLO] 5b0c8ec docs: session 36 progress - resume/handover cleanup, smart hooks (#22, #8) - PR #80
 - [ADMIN] -- closed GH issues #65, #66, #67 with implementation comments referencing PR #69
 
 - [MELLO] 7664d83 docs: add gh CLI Projects Classic workaround to CLAUDE.md (#22) - PR #79
 - [MELLO] 5ba904e chore: slim down all resume files, fix testing-scripts paths (#22) - PR #78
 - [MELLO] 66a6fe0 chore: fix file paths in resume/handover files, archive ARCHITECTURE-ASCII (#22) - PR #76
+- [MELLO] 9e7ff1f feat: daily R2 upload with rotation, max 10 copies [private scripts repo]
 - [TEST] -- PR #75 created, issue #6 updated and closed
 - [TEST] 421e989 docs: update testing-scripts-team progress (#6)
 - [TEST] 0731e29 fix: update docker-compose references across scripts (#6)
