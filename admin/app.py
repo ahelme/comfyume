@@ -1240,6 +1240,25 @@ async def models_check(username: str = Depends(verify_admin)):
     }
 
 
+@app.delete("/api/models/delete")
+async def models_delete(body: dict, username: str = Depends(verify_admin)):
+    """Delete a model file. Body: {directory, filename}."""
+    directory = body.get("directory", "")
+    filename = body.get("filename", "")
+    if not filename:
+        raise HTTPException(status_code=400, detail="filename required")
+    # Security: resolve and verify path is within /models
+    target = (Path("/models") / directory / filename).resolve()
+    if not str(target).startswith(str(Path("/models").resolve())):
+        raise HTTPException(status_code=403, detail="Path traversal not allowed")
+    if not target.is_file():
+        raise HTTPException(status_code=404, detail="File not found")
+    size = target.stat().st_size
+    target.unlink()
+    logger.info(f"[delete] Deleted {directory}/{filename} ({_human_size(size)})")
+    return {"deleted": f"{directory}/{filename}", "size": size, "size_human": _human_size(size)}
+
+
 @app.post("/api/models/download", status_code=202)
 async def models_download(body: dict = None, username: str = Depends(verify_admin)):
     """Start a download session. Body: {models: [{filename, directory, url}]} or omit for all missing."""

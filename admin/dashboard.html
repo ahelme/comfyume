@@ -1931,6 +1931,7 @@ async function checkModels() {
           <span class="tpl-badge" style="background:rgba(245,158,11,0.15);color:var(--accent-amber)">orphan</span>
           <span class="tpl-model-path">${esc(path)}</span>
           <span class="tpl-size">${m.file_size_human ? esc(m.file_size_human) : ''}</span>
+          <button class="tpl-dl-btn" style="background:rgba(239,68,68,0.2);color:var(--accent-red)" onclick="deleteModel('${esc(m.directory)}','${esc(m.filename)}','${m.file_size_human ? esc(m.file_size_human) : "?"}')">DEL</button>
         </div>`;
       }).join('');
     }
@@ -1992,6 +1993,26 @@ async function downloadSingleModel(directory, filename, url) {
   } catch (e) {
     toast('Download start failed: ' + e.message, 'error');
   }
+}
+
+async function deleteModel(directory, filename, sizeStr) {
+  showModal(
+    'Delete Orphaned Model',
+    `Permanently delete <strong>${esc(directory)}/${esc(filename)}</strong> (${esc(sizeStr)})? This cannot be undone.`,
+    async () => {
+      try {
+        const result = await api('/api/models/delete', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ directory, filename }),
+        });
+        toast(`Deleted ${directory}/${filename} (${result.size_human})`, 'success');
+        checkModels(); // refresh the list
+      } catch (e) {
+        toast('Delete failed: ' + e.message, 'error');
+      }
+    }
+  );
 }
 
 let _download_state_active = false;

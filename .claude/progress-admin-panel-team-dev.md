@@ -61,19 +61,55 @@
     - R2 bucket overview (objects count + sizes via boto3)
     - Directory browser with breadcrumb navigation (restricted to /outputs, /inputs, /models, /workflows)
 
-✅ **(COMPLETE - VERIFIED ON VERDA) - comfyume #88 - Templates & Models Management (Phase 4)**
+✅ **(COMPLETE - ALL MODELS ON DISK) - comfyume #88 - Templates & Models Management (Phase 4)**
     - Created: 2026-02-08 | Updated: 2026-02-08
     - Templates tab: scan workflow JSONs, extract model deps, show on-disk status
-    - Copy wget commands for missing models
-    - 2 new endpoints: GET /api/templates/scan, GET /api/templates/models
-    - Deployed to Verda, all 22 containers running with correct /mnt/sfs/models mount
-    - On-disk detection verified: 21 model files (172GB) across all 5 workflows
-    - Downloaded all 7 camera control LoRAs, LTX-2 distilled checkpoint, Flux 4B models
-    - Only missing: flux-2-klein-9b-fp8.safetensors (distilled 9B, HF gated)
+    - Check Models view: gated detection, download engine (testing team #93), orphan detection + delete
+    - All 22 models downloaded (172GB), disk cleaned to 68% (removed 3 legacy files ~34GB)
+    - Deployed to Verda, all 20 frontends verified with /mnt/sfs/models mount
+
+🔲 **IN PROGRESS - comfyume #88 - Serverless Inference Pipeline**
+    - Created: 2026-02-08 | Updated: 2026-02-08
+    - queue_redirect custom node was MISSING from per-user custom_nodes dirs (volume mount overwrites image)
+    - FIXED: copied queue_redirect to all 20 user dirs, restarted all containers
+    - NEXT: test job submission from user002 → queue-manager → serverless GPU
+    - NEXT: verify job appears in admin Queue tab
+    - NEXT: check /api/queue/submit endpoint exists in queue-manager
 
 ---
 
 # Progress Reports
+
+---
+## Progress Report 7 - 2026-02-08 - Download Engine Live, Orphan Detection, Inference Fix (#88, #93)
+
+**Date:** 2026-02-08 | **Issues:** #88, #93
+
+**Done:**
+- Deployed testing team's model download engine (#93) to Verda
+  - Rebuilt admin container with `sse-starlette`, added `NTFY_TOPIC` to .env
+  - Rebuilt nginx container with `proxy_buffering off` for SSE streaming
+  - Fixed SSL certs: copied from `/mnt/scratch/backup-from-old-os/letsencrypt/` to `/etc/letsencrypt/`
+- Fixed `HF_TOKEN` ReferenceError bug in download engine frontend (JS referenced server-side var)
+- Patched `flux2_klein_9b_text_to_image.json` workflow: added HF download URLs to UNETLoader nodes (had empty `properties.models`)
+- Downloaded last missing model `flux-2-klein-9b-fp8.safetensors` (distilled 9B) via admin panel download engine
+- **All 22 models now on disk** - 5/5 workflows at 100% coverage
+- Disk cleanup: removed 3 legacy files (~34GB): `flux2_klein_9b.safetensors`, `flux2_klein_4b.safetensors`, `gemma_3_12B_it.safetensors` → 85% → 68% usage
+- Added orphaned model detection to Check Models page (scans disk, compares to workflow refs, shows with amber badges + sizes)
+- Added DELETE endpoint + button for orphaned models with confirmation dialog
+- Created PR #94 (admin-panel-team → main)
+- Fixed inference pipeline: `queue_redirect` custom node was missing from all 20 user `custom_nodes` dirs (volume mount overwrites). Copied and restarted all containers.
+
+**Commits this session:**
+- `e924010` fix: resolve HF_TOKEN ReferenceError in check downloads UI (#93)
+- `9f0aa61` feat: add orphaned model detection to check downloads page (#88)
+- `4341cc6` fix: always show Check Models button after scan (#88)
+- `9132eaf` feat: add delete button for orphaned models (#88)
+
+**Pending:**
+- Test serverless inference end-to-end (user002 → queue-manager → GPU)
+- Verify queue_redirect routes jobs correctly
+- Check if `/api/queue/submit` endpoint exists in queue-manager
 
 ---
 ## Progress Report 6 - 2026-02-08 - Models Connected, All Camera LoRAs Downloaded (#88)
