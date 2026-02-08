@@ -358,6 +358,7 @@ Code Architecture:
 - **Branch Strategy:**
   - `main` - production-ready code
   - Feature branches as needed (mello-track-2, verda-track-2)
+  - ==**NEVER push directly to main** - ALWAYS use feature branches + PRs for BOTH repos!==
 - **Scripts Repo** (PRIVATE!) https://github.com/ahelme/comfymulti-scripts
 
 ### Commit Guidelines
@@ -801,15 +802,6 @@ Run `disk-check.sh` before builds/backups. Use `--block` to abort if >90% full. 
 5. **Persistent storage** for all user data
 6. **User model uploads** allowed
 
-### User Preferences
-- Appreciates thoroughness and detail
-- Values comprehensive and accurate documentation
-- Wants progress tracking (hence `progress-**.md`)
-- Likes structured approaches
-- Hates BOASTING in DOCS, COMMITS, GH ISSUES, GH COMMENTS
-- Why? MASSIVE waste of context & fills up brain with crap.
-==EXPRESS PRIDE TO **USER** in chat NOT DOCS/GITHUB!!==
-
 ## Deployment
 
 ### SSH Keys for Verda
@@ -900,4 +892,17 @@ Before each session ends:
 
 ---
 
-**Last Updated:** 2026-02-03 (AEST)
+## 👤 User Preferences
+
+- Appreciates thoroughness and detail
+- Values comprehensive and accurate documentation
+- Wants progress tracking (hence `progress-**.md`)
+- Likes structured approaches
+- Hates BOASTING in DOCS, COMMITS, GH ISSUES, GH COMMENTS
+- Why? MASSIVE waste of context & fills up brain with crap.
+- ==EXPRESS PRIDE TO **USER** in chat NOT DOCS/GITHUB!!==
+- ==**NEVER push directly to main** - ALWAYS use feature branches + PRs (BOTH repos!)==
+
+---
+
+**Last Updated:** 2026-02-08 (AEST)
