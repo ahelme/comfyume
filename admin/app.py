@@ -1185,6 +1185,33 @@ async def models_check(username: str = Depends(verify_admin)):
         else:
             m["gated_info"] = None
 
+    # Detect orphaned models (on disk but not referenced by any workflow)
+    orphaned = []
+    referenced_keys = set(all_models.keys())
+    models_root = Path("/models")
+    if models_root.is_dir():
+        for subdir in sorted(models_root.rglob("*")):
+            if subdir.is_file() and subdir.suffix in (".safetensors", ".ckpt", ".pt", ".pth", ".bin"):
+                rel = subdir.relative_to(models_root)
+                parts = rel.parts
+                if len(parts) >= 2:
+                    directory = str(Path(*parts[:-1]))
+                    filename = parts[-1]
+                else:
+                    directory = ""
+                    filename = parts[0]
+                if (directory, filename) not in referenced_keys:
+                    try:
+                        size = subdir.stat().st_size
+                    except OSError:
+                        size = None
+                    orphaned.append({
+                        "filename": filename,
+                        "directory": directory,
+                        "file_size": size,
+                        "file_size_human": _human_size(size) if size else None,
+                    })
+
     # Summary
     total = len(models_list)
     on_disk = sum(1 for m in models_list if m["on_disk"])
@@ -1200,6 +1227,7 @@ async def models_check(username: str = Depends(verify_admin)):
 
     return {
         "models": models_list,
+        "orphaned": orphaned,
         "summary": {
             "total": total,
             "on_disk": on_disk,
@@ -1207,6 +1235,7 @@ async def models_check(username: str = Depends(verify_admin)):
             "downloadable": downloadable,
             "gated_needs_action": gated_needs_action,
             "hf_token_set": bool(HF_TOKEN),
+            "orphaned": len(orphaned),
         },
     }
 

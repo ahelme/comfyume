@@ -1114,7 +1114,7 @@ body {
           <span>Workflow Templates</span>
           <div style="display:flex;gap:6px">
             <button class="btn primary" onclick="loadTemplates()">Scan</button>
-            <button class="btn" id="btn-check-dl" onclick="checkModels()" style="display:none">Check Downloads</button>
+            <button class="btn" id="btn-check-dl" onclick="checkModels()" style="display:none">Check Models</button>
             <button class="btn primary" id="btn-dl-all" onclick="downloadAllMissing()" style="display:none">Download All Missing</button>
           </div>
         </div>
@@ -1713,8 +1713,8 @@ async function loadTemplates() {
     document.getElementById('tpl-disk-free').textContent = disk.free_gb != null ? disk.free_gb + '' : '?';
     document.getElementById('tpl-disk-label').textContent = disk.free_gb != null ? 'GB free of ' + disk.total_gb + ' GB' : 'GB available';
 
-    // Show "Check Downloads" button if there are missing models
-    document.getElementById('btn-check-dl').style.display = totalMissing > 0 ? '' : 'none';
+    // Show "Check Downloads" button (also checks for orphaned models)
+    document.getElementById('btn-check-dl').style.display = '';
 
     if (workflows.length === 0) {
       panel.innerHTML = '<div class="empty-state">No workflow JSON files found in /workflows.</div>';
@@ -1913,6 +1913,22 @@ async function checkModels() {
         const path = (m.directory ? m.directory + '/' : '') + m.filename;
         return `<div class="tpl-model-row">
           <span class="tpl-badge on-disk">on disk</span>
+          <span class="tpl-model-path">${esc(path)}</span>
+          <span class="tpl-size">${m.file_size_human ? esc(m.file_size_human) : ''}</span>
+        </div>`;
+      }).join('');
+    }
+
+    // Orphaned (on disk but not referenced by any workflow)
+    const orphaned = data.orphaned || [];
+    if (orphaned.length > 0) {
+      const orphanSize = orphaned.reduce((sum, m) => sum + (m.file_size || 0), 0);
+      html += `<div style="font-size:12px;color:var(--accent-amber);margin:16px 0 8px;font-weight:600">ORPHANED - NOT IN ANY WORKFLOW (${orphaned.length} files, ${humanSize(orphanSize)})</div>`;
+      html += `<div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">These model files are on disk but not referenced by any workflow template. They may be safe to delete.</div>`;
+      html += orphaned.map(m => {
+        const path = (m.directory ? m.directory + '/' : '') + m.filename;
+        return `<div class="tpl-model-row">
+          <span class="tpl-badge" style="background:rgba(245,158,11,0.15);color:var(--accent-amber)">orphan</span>
           <span class="tpl-model-path">${esc(path)}</span>
           <span class="tpl-size">${m.file_size_human ? esc(m.file_size_human) : ''}</span>
         </div>`;
