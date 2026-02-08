@@ -19,12 +19,22 @@ Newest at top. One line per commit. No fluff. Link issues.
 
 - [TEST] 6721430 docs: update CLAUDE.md with Mello staging role and aiworkshop.art links (#71)
 - [TEST] 07032a2 feat: add Mello container cleanup script (#71)
+- [ADMIN] PENDING feat: add Templates & Models management tab to admin panel (#88)
+- [MELLO] (no comfyume commit) fix: R2 creds, backup cron, wiki pages, model storage plan (#87, #88)
+- [SCRIPTS] 8261a19 fix: backup-cron --backup-to-scratch flag (#87)
+- [SCRIPTS] e0b4a72 fix: persist AWS/R2 credentials in restore script
+- [ADMIN] 3ac3f56 docs: move user prefs to bottom of CLAUDE.md, add branch rule (#22)
+- [ADMIN] cd89b53 docs: update progress files - sync with main, close issues (#65, #66, #67)
+- [ADMIN] -- debugged admin auth on Verda (URL-encoded password), generated corrected user magic links
+- [ADMIN] -- restore-verda-instance.sh: Termius keys, root→dev key copy, full .env sync, MELLO_PUBLIC_IP (PR #32)
+- [ADMIN] -- copied commands to claude-settings/all-teams/commands/ in private scripts repo
 - [ADMIN] -- merged 34 commits from main, resolved merge conflict in resume file
 - [MELLO] bb838ce feat: add /update-progress command for team-aware progress updates (#22) - PR #81
 - [MELLO] 367c36f feat: add /pull-main command to merge latest main into current branch - PR #82
 
 ## 2026-02-07
 
+- [MELLO] a9c3c42 fix: admin routing, QM event loop block, health check IPv6 (#64)
 - [TEST] 5dbfad0 docs: update README with serverless architecture (#22)
 - [TEST] e5ee2a5 docs: update worker README with serverless note (#22)
 - [TEST] 849ef58 docs: update .env.example to v0.3.5 with serverless config (#22)

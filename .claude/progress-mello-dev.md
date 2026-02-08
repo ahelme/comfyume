@@ -43,28 +43,54 @@
 ---
 ## 1. PRIORITY TASKS
 
-🟡 **(CURRENT) - comfyume #64 - Restore script fixes**
-    - Created: 2026-02-05 | Updated: 2026-02-07
-    - Admin 404 FIXED, QM health FIXED, security audit PASSED
-    - **REMAINING:** Update restore-verda-instance.sh for issues found (see GH #64 comments)
-    - **REMAINING:** Set INFERENCE_MODE=serverless in Verda .env (currently defaults to local)
+🔴 **(CURRENT) - comfyume #88 - Download models to new block storage + backup rewrite**
+    - Created: 2026-02-08
+    - New block storage provisioned, will mount at `/mnt/sfs` for compatibility
+    - Download 91GB models from R2 overnight
+    - Phase 2: rewrite backup scripts (may assign to another team)
+    - INFERENCE_MODE=serverless now set in Verda .env
+
+🟡 **(NEXT) - comfyume #87 - Backup cron + R2 upload fixes**
+    - Created: 2026-02-08
+    - Cron installed with `--backup-to-scratch`, R2 creds fixed
+    - `upload-backups-to-r2.sh` not yet deployed to new Verda
+    - Mello SSH trigger needs key setup
 
 🟡 **(NEXT) - comfyume #18 - End-to-end job submission test**
     - Tests: frontend → queue-manager → serverless → output
-    - Verda is live, need INFERENCE_MODE=serverless first
+    - Blocked on models being available on Verda
 
 🟡 **(NEXT) - comfyume #71 - Downgrade Mello VPS after Verda stable**
     - Created: 2026-02-07
-    - Verda is stable now, can proceed
 
 🔵 **(PENDING) - comfyume #20 - Workshop readiness checklist**
-    - Final validation before workshop
 
   **Medium-term:**
     - Issue #19: Multi-user load test (20 concurrent users)
 ---
 
 # Progress Reports
+
+---
+
+## Progress Report 39 - 2026-02-08 - R2 creds, backup cron, wiki, model storage plan
+
+**Date:** 2026-02-08 | **Issues:** #64, #87, #88
+
+**Done:**
+- Fixed R2 credentials missing on Verda (restore script only exported, never persisted to `~/.aws/`)
+- Patched restore-verda-instance.sh to persist AWS creds (scripts repo `e0b4a72`)
+- Deployed fresh `.env` from scripts repo to Verda (with Verda-specific overrides)
+- INFERENCE_MODE=serverless now set on Verda
+- Installed backup-cron.sh on Verda with `--backup-to-scratch` flag (#87)
+- Created `--backup-to-scratch` flag (explicit, not silent fallback)
+- Created wiki: Storage Status, Backups Cron Jobs, Backups Scripts comparison
+- Set up `/home/dev/projects/comfyume-wiki/` on mello for wiki editing
+- Updated GH #64 with session 38 fixes
+- Created GH #87 (backup cron not installed) and #88 (models + backup rewrite)
+
+**Decision:** New block storage provisioned, will mount at `/mnt/sfs` for path compatibility.
+Download models from R2 overnight. Server currently shut down for storage attachment.
 
 ---
 
