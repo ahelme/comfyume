@@ -71,13 +71,23 @@
 # Progress Reports
 
 ---
-## Progress Report 4 - 2026-02-08 - Sync with main
+## Progress Report 4 - 2026-02-08 - Verda debugging, restore script improvements, CLAUDE.md updates
 
 **Date:** 2026-02-08
 
 **Done:**
 - Merged 34 commits from main into `admin-panel-team` (fast-forward after stash)
 - Resolved merge conflict in `.claude/CLAUDE-RESUME-ADMIN-PANEL-TEAM.md`
+- SSHed into Verda production (95.216.229.236) to debug admin panel auth
+  - Root cause: browser URL-encoding `/` as `%2F` in password
+  - Auth works fine server-side (curl 200), nginx logs confirmed password mismatch from encoded input
+  - Generated corrected magic links for all 20 users (fixed domain + URL encoding)
+- Copied fresh `.env` from Mello scripts repo to Verda `~/comfyume/.env`
+- Copied SSH authorized_keys from root to dev user on Verda (was missing mac + termius keys)
+- **Private scripts repo (comfymulti-scripts):**
+  - `restore-verda-instance.sh`: added Termius SSH keys, copy keys root→dev, full .env v0.3.5 sync, added MELLO_PUBLIC_IP (PR #32 merged)
+  - Created `claude-settings/all-teams/commands/` with all 12 command files
+- CLAUDE.md: moved User Preferences to bottom, added "never push directly to main" rule to git workflow + user prefs
 
 **Notable changes from main:**
 - New testing-scripts-team with test suites (connectivity, serverless, integration)
