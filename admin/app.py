@@ -1206,6 +1206,7 @@ async def models_check(username: str = Depends(verify_admin)):
             "missing": missing,
             "downloadable": downloadable,
             "gated_needs_action": gated_needs_action,
+            "hf_token_set": bool(HF_TOKEN),
         },
     }
 

@@ -1858,7 +1858,7 @@ async function checkModels() {
     if (summary.gated_needs_action > 0) {
       html += `<div style="padding:12px;margin-bottom:12px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:var(--radius);font-size:12px;color:var(--accent-amber)">
         ${summary.gated_needs_action} model(s) require license acceptance on HuggingFace before downloading.
-        ${HF_TOKEN ? '' : ' Set HF_TOKEN in .env for authenticated downloads.'}
+        ${summary.hf_token_set ? '' : ' Set HF_TOKEN in .env for authenticated downloads.'}
       </div>`;
     }
 
