@@ -23,6 +23,10 @@ Newest at top. One line per commit. No fluff. Link issues.
 
 ## 2026-02-07
 
+- [TEST] 5dbfad0 docs: update README with serverless architecture (#22)
+- [TEST] e5ee2a5 docs: update worker README with serverless note (#22)
+- [TEST] 849ef58 docs: update .env.example to v0.3.5 with serverless config (#22)
+- [TEST] c21cdc3 chore: archive obsolete GPU deployment scripts (#22)
 - [MELLO] a9d7cd2 fix: admin routing, QM event loop block, health check IPv6 (#64)
 - [MELLO] bc647b2 fix: nginx auth, CORS domain, user-maps include for Verda restore (#64)
 - [MELLO] 367c36f feat: add /pull-main command (#22) - PR #82
