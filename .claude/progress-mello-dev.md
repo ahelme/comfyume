@@ -43,28 +43,19 @@
 ---
 ## 1. PRIORITY TASKS
 
-🔴 **(CURRENT) - comfyume #64 - Set up Verda CPU instance as production app server**
+🟡 **(CURRENT) - comfyume #64 - Restore script fixes**
     - Created: 2026-02-05 | Updated: 2026-02-07
-    - restore-verda-instance.sh v0.4.0 DONE (ea6549b, private scripts repo)
-    - All doc refs updated across repo (PR #72 merged, PR #73 merged)
-    - Stale .claude files archived (#22)
-    - Issue #22 re-assessed: 2 scripts to archive, .env.example + READMEs to update
-    - **NEXT:** Run restore script on Verda (`--skip-sfs` if SFS still blocked)
-    - **NEXT:** Verify aiworkshop.art, /admin/, /user001-020/ all respond
+    - Admin 404 FIXED, QM health FIXED, security audit PASSED
+    - **REMAINING:** Update restore-verda-instance.sh for issues found (see GH #64 comments)
+    - **REMAINING:** Set INFERENCE_MODE=serverless in Verda .env (currently defaults to local)
 
-🟡 **(BLOCKED) - comfyume #71 - Downgrade Mello VPS after Verda stable**
-    - Created: 2026-02-07
-    - Blocked until Verda CPU instance fully operational
-
-✅ **(COMPLETE) - comfyume #54 - Workflow Save/Load 405 Error FIXED**
-    - Completed: 2026-02-05
-
-✅ **(COMPLETE) - comfyume #62 - Serverless Inference - ALL 4 GPU DEPLOYMENTS**
-    - Completed: 2026-02-04
-
-🟡 **(AFTER VERDA SETUP) - comfyume #18 - End-to-end job submission test**
+🟡 **(NEXT) - comfyume #18 - End-to-end job submission test**
     - Tests: frontend → queue-manager → serverless → output
-    - Blocked until Verda CPU instance is running
+    - Verda is live, need INFERENCE_MODE=serverless first
+
+🟡 **(NEXT) - comfyume #71 - Downgrade Mello VPS after Verda stable**
+    - Created: 2026-02-07
+    - Verda is stable now, can proceed
 
 🔵 **(PENDING) - comfyume #20 - Workshop readiness checklist**
     - Final validation before workshop
@@ -77,26 +68,63 @@
 
 ---
 
-## Progress Report 36 - 2026-02-07 - Resume/handover file cleanup + smart hooks
+## Progress Report 38 - 2026-02-07 - Admin routing, QM event loop, security audit
 
-**Date:** 2026-02-07 | **Issues:** #22, #8 | **PRs:** #76, #78
+**Date:** 2026-02-07 | **Issues:** #64
 
 **Done:**
-- Fixed broken file paths in all resume-context commands (missing `.claude/` prefix)
-- Fixed broken paths in Verda resume (progress file, admin guide, ARCHITECTURE-ASCII)
-- Archived outdated `docs/ARCHITECTURE-ASCII.md` to `docs/archive/`
-- Removed stale issue #7 refs from Verda handover + resume
-- Slimmed all 4 resume files from ~80-130 lines to ~45 lines (removed duplicated arch/deployment content)
-- Standardised KEY FILES across all teams to: CLAUDE.md, progress file, all-teams log
-- Fixed testing-scripts resume-context (missing `.claude/` prefix, created by another team)
-- Created `~/.claude/team-detect.sh` — smart hook that maps project dir to team resume/handover
-- Updated `~/.claude/settings.json` hooks to use team-detect.sh (auto-detects team on SessionStart/PreCompact)
+- Fixed admin /admin/ 404: nginx `proxy_pass` needed trailing slash to strip prefix
+- Fixed queue-manager unhealthy: `pubsub.listen()` blocked async event loop → replaced with non-blocking `get_message()` polling
+- Fixed docker-compose health check: `localhost` → `127.0.0.1` (IPv6 avoidance)
+- Fixed admin auth: updated ADMIN_PASSWORD in Verda .env (was `dummy`)
+- Security audit PASSED: all endpoints locked behind auth, only /health open
+- Updated GH issue #64 with session 38 details
+
+**Note:** INFERENCE_MODE not set in Verda .env → defaults to `local`. Need `serverless` for production.
+
+---
+
+## Progress Report 37 - 2026-02-07 - Verda restore complete + auth lockdown
+
+**Date:** 2026-02-07 | **Issues:** #64 | **PRs:** #83
+
+**Done:**
+- Ran restore-verda-instance.sh on Verda with `--skip-sfs` (SFS blocked, support unresponsive)
+- Script cloned from GitHub, built containers from source (comfyume v0.11.0)
+- Fixed 9 issues during restore (see GH #64 comments for full details):
+  - Wrong git remote (comfy-multi → comfyume), old Dockerfile (v0.8.2 → v0.11.0)
+  - `requests` missing, `${DOMAIN}` undefined, `user-maps.conf` not included
+  - REDIS_HOST pointed to Mello, host nginx blocked port 80, worker failed (no GPU)
+- 24/24 containers healthy: 20 frontends + nginx + redis + queue-manager + admin
+- HTTP Basic Auth enabled from old instance .htpasswd backup
+- DNS updated: aiworkshop.art → 95.216.229.236
+- Disk cleaned: removed old per-user images + worker image (33GB free)
+
+**Remaining:**
+- Admin /admin/ returns 404 through nginx (container healthy, routing issue)
+- Restore script needs updates for issues found (exclude worker on CPU, disable host nginx, etc.)
+
+---
+
+## Progress Report 36 - 2026-02-07 - Resume/handover file cleanup + smart hooks
+
+**Date:** 2026-02-07 | **Issues:** #22, #8 | **PRs:** #76, #78, #79, #80, #81, #82
+
+**Done:**
+- Fixed broken file paths in all resume-context + handover commands
+- Archived `docs/ARCHITECTURE-ASCII.md`, removed stale issue #7 refs
+- Slimmed all 4 resume files to ~45 lines (removed duplicated arch/deployment content)
+- Created `~/.claude/team-detect.sh` — auto-detects team from project dir for SessionStart hook
+- Removed PreCompact hook (doesn't work — runs during compact, not before it)
+- Created `/update-progress` and `/pull-main` slash commands
 - Added gh CLI Projects Classic workaround to CLAUDE.md
 - Updated issue #8 with hook changes
+- Private scripts repo (PR #30): daily R2 upload at 2am, rotation (max 10 dated copies), fix `.eu.` endpoint in backup-verda.sh, restore script prompts for R2 backup
 
 **NEXT:**
-- Add daily R2 upload + rotation to backup scripts (private scripts repo)
-- Run restore-verda-instance.sh on Verda
+- Run restore-verda-instance.sh on Verda (#64)
+- Merge private scripts PR #30
+- Issue #22 cleanup: archive 2 obsolete scripts, update .env.example + READMEs
 
 ---
 

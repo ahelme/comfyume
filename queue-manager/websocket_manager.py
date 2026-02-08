@@ -71,13 +71,17 @@ class WebSocketManager:
                     logger.info("Started Redis pub/sub listener")
                     retry_count = 0  # Reset on successful connection
 
-                    for message in self.pubsub.listen():
-                        if message['type'] == 'message':
+                    while True:
+                        # Non-blocking poll: wait up to 0.1s for a message,
+                        # then yield to the event loop so health checks etc. work
+                        message = self.pubsub.get_message(timeout=0.1)
+                        if message and message['type'] == 'message':
                             try:
                                 data = json.loads(message['data'])
                                 await self.broadcast(data)
                             except json.JSONDecodeError as e:
                                 logger.error(f"Failed to decode Redis message: {e}")
+                        await asyncio.sleep(0.01)
 
                 except Exception as e:
                     retry_count += 1

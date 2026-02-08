@@ -1,5 +1,5 @@
 **Project:** ComfyuME | **Repo:** github.com/ahelme/comfyume
-**Doc Updated:** 2026-02-07
+**Doc Updated:** 2026-02-08
 
 # All-Teams Progress (Ultra-Concise Commit Log)
 
@@ -15,15 +15,29 @@ Newest at top. One line per commit. No fluff. Link issues.
 
 ---
 
+## 2026-02-08
+
+- [ADMIN] -- merged 34 commits from main, resolved merge conflict in resume file
+- [MELLO] bb838ce feat: add /update-progress command for team-aware progress updates (#22) - PR #81
+- [MELLO] 367c36f feat: add /pull-main command to merge latest main into current branch - PR #82
+
 ## 2026-02-07
 
 - [TEST] 5dbfad0 docs: update README with serverless architecture (#22)
 - [TEST] e5ee2a5 docs: update worker README with serverless note (#22)
 - [TEST] 849ef58 docs: update .env.example to v0.3.5 with serverless config (#22)
 - [TEST] c21cdc3 chore: archive obsolete GPU deployment scripts (#22)
+- [MELLO] a9d7cd2 fix: admin routing, QM event loop block, health check IPv6 (#64)
+- [MELLO] bc647b2 fix: nginx auth, CORS domain, user-maps include for Verda restore (#64)
+- [MELLO] 367c36f feat: add /pull-main command (#22) - PR #82
+- [MELLO] bb838ce feat: add /update-progress command (#22) - PR #81
+- [MELLO] 5b0c8ec docs: session 36 progress - resume/handover cleanup, smart hooks (#22, #8) - PR #80
+- [ADMIN] -- closed GH issues #65, #66, #67 with implementation comments referencing PR #69
+
 - [MELLO] 7664d83 docs: add gh CLI Projects Classic workaround to CLAUDE.md (#22) - PR #79
 - [MELLO] 5ba904e chore: slim down all resume files, fix testing-scripts paths (#22) - PR #78
 - [MELLO] 66a6fe0 chore: fix file paths in resume/handover files, archive ARCHITECTURE-ASCII (#22) - PR #76
+- [MELLO] 9e7ff1f feat: daily R2 upload with rotation, max 10 copies [private scripts repo]
 - [TEST] -- PR #75 created, issue #6 updated and closed
 - [TEST] 421e989 docs: update testing-scripts-team progress (#6)
 - [TEST] 0731e29 fix: update docker-compose references across scripts (#6)
@@ -45,8 +59,10 @@ Newest at top. One line per commit. No fluff. Link issues.
 
 ## 2026-02-06
 
+- [ADMIN] bbffd11 docs: add all-teams ultra-concise commit log, link from all handover/resume files
 - [ADMIN] e8787bf feat: admin dashboard v2 - system status, GPU switching, storage mgmt (#65, #66, #67)
 - [ADMIN] -- team initialized: progress file, handover, resume context, onboarding
+- [ADMIN] -- PR #69: https://github.com/ahelme/comfyume/pull/69
 - [MELLO] f134ff5 docs: session 33 - Verda CPU instance provisioned, handover update
 - [MELLO] d0fd975 docs: CRITICAL - aiworkshop.art PRODUCTION is on Verda, not Mello
 - [MELLO] -- provisioned Verda CPU instance soft-wolf-shines-fin-01 (CPU.8V.32G, €34/mth) (#64)
