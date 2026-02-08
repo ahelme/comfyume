@@ -17,6 +17,7 @@ Newest at top. One line per commit. No fluff. Link issues.
 
 ## 2026-02-08
 
+- [ADMIN] PENDING feat: add Templates & Models management tab to admin panel (#88)
 - [MELLO] (no comfyume commit) fix: R2 creds, backup cron, wiki pages, model storage plan (#87, #88)
 - [SCRIPTS] 8261a19 fix: backup-cron --backup-to-scratch flag (#87)
 - [SCRIPTS] e0b4a72 fix: persist AWS/R2 credentials in restore script
