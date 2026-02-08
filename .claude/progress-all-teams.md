@@ -24,6 +24,10 @@ Newest at top. One line per commit. No fluff. Link issues.
 - [ADMIN] 296d69e feat: add Templates & Models management tab to admin panel (#88)
 - [ADMIN] -- deployed #88 to Verda, built admin container, nginx reload, initial testing looks great
 - [ADMIN] -- fix: REDIS_BIND_IP + INFERENCE_SERVER_REDIS_HOST → Verda Tailscale IP (private scripts 8259d60)
+- [SCRIPTS] 9b66c7c feat: add Portainer edge agent startup to restore script v0.4.1 [private scripts repo]
+- [TEST] 6721430 docs: update CLAUDE.md with Mello staging role and aiworkshop.art links (#71)
+- [TEST] 07032a2 feat: add Mello container cleanup script (#71)
+- [ADMIN] PENDING feat: add Templates & Models management tab to admin panel (#88)
 - [MELLO] (no comfyume commit) fix: R2 creds, backup cron, wiki pages, model storage plan (#87, #88)
 - [SCRIPTS] 8261a19 fix: backup-cron --backup-to-scratch flag (#87)
 - [SCRIPTS] e0b4a72 fix: persist AWS/R2 credentials in restore script

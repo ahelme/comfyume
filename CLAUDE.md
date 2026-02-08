@@ -14,7 +14,7 @@
 | Server | Domain | Role | Status |
 |--------|--------|------|--------|
 | **VERDA** | aiworkshop.art | **PRODUCTION** | nginx, queue-manager, Redis → serverless |
-| MELLO | comfy.ahelme.net | Has containers but NOT primary | 20 frontends exist but traffic goes to Verda |
+| MELLO | comfy.ahelme.net | Staging/backup only | Containers removed (#71), backup scripts, Tailscale node |
 
 **DO NOT DELETE VERDA without migrating aiworkshop.art back to Mello first!**
 
@@ -154,10 +154,10 @@ latent_upscale_models/ltx-2-spatial-upscaler-x2-1.0.safetensors
 - Comprehensive backup routines (scripts on private repo)
 
 ### Quick Links
-- **Production:** https://comfy.ahelme.net/
-- **Health Check:** https://comfy.ahelme.net/health
-- **Admin Dashboard:** https://comfy.ahelme.net/admin
-- **API:** https://comfy.ahelme.net/api/queue/status
+- **Production:** https://aiworkshop.art/
+- **Health Check:** https://aiworkshop.art/health
+- **Admin Dashboard:** https://aiworkshop.art/admin
+- **API:** https://aiworkshop.art/api/queue/status
 
 ---
 
@@ -286,7 +286,7 @@ Ensure these details are listed the top of ALL .md documentation files:
 **Project Desc:** ComfyUI Multi-User Workshop Platform
 **Project Started:** 2026-01-02
 **Repository:** github.com/ahelme/comfyume
-**Domain:** comfy.ahelme.net
+**Domain:** aiworkshop.art (production) / comfy.ahelme.net (staging)
 **Doc Created:** 2026-01-02
 **Doc Updated:** 2026-02-01
 
@@ -310,24 +310,28 @@ Ensure these details are listed the top of ALL .md documentation files:
 ## 🏗️ Architecture Overview
 
 ```
-  Split Server Architecture:
+  Current Architecture:
   ┌─────────────────────────────────────────┐
-  │ Hetzner VPS (comfy.ahelme.net)          │
+  │ Verda CPU Instance (aiworkshop.art)     │
   │  - Nginx (HTTPS, SSL)                   │
   │  - Redis (job queue)                    │
   │  - Queue Manager (FastAPI)              │
   │  - Admin Dashboard                      │
   │  - User Frontends x20 (UI only)         │
   └──────────────┬──────────────────────────┘
-                 │ Network
-                 │ (Redis connection)
+                 │ HTTP (serverless)
   ┌──────────────▼──────────────────────────┐
-  │ Remote GPU (Verda) instance/serverless  │
-  │  - Worker 1 (ComfyUI + GPU)             │
-  │  - Worker 2 (ComfyUI + GPU) [optional]  │
-  │  - Worker 3 (ComfyUI + GPU) [optional]  │
-  │                                         │
-  │  REDIS_HOST=comfy.ahelme.net            │
+  │ DataCrunch Serverless Containers        │
+  │  - H200 141GB (spot / on-demand)        │
+  │  - B300 288GB (spot / on-demand)        │
+  │  INFERENCE_MODE=serverless              │
+  └─────────────────────────────────────────┘
+
+  Mello (comfy.ahelme.net) — staging/backup only
+  ┌─────────────────────────────────────────┐
+  │  - Tailscale node (100.99.216.71)       │
+  │  - Backup scripts (comfymulti-scripts)  │
+  │  - Git repos, SSH                       │
   └─────────────────────────────────────────┘
 
 Code Architecture:
@@ -382,14 +386,13 @@ NO (you guessed it) BOASTING!!!
 
 ## 🛠️ Technology Stack
 
-### Development & Production Servers
-- **'mello' (dev & app server)**: Hetzner VPS CAX31 - Ubuntu
-  - Ampere® 8 vCPU, 16GB RAM, 80GB SSD
-  - €12.49/month
-  - Runs: app frontends, queue-manager, Redis, nginx
-- **'verda' (inference server)**: GPU cloud (renewable energy & EU policy)
-  - Rented GPU instance OR serverless containers
-  - Runs: ComfyUI workers with GPU
+### Servers
+- **'verda' (production app server)**: Verda CPU instance (aiworkshop.art)
+  - Runs: nginx, queue-manager, Redis, admin, 20 user frontends
+  - Inference: serverless containers on DataCrunch (H200/B300)
+- **'mello' (staging/backup)**: Hetzner VPS CAX31 - Ubuntu
+  - Ampere® 8 vCPU, 16GB RAM, 80GB SSD (pending downgrade — #71)
+  - Runs: backup scripts, Tailscale, git repos (containers removed)
 - **Local dev machine**: MBP M4 Pro 48GB RAM
 
 ### Backups
@@ -572,7 +575,7 @@ sudo ufw status
 
 ### SSL/TLS
 - **Provider:** Existing ahelme.net certificate
-- **Domain:** comfy.ahelme.net
+- **Domain:** aiworkshop.art (production), comfy.ahelme.net (staging)
 - **Expiry:** 2026-04-10
 - **Protocols:** TLSv1.2, TLSv1.3
 
@@ -902,7 +905,7 @@ This preserves the expected IP: **100.89.38.43**
 ### Deployment Prerequisites Checklist
 
 Before starting, verify:
-- [ ] mello VPS is running (comfy.ahelme.net)
+- [ ] mello VPS is running (staging/backup — comfy.ahelme.net)
 - [ ] R2: **Models bucket** (`comfyume-model-vault-backups`) contains:
   - [ ] `checkpoints/*.safetensors` (~25-50 GB)
   - [ ] `text_encoders/*.safetensors` (~20 GB)
@@ -960,4 +963,4 @@ Before each session ends:
 
 ---
 
-**Last Updated:** 2026-02-08 (AEST)
+**Last Updated:** 2026-02-08 (AEST) — Mello role updated to staging/backup (#71)
