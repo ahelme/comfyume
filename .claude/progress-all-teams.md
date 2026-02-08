@@ -17,6 +17,7 @@ Newest at top. One line per commit. No fluff. Link issues.
 
 ## 2026-02-08
 
+- [TEST] 3fa1c0e feat: add model download engine to admin panel (#93, #88)
 - [SCRIPTS] 9b66c7c feat: add Portainer edge agent startup to restore script v0.4.1 [private scripts repo]
 - [TEST] 6721430 docs: update CLAUDE.md with Mello staging role and aiworkshop.art links (#71)
 - [TEST] 07032a2 feat: add Mello container cleanup script (#71)

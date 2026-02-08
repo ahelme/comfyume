@@ -221,6 +221,9 @@ services:
       - R2_ENDPOINT=${R2_ENDPOINT:-}
       - R2_ACCESS_KEY_ID=${R2_ACCESS_KEY_ID:-}
       - R2_SECRET_ACCESS_KEY=${R2_SECRET_ACCESS_KEY:-}
+      # Model downloads (Phase 4)
+      - HF_TOKEN=${HF_TOKEN:-}
+      - NTFY_TOPIC=${NTFY_TOPIC:-}
     volumes:
       # Docker socket for container management (Phase 1)
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -229,7 +232,7 @@ services:
       # Storage volumes for directory browser (Phase 3)
       - ${OUTPUTS_PATH:-./data/outputs}:/outputs:ro
       - ${INPUTS_PATH:-./data/inputs}:/inputs:ro
-      - ${MODELS_PATH:-./data/models}/shared:/models:ro
+      - ${MODELS_PATH:-./data/models}/shared:/models
       - ${WORKFLOWS_PATH:-./data/workflows}:/workflows:ro
     depends_on:
       queue-manager:

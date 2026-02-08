@@ -19,3 +19,6 @@ redis==5.2.1
 
 # AWS S3-compatible client for R2 storage (Phase 3 - Issue #67)
 boto3==1.35.86
+
+# SSE for model download progress streaming (Phase 4 - Issue #88)
+sse-starlette==2.2.1
