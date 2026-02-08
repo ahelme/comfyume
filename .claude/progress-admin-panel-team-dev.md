@@ -61,15 +61,14 @@
     - R2 bucket overview (objects count + sizes via boto3)
     - Directory browser with breadcrumb navigation (restricted to /outputs, /inputs, /models, /workflows)
 
-🔄 **(IN PROGRESS) - comfyume #88 - Templates & Models Management (Phase 4)**
-    - Created: 2026-02-08
+🔄 **(IMPLEMENTED - AWAITING FULL TEST) - comfyume #88 - Templates & Models Management (Phase 4)**
+    - Created: 2026-02-08 | Updated: 2026-02-08
     - Templates tab: scan workflow JSONs, extract model deps, show on-disk status
     - Copy wget commands for missing models
     - 2 new endpoints: GET /api/templates/scan, GET /api/templates/models
-
-🟡 **(PENDING) - Deploy & test on Verda (aiworkshop.art)**
-    - Rebuild admin container on Verda
-    - Test all 5 tabs with live data
+    - Deployed to Verda, admin container healthy, API verified working
+    - Initial browser testing looks great
+    - Need to connect models on block storage (mounted at /mnt/sfs) to verify on-disk detection
 
 ---
 
@@ -95,6 +94,12 @@
   - Disk usage bar
 - Tested model extraction against all 5 workflow files - correct results
 - No new dependencies, no Docker changes needed
+- Deployed to Verda: fetched branch, built admin container, restarted
+- Fixed REDIS_BIND_IP and INFERENCE_SERVER_REDIS_HOST: Mello IP (100.99.216.71) → Verda Tailscale IP (100.89.38.43)
+  - Updated on Verda live .env + private scripts repo .env (comfymulti-scripts 8259d60)
+  - Best practice: bind Redis to Tailscale interface only (serverless containers connect via Tailscale)
+- Reloaded nginx to pick up new admin container IP after recreation
+- Initial browser testing looks great, need /mnt/sfs models mount to verify on-disk detection
 
 ---
 ## Progress Report 4 - 2026-02-08 - Verda debugging, restore script improvements, CLAUDE.md updates
