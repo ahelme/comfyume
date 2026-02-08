@@ -17,6 +17,13 @@ Newest at top. One line per commit. No fluff. Link issues.
 
 ## 2026-02-08
 
+- [ADMIN] f9526fb docs: add workflow template reference with model inventory and camera LoRAs (#88)
+- [ADMIN] -- downloaded 21 models (172GB) to /mnt/sfs: 3 Flux Klein, 7 camera LoRAs, LTX-2 distilled, Flux 4B
+- [ADMIN] -- fix: replace symlink storage with direct .env paths, restore script v0.4.2 (private scripts 2a3d444)
+- [ADMIN] -- recreated all 22 containers with correct /mnt/sfs/models mount, Templates tab verified working
+- [ADMIN] 296d69e feat: add Templates & Models management tab to admin panel (#88)
+- [ADMIN] -- deployed #88 to Verda, built admin container, nginx reload, initial testing looks great
+- [ADMIN] -- fix: REDIS_BIND_IP + INFERENCE_SERVER_REDIS_HOST → Verda Tailscale IP (private scripts 8259d60)
 - [SCRIPTS] 9b66c7c feat: add Portainer edge agent startup to restore script v0.4.1 [private scripts repo]
 - [TEST] 6721430 docs: update CLAUDE.md with Mello staging role and aiworkshop.art links (#71)
 - [TEST] 07032a2 feat: add Mello container cleanup script (#71)
