@@ -1114,7 +1114,7 @@ body {
           <span>Workflow Templates</span>
           <div style="display:flex;gap:6px">
             <button class="btn primary" onclick="loadTemplates()">Scan</button>
-            <button class="btn" id="btn-check-dl" onclick="checkModels()" style="display:none">Check Downloads</button>
+            <button class="btn" id="btn-check-dl" onclick="checkModels()" style="display:none">Check Models</button>
             <button class="btn primary" id="btn-dl-all" onclick="downloadAllMissing()" style="display:none">Download All Missing</button>
           </div>
         </div>
@@ -1713,8 +1713,8 @@ async function loadTemplates() {
     document.getElementById('tpl-disk-free').textContent = disk.free_gb != null ? disk.free_gb + '' : '?';
     document.getElementById('tpl-disk-label').textContent = disk.free_gb != null ? 'GB free of ' + disk.total_gb + ' GB' : 'GB available';
 
-    // Show "Check Downloads" button if there are missing models
-    document.getElementById('btn-check-dl').style.display = totalMissing > 0 ? '' : 'none';
+    // Show "Check Downloads" button (also checks for orphaned models)
+    document.getElementById('btn-check-dl').style.display = '';
 
     if (workflows.length === 0) {
       panel.innerHTML = '<div class="empty-state">No workflow JSON files found in /workflows.</div>';
