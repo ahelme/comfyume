@@ -60,7 +60,20 @@
 ### Implementation Phase
 **Repository:** comfyume (https://github.com/ahelme/comfyume)
 **Branch:** testing-scripts-team-2
-**Phase:** Issue #71 — Mello cleanup + doc updates
+**Phase:** Restore script updates + maintenance
+
+## Progress Report 6 - 2026-02-08 - Portainer Edge Agent in Restore Script
+
+**Date:** 2026-02-08
+
+**Done:**
+- Updated `restore-verda-instance.sh` v0.4.0 → v0.4.1 (private scripts repo)
+  - Filled in `VERDA_EDGE_ID` and `VERDA_EDGE_KEY` (were empty)
+  - Set `VERDA_PORTAINER_CONNECTION_MODE` to `http2` (was `http`)
+  - Added Step 16: Start Portainer edge agent (`docker run` with EDGE_PROTOCOL=http2, EDGE_INSECURE_POLL=1, --restart always)
+- Commit: 9b66c7c pushed to comfymulti-scripts main
+
+---
 
 ## Progress Report 5 - 2026-02-08 - Issue #71 Mello Cleanup
 
