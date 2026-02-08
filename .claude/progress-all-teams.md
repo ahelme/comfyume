@@ -17,13 +17,16 @@ Newest at top. One line per commit. No fluff. Link issues.
 
 ## 2026-02-08
 
+- [MELLO] (no comfyume commit) fix: R2 creds, backup cron, wiki pages, model storage plan (#87, #88)
+- [SCRIPTS] 8261a19 fix: backup-cron --backup-to-scratch flag (#87)
+- [SCRIPTS] e0b4a72 fix: persist AWS/R2 credentials in restore script
 - [ADMIN] -- merged 34 commits from main, resolved merge conflict in resume file
 - [MELLO] bb838ce feat: add /update-progress command for team-aware progress updates (#22) - PR #81
 - [MELLO] 367c36f feat: add /pull-main command to merge latest main into current branch - PR #82
 
 ## 2026-02-07
 
-- [MELLO] a9d7cd2 fix: admin routing, QM event loop block, health check IPv6 (#64)
+- [MELLO] a9c3c42 fix: admin routing, QM event loop block, health check IPv6 (#64)
 - [MELLO] bc647b2 fix: nginx auth, CORS domain, user-maps include for Verda restore (#64)
 - [MELLO] 367c36f feat: add /pull-main command (#22) - PR #82
 - [MELLO] bb838ce feat: add /update-progress command (#22) - PR #81
