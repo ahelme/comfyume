@@ -3,7 +3,7 @@
 **Repository:** github.com/ahelme/comfyume
 **Domain:** comfy.ahelme.net (staging) / aiworkshop.art (production)
 **Doc Created:** 2026-02-06
-**Doc Updated:** 2026-02-06 (AEST) - Admin Panel Team initialized
+**Doc Updated:** 2026-02-08 (AEST)
 
 ---
 # Project Progress Tracker
@@ -69,6 +69,31 @@
 ---
 
 # Progress Reports
+
+---
+## Progress Report 4 - 2026-02-08 - Sync with main
+
+**Date:** 2026-02-08
+
+**Done:**
+- Merged 34 commits from main into `admin-panel-team` (fast-forward after stash)
+- Resolved merge conflict in `.claude/CLAUDE-RESUME-ADMIN-PANEL-TEAM.md`
+
+**Notable changes from main:**
+- New testing-scripts-team with test suites (connectivity, serverless, integration)
+- `/pull-main` and `/update-progress` commands added
+- Docs archived and cleaned up
+- Resume/handover files slimmed down
+- Restore script renamed to `restore-verda-instance.sh` v0.4.0
+
+---
+## Progress Report 3 - 2026-02-07 - Close GH issues
+
+**Date:** 2026-02-07
+
+**Done:**
+- Commented and closed GitHub issues #65, #66, #67 with implementation details referencing PR #69
+- PR #69 already merged to main
 
 ---
 ### Implementation Phase
