@@ -17,6 +17,13 @@ Newest at top. One line per commit. No fluff. Link issues.
 
 ## 2026-02-08
 
+- [ADMIN] 9132eaf feat: add delete button for orphaned models (#88)
+- [ADMIN] 4341cc6 fix: always show Check Models button after scan (#88)
+- [ADMIN] 9f0aa61 feat: add orphaned model detection to check downloads page (#88)
+- [ADMIN] e924010 fix: resolve HF_TOKEN ReferenceError in check downloads UI (#93)
+- [ADMIN] -- deployed download engine (#93) to Verda, fixed SSL certs, downloaded last missing model
+- [ADMIN] -- disk cleanup: removed 3 legacy models (~34GB), 85%→68% usage
+- [ADMIN] -- fix: copied queue_redirect to all 20 user custom_nodes dirs, restarted containers
 - [TEST] 3fa1c0e feat: add model download engine to admin panel (#93, #88)
 - [ADMIN] f9526fb docs: add workflow template reference with model inventory and camera LoRAs (#88)
 - [ADMIN] -- downloaded 21 models (172GB) to /mnt/sfs: 3 Flux Klein, 7 camera LoRAs, LTX-2 distilled, Flux 4B
