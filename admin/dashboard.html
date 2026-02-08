@@ -1950,6 +1950,22 @@ async function downloadSingleModel(directory, filename, url) {
     toast('A download is already in progress', 'error');
     return;
   }
+  // Pre-check gated status before attempting download
+  try {
+    toast('Checking download access...', 'info');
+    const checkData = await api('/api/models/check');
+    const match = (checkData.models || []).find(
+      m => m.directory === directory && m.filename === filename
+    );
+    if (match && match.gated_info && match.gated_info.gated && !match.gated_info.accessible) {
+      const page = match.gated_info.model_page || '';
+      toast('Model is gated — accept license on HuggingFace first', 'error');
+      if (page) window.open(page, '_blank');
+      return;
+    }
+  } catch (e) {
+    // Check failed — proceed anyway, download will fail with clear error
+  }
   try {
     await api('/api/models/download', {
       method: 'POST',
