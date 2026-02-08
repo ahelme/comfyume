@@ -18,6 +18,9 @@ Newest at top. One line per commit. No fluff. Link issues.
 ## 2026-02-08
 
 - [ADMIN] PENDING feat: add Templates & Models management tab to admin panel (#88)
+- [MELLO] (no comfyume commit) fix: R2 creds, backup cron, wiki pages, model storage plan (#87, #88)
+- [SCRIPTS] 8261a19 fix: backup-cron --backup-to-scratch flag (#87)
+- [SCRIPTS] e0b4a72 fix: persist AWS/R2 credentials in restore script
 - [ADMIN] 3ac3f56 docs: move user prefs to bottom of CLAUDE.md, add branch rule (#22)
 - [ADMIN] cd89b53 docs: update progress files - sync with main, close issues (#65, #66, #67)
 - [ADMIN] -- debugged admin auth on Verda (URL-encoded password), generated corrected user magic links
@@ -29,6 +32,7 @@ Newest at top. One line per commit. No fluff. Link issues.
 
 ## 2026-02-07
 
+- [MELLO] a9c3c42 fix: admin routing, QM event loop block, health check IPv6 (#64)
 - [TEST] 5dbfad0 docs: update README with serverless architecture (#22)
 - [TEST] e5ee2a5 docs: update worker README with serverless note (#22)
 - [TEST] 849ef58 docs: update .env.example to v0.3.5 with serverless config (#22)
