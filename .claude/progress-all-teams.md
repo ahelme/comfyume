@@ -17,6 +17,11 @@ Newest at top. One line per commit. No fluff. Link issues.
 
 ## 2026-02-08
 
+- [ADMIN] 3ac3f56 docs: move user prefs to bottom of CLAUDE.md, add branch rule (#22)
+- [ADMIN] cd89b53 docs: update progress files - sync with main, close issues (#65, #66, #67)
+- [ADMIN] -- debugged admin auth on Verda (URL-encoded password), generated corrected user magic links
+- [ADMIN] -- restore-verda-instance.sh: Termius keys, root→dev key copy, full .env sync, MELLO_PUBLIC_IP (PR #32)
+- [ADMIN] -- copied commands to claude-settings/all-teams/commands/ in private scripts repo
 - [ADMIN] -- merged 34 commits from main, resolved merge conflict in resume file
 - [MELLO] bb838ce feat: add /update-progress command for team-aware progress updates (#22) - PR #81
 - [MELLO] 367c36f feat: add /pull-main command to merge latest main into current branch - PR #82
