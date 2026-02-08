@@ -44,11 +44,10 @@
 ## 1. PRIORITY TASKS
 
 - [x] P1 #6 Testing infrastructure rewrite — MERGED (PR #75)
-- [x] P1 #22 Phase 3: archive scripts, update .env.example, update READMEs
-  - 2026-02-07 DONE
-  - 4 commits on testing-scripts-team-2
-- [ ] P1 #22 Push, create PR for Phase 3 work
-  - 2026-02-07
+- [x] P1 #22 Phase 3: archive scripts, update .env.example, update READMEs — MERGED (PR #85)
+- [x] P1 #71 Mello cleanup script + CLAUDE.md updates
+  - 2026-02-08 DONE
+  - cleanup-mello.sh created, CLAUDE.md updated (Quick Links, architecture, tech stack)
 - [ ] P2 Run test.sh on Verda app server to validate
   - 2026-02-07
   - Requires services running on production
@@ -61,7 +60,18 @@
 ### Implementation Phase
 **Repository:** comfyume (https://github.com/ahelme/comfyume)
 **Branch:** testing-scripts-team-2
-**Phase:** Issue #22 Phase 3 — Doc updates
+**Phase:** Issue #71 — Mello cleanup + doc updates
+
+## Progress Report 5 - 2026-02-08 - Issue #71 Mello Cleanup
+
+**Date:** 2026-02-08
+
+**Done:**
+- Created `scripts/cleanup-mello.sh` — dry-run by default, --execute to remove containers/images
+- Updated CLAUDE.md: Quick Links → aiworkshop.art, architecture diagram → Verda CPU + DataCrunch serverless, tech stack → Mello as staging/backup, server table updated
+- Containers already removed from Mello by user
+
+---
 
 ## Progress Report 4 - 2026-02-07 - Issue #22 Phase 3 Complete
 

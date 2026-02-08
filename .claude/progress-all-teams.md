@@ -17,6 +17,8 @@ Newest at top. One line per commit. No fluff. Link issues.
 
 ## 2026-02-08
 
+- [TEST] 6721430 docs: update CLAUDE.md with Mello staging role and aiworkshop.art links (#71)
+- [TEST] 07032a2 feat: add Mello container cleanup script (#71)
 - [ADMIN] -- merged 34 commits from main, resolved merge conflict in resume file
 - [MELLO] bb838ce feat: add /update-progress command for team-aware progress updates (#22) - PR #81
 - [MELLO] 367c36f feat: add /pull-main command to merge latest main into current branch - PR #82
