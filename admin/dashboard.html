@@ -1919,6 +1919,22 @@ async function checkModels() {
       }).join('');
     }
 
+    // Orphaned (on disk but not referenced by any workflow)
+    const orphaned = data.orphaned || [];
+    if (orphaned.length > 0) {
+      const orphanSize = orphaned.reduce((sum, m) => sum + (m.file_size || 0), 0);
+      html += `<div style="font-size:12px;color:var(--accent-amber);margin:16px 0 8px;font-weight:600">ORPHANED - NOT IN ANY WORKFLOW (${orphaned.length} files, ${humanSize(orphanSize)})</div>`;
+      html += `<div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">These model files are on disk but not referenced by any workflow template. They may be safe to delete.</div>`;
+      html += orphaned.map(m => {
+        const path = (m.directory ? m.directory + '/' : '') + m.filename;
+        return `<div class="tpl-model-row">
+          <span class="tpl-badge" style="background:rgba(245,158,11,0.15);color:var(--accent-amber)">orphan</span>
+          <span class="tpl-model-path">${esc(path)}</span>
+          <span class="tpl-size">${m.file_size_human ? esc(m.file_size_human) : ''}</span>
+        </div>`;
+      }).join('');
+    }
+
     panel.innerHTML = html || '<div class="empty-state">No models found in workflow templates.</div>';
 
   } catch (e) {
