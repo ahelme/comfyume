@@ -17,6 +17,7 @@ Newest at top. One line per commit. No fluff. Link issues.
 
 ## 2026-02-08
 
+- [TEST] 3fa1c0e feat: add model download engine to admin panel (#93, #88)
 - [ADMIN] f9526fb docs: add workflow template reference with model inventory and camera LoRAs (#88)
 - [ADMIN] -- downloaded 21 models (172GB) to /mnt/sfs: 3 Flux Klein, 7 camera LoRAs, LTX-2 distilled, Flux 4B
 - [ADMIN] -- fix: replace symlink storage with direct .env paths, restore script v0.4.2 (private scripts 2a3d444)

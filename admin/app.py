@@ -5,19 +5,23 @@ Phase 1: System Status, Container Management (Issue #65)
 Phase 2: GPU Deployment Switching (Issue #66)
 Phase 3: Storage & R2 Management (Issue #67)
 Phase 4: Templates & Models Management (Issue #88)
+Phase 4b: Model Download Engine (Issue TBD)
 """
+import asyncio
 import logging
 import secrets
 import shutil
 import os
 import json
+import time
 from pathlib import Path
 from datetime import datetime, timezone
 from typing import Dict, Any, List, Optional
 
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, Request
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from fastapi.responses import HTMLResponse, JSONResponse
+from sse_starlette.sse import EventSourceResponse
 import httpx
 
 # Optional: Docker SDK for container management
@@ -69,6 +73,11 @@ R2_BUCKETS = [
     "comfyume-worker-container-backups",
     "comfyume-user-files-backups",
 ]
+
+# Model Download Configuration
+HF_TOKEN = os.getenv("HF_TOKEN", "")
+NTFY_TOPIC = os.getenv("NTFY_TOPIC", "")
+MODELS_BASE_PATH = Path("/models")
 
 # GPU Deployment options (serverless via DataCrunch)
 GPU_DEPLOYMENTS = {
@@ -866,6 +875,464 @@ async def templates_models(username: str = Depends(verify_admin)):
                     all_models[key]["url"] = m["url"]
 
     return {"models": list(all_models.values())}
+
+
+# ============================================================================
+# Model Download Engine (Phase 4b)
+# ============================================================================
+
+# Download state — single admin user, in-memory is sufficient
+_download_state: Dict[str, Any] = {
+    "active": False,
+    "cancel_requested": False,
+    "current_file": None,
+    "current_directory": None,
+    "bytes_downloaded": 0,
+    "bytes_total": 0,
+    "files_completed": 0,
+    "files_total": 0,
+    "files_failed": 0,
+    "log": [],
+    "error": None,
+    "started_at": None,
+}
+_download_lock = asyncio.Lock()
+_download_task: Optional[asyncio.Task] = None
+
+
+def _append_log(message: str):
+    """Add timestamped log line to download state."""
+    ts = datetime.now(timezone.utc).strftime("%H:%M:%S")
+    line = f"[{ts}] {message}"
+    _download_state["log"].append(line)
+    # Keep log bounded
+    if len(_download_state["log"]) > 500:
+        _download_state["log"] = _download_state["log"][-300:]
+    logger.info(f"[download] {message}")
+
+
+def _reset_download_state():
+    """Clear state for a new download session."""
+    _download_state.update({
+        "active": False,
+        "cancel_requested": False,
+        "current_file": None,
+        "current_directory": None,
+        "bytes_downloaded": 0,
+        "bytes_total": 0,
+        "files_completed": 0,
+        "files_total": 0,
+        "files_failed": 0,
+        "log": [],
+        "error": None,
+        "started_at": None,
+    })
+
+
+async def _check_hf_gated(url: str) -> Dict[str, Any]:
+    """Check if a HuggingFace URL is gated (requires license acceptance)."""
+    result = {
+        "accessible": False,
+        "gated": False,
+        "needs_token": False,
+        "model_page": None,
+        "content_length": None,
+    }
+
+    if not url or "huggingface.co" not in url:
+        # Non-HF URL — just check if reachable
+        try:
+            resp = await http_client.head(url, follow_redirects=True, timeout=15.0)
+            result["accessible"] = resp.status_code == 200
+            cl = resp.headers.get("content-length")
+            if cl:
+                result["content_length"] = int(cl)
+        except Exception:
+            pass
+        return result
+
+    # Extract model page from HF resolve URL
+    # e.g. https://huggingface.co/Comfy-Org/flux2-klein-9B/resolve/main/...
+    try:
+        parts = url.split("/resolve/")
+        if len(parts) >= 2:
+            result["model_page"] = parts[0]
+    except Exception:
+        pass
+
+    # Try without token first
+    try:
+        resp = await http_client.head(url, follow_redirects=True, timeout=15.0)
+        if resp.status_code == 200:
+            result["accessible"] = True
+            cl = resp.headers.get("content-length")
+            if cl:
+                result["content_length"] = int(cl)
+            return result
+        elif resp.status_code in (401, 403):
+            result["gated"] = True
+        # 302 to login page also indicates gating
+    except Exception:
+        pass
+
+    # Try with HF_TOKEN if available
+    if HF_TOKEN and result["gated"]:
+        try:
+            headers = {"Authorization": f"Bearer {HF_TOKEN}"}
+            resp = await http_client.head(url, headers=headers, follow_redirects=True, timeout=15.0)
+            if resp.status_code == 200:
+                result["accessible"] = True
+                result["needs_token"] = True
+                cl = resp.headers.get("content-length")
+                if cl:
+                    result["content_length"] = int(cl)
+            elif resp.status_code in (401, 403):
+                # Token present but not authorized — user needs to accept license
+                result["needs_token"] = True
+        except Exception:
+            pass
+    elif result["gated"]:
+        result["needs_token"] = True
+
+    return result
+
+
+async def _download_single_file(url: str, directory: str, filename: str) -> bool:
+    """Download a single file with resume support. Returns True on success."""
+    target_dir = MODELS_BASE_PATH / directory
+    target_dir.mkdir(parents=True, exist_ok=True)
+    final_path = target_dir / filename
+    temp_path = target_dir / f".{filename}.download"
+
+    _download_state["current_file"] = filename
+    _download_state["current_directory"] = directory
+
+    # Resume support — check existing temp file
+    existing_bytes = 0
+    if temp_path.exists():
+        existing_bytes = temp_path.stat().st_size
+        _append_log(f"Resuming {filename} from {_human_size(existing_bytes)}")
+
+    headers = {}
+    if existing_bytes > 0:
+        headers["Range"] = f"bytes={existing_bytes}-"
+    if HF_TOKEN and "huggingface.co" in url:
+        headers["Authorization"] = f"Bearer {HF_TOKEN}"
+
+    try:
+        async with httpx.AsyncClient(timeout=httpx.Timeout(30.0, read=300.0)) as dl_client:
+            async with dl_client.stream("GET", url, headers=headers, follow_redirects=True) as resp:
+                if resp.status_code == 416:
+                    # Range not satisfiable — file already complete
+                    if temp_path.exists():
+                        temp_path.rename(final_path)
+                    _append_log(f"Already complete: {filename}")
+                    return True
+
+                if resp.status_code not in (200, 206):
+                    _append_log(f"HTTP {resp.status_code} for {filename}")
+                    _download_state["files_failed"] += 1
+                    return False
+
+                # Determine total size
+                if resp.status_code == 206:
+                    # Partial content — parse Content-Range
+                    cr = resp.headers.get("content-range", "")
+                    if "/" in cr:
+                        try:
+                            total = int(cr.split("/")[-1])
+                            _download_state["bytes_total"] = total
+                        except (ValueError, IndexError):
+                            pass
+                else:
+                    # Fresh download — reset existing bytes
+                    existing_bytes = 0
+                    cl = resp.headers.get("content-length")
+                    if cl:
+                        _download_state["bytes_total"] = int(cl)
+
+                _download_state["bytes_downloaded"] = existing_bytes
+                mode = "ab" if resp.status_code == 206 else "wb"
+
+                with open(temp_path, mode) as f:
+                    async for chunk in resp.aiter_bytes(chunk_size=1024 * 1024):
+                        if _download_state["cancel_requested"]:
+                            _append_log(f"Cancelled during {filename}")
+                            return False
+                        f.write(chunk)
+                        _download_state["bytes_downloaded"] += len(chunk)
+
+        # Atomic rename
+        temp_path.rename(final_path)
+        return True
+
+    except Exception as e:
+        _append_log(f"Error downloading {filename}: {e}")
+        _download_state["files_failed"] += 1
+        return False
+
+
+async def _run_download_session(models: List[Dict[str, str]]):
+    """Sequential download of a list of models."""
+    _download_state["active"] = True
+    _download_state["files_total"] = len(models)
+    _download_state["started_at"] = datetime.now(timezone.utc).isoformat()
+    _append_log(f"Starting download session: {len(models)} file(s)")
+
+    for i, model in enumerate(models):
+        if _download_state["cancel_requested"]:
+            _append_log("Download session cancelled by user")
+            break
+
+        filename = model["filename"]
+        directory = model["directory"]
+        url = model["url"]
+
+        _append_log(f"[{i+1}/{len(models)}] Downloading {directory}/{filename}")
+        _download_state["bytes_downloaded"] = 0
+        _download_state["bytes_total"] = 0
+
+        success = await _download_single_file(url, directory, filename)
+        if success:
+            _download_state["files_completed"] += 1
+            size_path = MODELS_BASE_PATH / directory / filename
+            if size_path.exists():
+                _append_log(f"Completed: {filename} ({_human_size(size_path.stat().st_size)})")
+            else:
+                _append_log(f"Completed: {filename}")
+
+    # Summary
+    completed = _download_state["files_completed"]
+    failed = _download_state["files_failed"]
+    total = _download_state["files_total"]
+    cancelled = _download_state["cancel_requested"]
+
+    if cancelled:
+        summary = f"Cancelled: {completed}/{total} completed, {failed} failed"
+    elif failed > 0:
+        summary = f"Done with errors: {completed}/{total} completed, {failed} failed"
+    else:
+        summary = f"All {completed} file(s) downloaded successfully"
+
+    _append_log(summary)
+    _download_state["active"] = False
+    _download_state["current_file"] = None
+    _download_state["current_directory"] = None
+
+    # Send ntfy notification
+    await _send_ntfy(summary, is_error=(failed > 0))
+
+
+async def _send_ntfy(message: str, is_error: bool = False):
+    """Send push notification via ntfy.sh."""
+    if not NTFY_TOPIC:
+        return
+    try:
+        headers = {
+            "Title": "ComfyuME Model Download",
+            "Priority": "high" if is_error else "default",
+            "Tags": "warning" if is_error else "white_check_mark",
+        }
+        await http_client.post(
+            f"https://ntfy.sh/{NTFY_TOPIC}",
+            content=message,
+            headers=headers,
+            timeout=10.0,
+        )
+        logger.info(f"ntfy notification sent: {message}")
+    except Exception as e:
+        logger.warning(f"ntfy send failed: {e}")
+
+
+@app.get("/api/models/check")
+async def models_check(username: str = Depends(verify_admin)):
+    """All models with on-disk + HF gated status."""
+    workflows_dir = Path("/workflows")
+    all_models: Dict[tuple, Dict] = {}
+
+    if not workflows_dir.is_dir():
+        return {"models": [], "summary": {}, "error": "/workflows not mounted"}
+
+    for wf_path in sorted(workflows_dir.glob("*.json")):
+        if wf_path.name.startswith("."):
+            continue
+        try:
+            with open(wf_path) as f:
+                data = json.load(f)
+        except (json.JSONDecodeError, OSError):
+            continue
+
+        extracted = _extract_models_from_workflow(data)
+        for m in extracted["models"]:
+            key = (m["directory"], m["filename"])
+            if key not in all_models:
+                on_disk, size = _check_model_on_disk(m["directory"], m["filename"])
+                all_models[key] = {
+                    **m,
+                    "on_disk": on_disk,
+                    "file_size": size,
+                    "file_size_human": _human_size(size) if size else None,
+                }
+            if not all_models[key].get("url") and m.get("url"):
+                all_models[key]["url"] = m["url"]
+
+    # Check gated status for missing models with URLs
+    models_list = list(all_models.values())
+    for m in models_list:
+        if not m["on_disk"] and m.get("url"):
+            gated_info = await _check_hf_gated(m["url"])
+            m["gated_info"] = gated_info
+        else:
+            m["gated_info"] = None
+
+    # Summary
+    total = len(models_list)
+    on_disk = sum(1 for m in models_list if m["on_disk"])
+    missing = total - on_disk
+    downloadable = sum(
+        1 for m in models_list
+        if not m["on_disk"] and m.get("url") and m.get("gated_info", {}) and m["gated_info"].get("accessible")
+    )
+    gated_needs_action = sum(
+        1 for m in models_list
+        if not m["on_disk"] and m.get("gated_info") and m["gated_info"].get("gated") and not m["gated_info"].get("accessible")
+    )
+
+    return {
+        "models": models_list,
+        "summary": {
+            "total": total,
+            "on_disk": on_disk,
+            "missing": missing,
+            "downloadable": downloadable,
+            "gated_needs_action": gated_needs_action,
+        },
+    }
+
+
+@app.post("/api/models/download", status_code=202)
+async def models_download(body: dict = None, username: str = Depends(verify_admin)):
+    """Start a download session. Body: {models: [{filename, directory, url}]} or omit for all missing."""
+    global _download_task
+
+    if _download_state["active"]:
+        raise HTTPException(status_code=409, detail="Download already in progress")
+
+    if body and body.get("models"):
+        models = body["models"]
+    else:
+        # Auto-detect all missing models with download URLs
+        check_result = await models_check(username)
+        models = [
+            {"filename": m["filename"], "directory": m["directory"], "url": m["url"]}
+            for m in check_result["models"]
+            if not m["on_disk"]
+            and m.get("url")
+            and m.get("gated_info", {})
+            and m["gated_info"].get("accessible")
+        ]
+
+    if not models:
+        raise HTTPException(status_code=400, detail="No downloadable models found")
+
+    # Validate each model has required fields
+    for m in models:
+        if not m.get("filename") or not m.get("url"):
+            raise HTTPException(status_code=400, detail=f"Model missing filename or url: {m}")
+
+    _reset_download_state()
+    _download_task = asyncio.create_task(_run_download_session(models))
+
+    return {"status": "started", "files": len(models)}
+
+
+@app.get("/api/models/download/status")
+async def models_download_status(username: str = Depends(verify_admin)):
+    """Snapshot of current download state."""
+    return {
+        "active": _download_state["active"],
+        "cancel_requested": _download_state["cancel_requested"],
+        "current_file": _download_state["current_file"],
+        "current_directory": _download_state["current_directory"],
+        "bytes_downloaded": _download_state["bytes_downloaded"],
+        "bytes_total": _download_state["bytes_total"],
+        "files_completed": _download_state["files_completed"],
+        "files_total": _download_state["files_total"],
+        "files_failed": _download_state["files_failed"],
+        "error": _download_state["error"],
+        "started_at": _download_state["started_at"],
+        "log_lines": len(_download_state["log"]),
+    }
+
+
+@app.get("/api/models/download/stream")
+async def models_download_stream(request: Request, username: str = Depends(verify_admin)):
+    """SSE stream for real-time download progress."""
+
+    async def event_generator():
+        last_log_idx = 0
+        last_bytes = 0
+
+        while True:
+            # Check if client disconnected
+            if await request.is_disconnected():
+                break
+
+            # Send new log lines
+            current_log = _download_state["log"]
+            if len(current_log) > last_log_idx:
+                for line in current_log[last_log_idx:]:
+                    yield {"event": "log", "data": line}
+                last_log_idx = len(current_log)
+
+            # Send progress update if bytes changed
+            current_bytes = _download_state["bytes_downloaded"]
+            if current_bytes != last_bytes or _download_state["active"]:
+                progress_data = json.dumps({
+                    "current_file": _download_state["current_file"],
+                    "current_directory": _download_state["current_directory"],
+                    "bytes_downloaded": _download_state["bytes_downloaded"],
+                    "bytes_total": _download_state["bytes_total"],
+                    "files_completed": _download_state["files_completed"],
+                    "files_total": _download_state["files_total"],
+                    "files_failed": _download_state["files_failed"],
+                })
+                yield {"event": "progress", "data": progress_data}
+                last_bytes = current_bytes
+
+            # Check if download finished
+            if not _download_state["active"] and _download_state["started_at"]:
+                if _download_state["error"]:
+                    yield {"event": "error", "data": _download_state["error"]}
+                else:
+                    complete_data = json.dumps({
+                        "files_completed": _download_state["files_completed"],
+                        "files_total": _download_state["files_total"],
+                        "files_failed": _download_state["files_failed"],
+                        "cancelled": _download_state["cancel_requested"],
+                    })
+                    yield {"event": "complete", "data": complete_data}
+                break
+
+            # If no download ever started, just wait briefly then check again
+            if not _download_state["started_at"]:
+                await asyncio.sleep(1)
+                continue
+
+            await asyncio.sleep(0.5)
+
+    return EventSourceResponse(event_generator())
+
+
+@app.post("/api/models/download/cancel")
+async def models_download_cancel(username: str = Depends(verify_admin)):
+    """Cancel the current download session."""
+    if not _download_state["active"]:
+        raise HTTPException(status_code=400, detail="No active download to cancel")
+
+    _download_state["cancel_requested"] = True
+    _append_log("Cancel requested — stopping after current chunk")
+    return {"status": "cancel_requested"}
 
 
 if __name__ == "__main__":

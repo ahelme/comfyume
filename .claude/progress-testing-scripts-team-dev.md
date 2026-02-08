@@ -62,6 +62,31 @@
 **Branch:** testing-scripts-team-2
 **Phase:** Restore script updates + maintenance
 
+## Progress Report 7 - 2026-02-08 - Model Download Engine (#93)
+
+**Date:** 2026-02-08
+
+**Done:**
+- Created #93: model download engine in admin panel
+- Backend (`admin/app.py`):
+  - Download engine with resume support (Range header + temp files)
+  - HuggingFace gated model detection (HEAD request, token check)
+  - SSE streaming for real-time progress (`sse-starlette`)
+  - ntfy.sh push notifications on completion
+  - 5 new endpoints: check, download, status, stream, cancel
+- Frontend (`admin/dashboard.html`):
+  - Download progress panel with progress bar, console log, cancel button
+  - "Check Downloads" button: scans HF gated status, groups by downloadable/gated/no-url
+  - "Download All Missing" button + per-model "DL" buttons
+  - SSE EventSource reconnects on tab switch if download active
+- Config:
+  - `docker-compose.yml`: models mount `:ro` → writable, `HF_TOKEN`/`NTFY_TOPIC` env vars
+  - `.env.example`: new MODEL DOWNLOADS section
+  - `admin/requirements.txt`: added `sse-starlette==2.2.1`
+  - `nginx/nginx.conf`: `proxy_buffering off` + `proxy_cache off` on admin location for SSE
+
+---
+
 ## Progress Report 6 - 2026-02-08 - Portainer Edge Agent in Restore Script
 
 **Date:** 2026-02-08

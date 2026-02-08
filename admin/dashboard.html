@@ -712,6 +712,109 @@ body {
 .tpl-copy-btn:hover { background: var(--bg-card-hover); color: var(--text); border-color: var(--border-light); }
 .tpl-no-url { font-size: 10px; color: var(--text-muted); font-style: italic; flex-shrink: 0; }
 
+/* ---- Download UI ---- */
+.dl-progress-panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.dl-status-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.dl-status-bar .dl-filename {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dl-progress-bar-container {
+  width: 200px;
+  height: 16px;
+  background: var(--bg-input);
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.dl-progress-bar {
+  height: 100%;
+  border-radius: 8px;
+  background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+  transition: width 0.3s ease;
+}
+.dl-pct {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  min-width: 45px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.dl-file-counter {
+  font-size: 12px;
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+.dl-console {
+  background: #0d0d1a;
+  border-radius: var(--radius);
+  padding: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.5;
+  max-height: 300px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+  color: var(--text-dim);
+}
+.dl-console .dl-log-error { color: var(--accent-red); }
+.dl-console .dl-log-ok { color: var(--accent-green); }
+.dl-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  align-items: center;
+}
+.tpl-gated-warning {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 600;
+  background: rgba(245,158,11,0.15);
+  color: var(--accent-amber);
+  text-transform: uppercase;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.tpl-gated-warning a {
+  color: var(--accent-amber);
+  text-decoration: underline;
+}
+.tpl-dl-btn {
+  padding: 3px 8px;
+  border: 1px solid rgba(0,212,170,0.3);
+  border-radius: 4px;
+  font-size: 10px;
+  cursor: pointer;
+  background: var(--accent-dim);
+  color: var(--accent);
+  transition: all 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.tpl-dl-btn:hover { background: rgba(0,212,170,0.25); }
+
 /* Scrollbar styling */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -985,12 +1088,35 @@ body {
       </div>
     </div>
 
+    <!-- Download Progress Panel (hidden until active) -->
+    <div id="dl-panel" style="display:none">
+      <div class="dl-progress-panel">
+        <div class="dl-status-bar">
+          <span class="dl-filename" id="dl-filename">Waiting...</span>
+          <div class="dl-progress-bar-container">
+            <div class="dl-progress-bar" id="dl-progress-bar" style="width:0%"></div>
+          </div>
+          <span class="dl-pct" id="dl-pct">0%</span>
+          <span class="dl-file-counter" id="dl-file-counter">0/0</span>
+        </div>
+        <div class="dl-console" id="dl-console"></div>
+        <div class="dl-actions">
+          <button class="btn danger" id="dl-cancel-btn" onclick="cancelDownload()">Cancel</button>
+          <span id="dl-size-info" style="font-size:12px;color:var(--text-dim)"></span>
+        </div>
+      </div>
+    </div>
+
     <!-- Workflow Panels -->
     <div class="panels-row full">
       <div class="panel">
         <div class="panel-header">
           <span>Workflow Templates</span>
-          <button class="btn primary" onclick="loadTemplates()">Scan</button>
+          <div style="display:flex;gap:6px">
+            <button class="btn primary" onclick="loadTemplates()">Scan</button>
+            <button class="btn" id="btn-check-dl" onclick="checkModels()" style="display:none">Check Downloads</button>
+            <button class="btn primary" id="btn-dl-all" onclick="downloadAllMissing()" style="display:none">Download All Missing</button>
+          </div>
         </div>
         <div class="panel-body" id="tpl-workflows">
           <div class="empty-state">Click <strong>Scan</strong> to discover workflow templates and their model dependencies.</div>
@@ -1052,7 +1178,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
     if (tab === 'gpu') loadGpuStatus();
     if (tab === 'storage') { loadStorageDisk(); loadStorageR2(); browseTo('/'); }
     if (tab === 'queue') { loadQueueStatus(); loadJobs(); }
-    if (tab === 'templates') loadTemplates();
+    if (tab === 'templates') { loadTemplates(); checkActiveDownload(); }
   });
 });
 
@@ -1587,6 +1713,9 @@ async function loadTemplates() {
     document.getElementById('tpl-disk-free').textContent = disk.free_gb != null ? disk.free_gb + '' : '?';
     document.getElementById('tpl-disk-label').textContent = disk.free_gb != null ? 'GB free of ' + disk.total_gb + ' GB' : 'GB available';
 
+    // Show "Check Downloads" button if there are missing models
+    document.getElementById('btn-check-dl').style.display = totalMissing > 0 ? '' : 'none';
+
     if (workflows.length === 0) {
       panel.innerHTML = '<div class="empty-state">No workflow JSON files found in /workflows.</div>';
       return;
@@ -1632,14 +1761,18 @@ async function loadTemplates() {
             <span class="tpl-size">${m.file_size_human ? esc(m.file_size_human) : ''}</span>
           </div>`;
         } else {
-          const actionHtml = m.url
-            ? `<button class="tpl-copy-btn" onclick="copyDownloadCmd('${esc(m.url).replace(/'/g, "\\'")}', '${esc(m.directory)}')">Copy wget</button>`
+          const dlBtn = m.url
+            ? `<button class="tpl-dl-btn" onclick="downloadSingleModel('${esc(m.directory)}','${esc(m.filename)}','${esc(m.url).replace(/'/g, "\\'")}')">DL</button>`
+            : '';
+          const wgetBtn = m.url
+            ? `<button class="tpl-copy-btn" onclick="copyDownloadCmd('${esc(m.url).replace(/'/g, "\\'")}', '${esc(m.directory)}')">wget</button>`
             : '<span class="tpl-no-url">No download URL</span>';
           return `<div class="tpl-model-row">
             <span class="tpl-badge missing">missing</span>
             <span class="tpl-model-path">${esc(path)}</span>
             <span class="tpl-size"></span>
-            ${actionHtml}
+            ${dlBtn}
+            ${wgetBtn}
           </div>`;
         }
       }).join('');
@@ -1676,6 +1809,261 @@ function copyDownloadCmd(url, directory) {
     document.body.removeChild(ta);
     toast('wget command copied to clipboard', 'success');
   });
+}
+
+
+// ============================================================
+// MODEL DOWNLOADS
+// ============================================================
+
+let dlEventSource = null;
+let checkedModels = null;
+
+function humanSize(bytes) {
+  if (bytes == null || bytes === 0) return '0 B';
+  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
+  let i = 0;
+  let val = bytes;
+  while (val >= 1024 && i < units.length - 1) { val /= 1024; i++; }
+  return val.toFixed(1) + ' ' + units[i];
+}
+
+async function checkModels() {
+  const panel = document.getElementById('tpl-workflows');
+  panel.innerHTML = '<div class="empty-state"><div class="spinner"></div><br>Checking model downloads & gated status...</div>';
+
+  try {
+    const data = await api('/api/models/check');
+    checkedModels = data;
+    const models = data.models || [];
+    const summary = data.summary || {};
+
+    // Update summary cards
+    document.getElementById('tpl-on-disk').textContent = summary.on_disk || 0;
+    document.getElementById('tpl-missing').textContent = summary.missing || 0;
+    document.getElementById('tpl-missing').style.color = (summary.missing || 0) > 0 ? 'var(--accent-red)' : 'var(--accent-green)';
+
+    // Show/hide download all button
+    const dlAllBtn = document.getElementById('btn-dl-all');
+    dlAllBtn.style.display = (summary.downloadable || 0) > 0 ? '' : 'none';
+
+    // Render model list grouped by status
+    const onDisk = models.filter(m => m.on_disk);
+    const downloadable = models.filter(m => !m.on_disk && m.gated_info && m.gated_info.accessible && m.url);
+    const gated = models.filter(m => !m.on_disk && m.gated_info && m.gated_info.gated && !m.gated_info.accessible);
+    const noUrl = models.filter(m => !m.on_disk && !m.url);
+
+    let html = '';
+
+    if (summary.gated_needs_action > 0) {
+      html += `<div style="padding:12px;margin-bottom:12px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:var(--radius);font-size:12px;color:var(--accent-amber)">
+        ${summary.gated_needs_action} model(s) require license acceptance on HuggingFace before downloading.
+        ${HF_TOKEN ? '' : ' Set HF_TOKEN in .env for authenticated downloads.'}
+      </div>`;
+    }
+
+    // Downloadable
+    if (downloadable.length > 0) {
+      html += `<div style="font-size:12px;color:var(--accent-green);margin-bottom:8px;font-weight:600">READY TO DOWNLOAD (${downloadable.length})</div>`;
+      html += downloadable.map(m => {
+        const path = (m.directory ? m.directory + '/' : '') + m.filename;
+        const sizeStr = m.gated_info && m.gated_info.content_length ? humanSize(m.gated_info.content_length) : '';
+        return `<div class="tpl-model-row">
+          <span class="tpl-badge missing">missing</span>
+          <span class="tpl-model-path">${esc(path)}</span>
+          <span class="tpl-size">${esc(sizeStr)}</span>
+          <button class="tpl-dl-btn" onclick="downloadSingleModel('${esc(m.directory)}','${esc(m.filename)}','${esc(m.url).replace(/'/g, "\\'")}')">DL</button>
+          <button class="tpl-copy-btn" onclick="copyDownloadCmd('${esc(m.url).replace(/'/g, "\\'")}', '${esc(m.directory)}')">wget</button>
+        </div>`;
+      }).join('');
+    }
+
+    // Gated
+    if (gated.length > 0) {
+      html += `<div style="font-size:12px;color:var(--accent-amber);margin:16px 0 8px;font-weight:600">GATED - NEEDS LICENSE (${gated.length})</div>`;
+      html += gated.map(m => {
+        const path = (m.directory ? m.directory + '/' : '') + m.filename;
+        const modelPage = m.gated_info && m.gated_info.model_page ? m.gated_info.model_page : '';
+        return `<div class="tpl-model-row">
+          <span class="tpl-gated-warning">${modelPage ? `<a href="${esc(modelPage)}" target="_blank" rel="noopener">GATED</a>` : 'GATED'}</span>
+          <span class="tpl-model-path">${esc(path)}</span>
+          <span class="tpl-size"></span>
+          ${modelPage ? `<a href="${esc(modelPage)}" target="_blank" rel="noopener" style="font-size:10px;color:var(--accent-amber)">Accept License</a>` : ''}
+        </div>`;
+      }).join('');
+    }
+
+    // No URL
+    if (noUrl.length > 0) {
+      html += `<div style="font-size:12px;color:var(--text-muted);margin:16px 0 8px;font-weight:600">NO DOWNLOAD URL (${noUrl.length})</div>`;
+      html += noUrl.map(m => {
+        const path = (m.directory ? m.directory + '/' : '') + m.filename;
+        return `<div class="tpl-model-row">
+          <span class="tpl-badge missing">missing</span>
+          <span class="tpl-model-path">${esc(path)}</span>
+          <span class="tpl-no-url">No URL in workflow</span>
+        </div>`;
+      }).join('');
+    }
+
+    // On disk
+    if (onDisk.length > 0) {
+      html += `<div style="font-size:12px;color:var(--accent-green);margin:16px 0 8px;font-weight:600">ON DISK (${onDisk.length})</div>`;
+      html += onDisk.map(m => {
+        const path = (m.directory ? m.directory + '/' : '') + m.filename;
+        return `<div class="tpl-model-row">
+          <span class="tpl-badge on-disk">on disk</span>
+          <span class="tpl-model-path">${esc(path)}</span>
+          <span class="tpl-size">${m.file_size_human ? esc(m.file_size_human) : ''}</span>
+        </div>`;
+      }).join('');
+    }
+
+    panel.innerHTML = html || '<div class="empty-state">No models found in workflow templates.</div>';
+
+  } catch (e) {
+    panel.innerHTML = `<div class="empty-state">Failed: ${esc(e.message)}</div>`;
+  }
+}
+
+async function downloadAllMissing() {
+  showModal(
+    'Download All Missing Models',
+    'Start downloading all accessible missing models? This may take a while for large files.',
+    async () => {
+      try {
+        await api('/api/models/download', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({}),
+        });
+        startDownloadStream();
+      } catch (e) {
+        toast('Download start failed: ' + e.message, 'error');
+      }
+    }
+  );
+}
+
+async function downloadSingleModel(directory, filename, url) {
+  if (_download_state_active) {
+    toast('A download is already in progress', 'error');
+    return;
+  }
+  try {
+    await api('/api/models/download', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ models: [{ directory, filename, url }] }),
+    });
+    startDownloadStream();
+  } catch (e) {
+    toast('Download start failed: ' + e.message, 'error');
+  }
+}
+
+let _download_state_active = false;
+
+function startDownloadStream() {
+  // Show progress panel
+  document.getElementById('dl-panel').style.display = '';
+  document.getElementById('dl-console').innerHTML = '';
+  document.getElementById('dl-cancel-btn').disabled = false;
+  _download_state_active = true;
+
+  // Close existing stream
+  if (dlEventSource) { dlEventSource.close(); dlEventSource = null; }
+
+  const url = BASE + '/api/models/download/stream';
+  dlEventSource = new EventSource(url);
+
+  dlEventSource.addEventListener('log', (e) => {
+    const console_el = document.getElementById('dl-console');
+    const line = document.createElement('div');
+    const text = e.data || '';
+    if (text.includes('Error') || text.includes('failed') || text.includes('HTTP ')) {
+      line.className = 'dl-log-error';
+    } else if (text.includes('Completed:') || text.includes('successfully')) {
+      line.className = 'dl-log-ok';
+    }
+    line.textContent = text;
+    console_el.appendChild(line);
+    console_el.scrollTop = console_el.scrollHeight;
+  });
+
+  dlEventSource.addEventListener('progress', (e) => {
+    try {
+      const d = JSON.parse(e.data);
+      const filename = d.current_file || 'Waiting...';
+      document.getElementById('dl-filename').textContent =
+        (d.current_directory ? d.current_directory + '/' : '') + filename;
+      document.getElementById('dl-file-counter').textContent =
+        `${d.files_completed}/${d.files_total}`;
+
+      if (d.bytes_total > 0) {
+        const pct = Math.min(100, Math.round((d.bytes_downloaded / d.bytes_total) * 100));
+        document.getElementById('dl-progress-bar').style.width = pct + '%';
+        document.getElementById('dl-pct').textContent = pct + '%';
+        document.getElementById('dl-size-info').textContent =
+          humanSize(d.bytes_downloaded) + ' / ' + humanSize(d.bytes_total);
+      } else {
+        document.getElementById('dl-progress-bar').style.width = '0%';
+        document.getElementById('dl-pct').textContent = '';
+        document.getElementById('dl-size-info').textContent = '';
+      }
+    } catch (err) { /* ignore parse errors */ }
+  });
+
+  dlEventSource.addEventListener('complete', (e) => {
+    _download_state_active = false;
+    document.getElementById('dl-cancel-btn').disabled = true;
+    try {
+      const d = JSON.parse(e.data);
+      if (d.cancelled) {
+        toast(`Download cancelled: ${d.files_completed}/${d.files_total} completed`, 'info');
+      } else if (d.files_failed > 0) {
+        toast(`Download done with errors: ${d.files_completed}/${d.files_total} OK, ${d.files_failed} failed`, 'error');
+      } else {
+        toast(`All ${d.files_completed} model(s) downloaded`, 'success');
+      }
+    } catch (err) {
+      toast('Download completed', 'success');
+    }
+    if (dlEventSource) { dlEventSource.close(); dlEventSource = null; }
+  });
+
+  dlEventSource.addEventListener('error', (e) => {
+    // SSE error could be connection drop or actual error event
+    if (e.data) {
+      const console_el = document.getElementById('dl-console');
+      const line = document.createElement('div');
+      line.className = 'dl-log-error';
+      line.textContent = e.data;
+      console_el.appendChild(line);
+    }
+    _download_state_active = false;
+    if (dlEventSource) { dlEventSource.close(); dlEventSource = null; }
+  });
+}
+
+async function cancelDownload() {
+  showModal('Cancel Download', 'Cancel the current download? Partially downloaded files can be resumed later.', async () => {
+    try {
+      await api('/api/models/download/cancel', { method: 'POST' });
+      document.getElementById('dl-cancel-btn').disabled = true;
+      toast('Cancel requested', 'info');
+    } catch (e) { toast('Cancel failed: ' + e.message, 'error'); }
+  });
+}
+
+async function checkActiveDownload() {
+  try {
+    const status = await api('/api/models/download/status');
+    if (status.active) {
+      _download_state_active = true;
+      startDownloadStream();
+    }
+  } catch (e) { /* ignore */ }
 }
 
 
