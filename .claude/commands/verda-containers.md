@@ -15,14 +15,16 @@ Manage Verda serverless containers. Uses the Verda Python SDK on the Verda serve
 **Operations (via SSH + Python):**
 
 1. **List deployments:**
-```python
-ssh root@95.216.229.236 "python3 -c \"
-from verda import VerdaClient
+```bash
+ssh root@95.216.229.236 'source /root/.bashrc && python3 << PYEOF
 import os
-client = VerdaClient(os.environ['VERDA_CLIENT_ID'], os.environ['VERDA_CLIENT_SECRET'])
-# List all container deployments
-print(client.containers.get())
-\""
+from verda import VerdaClient
+client = VerdaClient(os.environ["VERDA_CLIENT_ID"], os.environ["VERDA_CLIENT_SECRET"])
+for d in client.containers.get_deployments():
+    c = d.containers[0]
+    eo = c.entrypoint_overrides
+    print(d.name + ": " + str(eo.cmd)[:100])
+PYEOF'
 ```
 
 2. **Check container health:** Call the endpoint directly:

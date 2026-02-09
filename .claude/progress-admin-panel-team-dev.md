@@ -78,13 +78,41 @@
 ✅ **(COMPLETE) - comfyume #106 - Monitoring & Management Stack**
     - Created: 2026-02-09 | Updated: 2026-02-09
     - Installed on Verda: Prometheus v3.9.1 (:9090), Grafana v12.3.2 (:3001), Loki v3.6.5 (:3100), cAdvisor (:8081), Promtail, Dry v0.11.2, Verda SDK v1.20.0, OpenTofu v1.11.4
-    - 12 custom skills created: `/verda-ssh`, `/verda-status`, `/verda-logs`, `/verda-containers`, `/verda-terraform`, `/verda-open-tofu`, `/verda-prometheus`, `/verda-dry`, `/verda-loki`, `/verda-grafana`, `/verda-monitoring-check`, `/verda-debug-containers`
+    - 12 custom skills created + user guide (docs/verda-skills-guide.md)
     - 2 Grafana dashboards imported: Docker Container (15331), Container Resources (14678)
-    - PR #104 cleaned up (favicon removed)
+
+✅ **(COMPLETE) - comfyume #109 - SSL Certs for New Subdomains**
+    - Created: 2026-02-09 | Updated: 2026-02-09
+    - Let's Encrypt cert for 5 subdomains: portainer, grafana, prometheus, docs, upload
+    - All reverse-proxied through Mello nginx → Verda via Tailscale
+    - Grafana password changed from default to match .env ADMIN_PASSWORD
 
 ---
 
 # Progress Reports
+
+---
+## Progress Report 10 - 2026-02-09 - Monitoring Fixes, SSL Certs, Verda SDK (#106, #109)
+
+**Date:** 2026-02-09 | **Issues:** #106, #109
+
+**Done:**
+- Fixed Promtail: added `promtail` user to `docker` group — was unable to read Docker socket, zero log ingestion. Now shipping logs from all 26 containers to Loki
+- Fixed Loki queries: labels are `container_name`/`service_name`/`stream` (no `job` label). Updated 4 skill files
+- Fixed Verda SDK: correct method is `get_deployments()` not `get()`, env vars need `source /root/.bashrc`. Added to `/etc/environment` for reliability
+- Discovered h200-spot deployment has diagnostic startup command (not ComfyUI) from last session's debugging
+- Created `docs/verda-skills-guide.md` — 153-line user-friendly guide to all 12 skills
+- SSL certs (#109): Let's Encrypt cert for portainer, grafana, prometheus, docs, upload (.aiworkshop.art)
+  - All 5 subdomains DNS → Mello public IP (157.180.76.189)
+  - Mello nginx reverse proxies grafana/prometheus to Verda via Tailscale
+  - Grafana admin password changed to match .env
+  - Prometheus protected with basic auth (same .env credentials)
+  - Removed stale comfy.ahelme.net.bak from Mello nginx sites-enabled
+  - Backed up Mello nginx configs before changes
+
+**Key finding — Verda serverless deployments:**
+- h200-spot: DIAGNOSTIC cmd (cat yaml + ls) — needs restoring to ComfyUI startup
+- h200-on-demand, b300-spot, b300-on-demand: correct ComfyUI startup cmd
 
 ---
 ## Progress Report 9 - 2026-02-09 - Monitoring Stack Installed (#106)

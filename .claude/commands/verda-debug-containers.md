@@ -50,17 +50,34 @@ ssh root@95.216.229.236 "curl -s 'localhost:9090/api/v1/query?query=container_st
 ## Step 5: Check Serverless Container (via Verda SDK)
 
 ```bash
-# List serverless deployments
-ssh root@95.216.229.236 "python3 -c \"
+# List deployments with startup commands
+ssh root@95.216.229.236 'source /root/.bashrc && python3 << PYEOF
 import os
 from verda import VerdaClient
-client = VerdaClient(os.environ.get('VERDA_CLIENT_ID'), os.environ.get('VERDA_CLIENT_SECRET'))
-print(client.containers.get())
-\" 2>&1"
+client = VerdaClient(os.environ["VERDA_CLIENT_ID"], os.environ["VERDA_CLIENT_SECRET"])
+for d in client.containers.get_deployments():
+    c = d.containers[0]
+    eo = c.entrypoint_overrides
+    print(d.name)
+    print("  cmd: " + str(eo.cmd))
+    print("  mounts: " + str(c.volume_mounts))
+    print("  env: " + str(c.env))
+    print()
+PYEOF'
 
 # Test serverless endpoint directly
 ssh root@95.216.229.236 "curl -s -w '\nHTTP %{http_code}\n' -H 'Authorization: Bearer \$(grep SERVERLESS_API_KEY /home/dev/comfyume/.env | cut -d= -f2)' https://containers.datacrunch.io/comfyume-vca-ftv-h200-spot/health 2>&1"
 ```
+
+**Verda SDK key methods:**
+- `client.containers.get_deployments()` — list all deployments
+- `client.containers.get_deployment_by_name("name")` — get specific deployment
+- `client.containers.update_deployment("name", ...)` — update config
+- `client.containers.get_deployment_status("name")` — check status
+- `client.containers.get_deployment_replicas("name")` — check replicas
+- `client.containers.get_deployment_environment_variables("name")` — get env vars
+
+**Important:** Env vars require `source /root/.bashrc` before SDK calls.
 
 ## Step 6: Docker Logs (Recent Errors)
 

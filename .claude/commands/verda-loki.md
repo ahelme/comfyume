@@ -14,7 +14,7 @@ Loki log aggregation on Verda — query logs with LogQL.
 ssh root@95.216.229.236 "curl -s localhost:3100/ready"
 
 # Check Promtail is shipping logs
-ssh root@95.216.229.236 "systemctl is-active promtail && curl -s localhost:9080/targets | python3 -m json.tool | head -20"
+ssh root@95.216.229.236 "systemctl is-active promtail && curl -sf localhost:9080/ready && echo 'Promtail: READY' || echo 'Promtail: NOT READY'"
 
 # Query logs via LogQL API
 ssh root@95.216.229.236 "curl -s -G 'localhost:3100/loki/api/v1/query_range' --data-urlencode 'query={container_name=~\"comfy-.*\"}' --data-urlencode 'limit=20' | python3 -m json.tool | head -50"
@@ -22,8 +22,11 @@ ssh root@95.216.229.236 "curl -s -G 'localhost:3100/loki/api/v1/query_range' --d
 # Check available labels
 ssh root@95.216.229.236 "curl -s localhost:3100/loki/api/v1/labels"
 
-# Check storage usage
-ssh root@95.216.229.236 "du -sh /var/lib/loki/"
+# Check storage usage (data stored in /tmp/loki, NOT /var/lib/loki)
+ssh root@95.216.229.236 "du -sh /tmp/loki/"
+
+# Check which containers are being indexed
+ssh root@95.216.229.236 "curl -s localhost:3100/loki/api/v1/label/container_name/values | python3 -m json.tool"
 ```
 
 ## LogQL Query Syntax
