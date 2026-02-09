@@ -1,6 +1,6 @@
 # CLAUDE RESUME - COMFYUME (TESTING SCRIPTS TEAM)
 
-**DATE**: 2026-02-08
+**DATE**: 2026-02-09
 
 ---
 
@@ -12,27 +12,34 @@
 
 ---
 
-## RECENT WORK (this session)
+## RECENT WORK (this session — 2026-02-09)
 
-### Issue #22 — Phase 3 doc updates (MERGED as PR #85)
-- Archived 2 obsolete GPU scripts → `scripts/archive/`
-- Updated `.env.example` v0.3.2 → v0.3.5 (serverless config)
-- Updated `comfyui-worker/README.md` (serverless production note)
-- Updated `README.md` (aiworkshop.art, serverless architecture)
+### Issue #111 — File sharing + favicon (PR #112 MERGED)
+- Bidirectional file sharing on mello (host nginx config, NOT in repo):
+  - `upload.aiworkshop.art` — dedicated subdomain, root = upload page
+  - `comfy.ahelme.net/upload` — same via mello domain
+  - Cookie-based login form at `/login` (browser saves password, 30-day cookie)
+  - `/mello-share/` (mello→mac), `/mac-share/` (mac→mello, WebDAV PUT)
+  - Drag & drop + Cmd+V paste support on upload page
+- Favicon: official ComfyUI logo (yellow C on blue)
+  - Replaced in admin dashboard (data URI), nginx (inline SVG), static files
+  - Source: Dashboard Icons (CC BY 4.0)
 
-### Issue #71 — Mello cleanup (PR #91 open)
-- Created `scripts/cleanup-mello.sh` (dry-run by default, --execute to remove)
-- Updated CLAUDE.md: Quick Links → aiworkshop.art, architecture diagram → Verda CPU + DataCrunch, server table → Mello staging/backup, tech stack updated
-- Containers already removed from Mello by user
+### Mello host files (NOT in repo)
+- `/etc/nginx/sites-enabled/upload.aiworkshop.art` — upload subdomain
+- `/etc/nginx/sites-enabled/comfy.ahelme.net` — share locations + cookie map
+- `/etc/nginx/share-htpasswd` — admin auth
+- `/var/www/login.html`, `/var/www/upload.html` — login + upload pages
+- `/var/www/mello-share/`, `/var/www/mac-share/` — share directories
 
 ---
 
 ## PENDING WORK
 
-- [ ] PR #91 needs merge (#71 work)
-- [ ] Close #71 after Hetzner downgrade (user handles manually)
+- [ ] Deploy favicon to Verda (steps in GH issue #111 comment)
+  - `git pull`, `docker compose build admin`, update host nginx, reload
 - [ ] Run test.sh on Verda app server to validate test scripts
-- [ ] Lower-priority stale Mello refs in: `docs/admin-backup-restore.md`, `implementation-backup-restore.md`, `scripts/README-RESTORE.md`
+- [ ] Close #71 after Hetzner downgrade (user handles manually)
 
 ---
 
@@ -58,15 +65,16 @@ Please read:
 | `scripts/test-helpers.sh` | Shared test library |
 | `scripts/test-serverless.sh` | Serverless E2E test |
 | `scripts/test-connectivity.sh` | Network connectivity test |
-| `scripts/cleanup-mello.sh` | Mello container/image cleanup |
+| `admin/dashboard.html` | Admin panel (has favicon data URI) |
+| `nginx/nginx.conf` | Docker nginx config (has favicon inline SVG) |
 
 ---
 
 ## TEAM COORDINATION
 
 **GitHub Issues:** https://github.com/ahelme/comfyume/issues
-**Completed:** #6 (test scripts — PR #75 merged), #22 (Phase 3 docs — PR #85 merged)
-**In Progress:** #71 (Mello cleanup — PR #91 open)
+**Completed:** #6 (test scripts), #22 (Phase 3 docs), #93 (download engine), #111 (file sharing + favicon)
+**In Progress:** #71 (Mello cleanup — awaiting Hetzner downgrade)
 **Branch:** `testing-scripts-team-2`
 
 ---
