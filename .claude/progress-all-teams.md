@@ -17,6 +17,8 @@ Newest at top. One line per commit. No fluff. Link issues.
 
 ## 2026-02-09
 
+- [ADMIN] 6b70dbe feat: install monitoring stack on Verda + 12 custom skills (#106)
+- [ADMIN] 6e96601 fix: remove non-working favicon from nginx (#101)
 - [ADMIN] -- fix: redirect.js import, endpoint, field name, priority, graphToPrompt() (#101)
 - [ADMIN] -- fix: nginx auth_basic off on /api/, removed trailing slash, 600s timeouts, favicon (#101)
 - [ADMIN] -- fix: queue-manager debug logging for serverless response body (#101)
