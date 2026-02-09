@@ -1,6 +1,6 @@
 # CLAUDE RESUME - COMFYUME (ADMIN PANEL TEAM)
 
-**DATE**: 2026-02-08
+**DATE**: 2026-02-09
 
 ---
 
@@ -8,36 +8,45 @@
 
 **We are the Admin Panel Team.** Branch: `admin-panel-team`.
 
-**Production:** aiworkshop.art runs on Verda (95.216.229.236), NOT Mello.
+**Production:** aiworkshop.art runs on Verda CPU instance (95.216.229.236), NOT Mello.
 
 ---
 
 ## IMMEDIATE PRIORITY
 
-**Serverless inference is NOT working yet.** The `queue_redirect` custom node
-has been installed in all 20 user containers but has not been tested end-to-end.
+**Fix serverless inference (#101, #103).** Execute Option 1 from #103.
 
-Steps to verify:
-1. Open `https://aiworkshop.art/user002/` in browser
-2. Load a workflow (e.g. Flux Klein 4B text-to-image)
-3. Check browser console for `[QueueRedirect] Extension loaded`
-4. Submit a job - it should POST to `/api/queue/submit`
-5. Check queue-manager logs: `sudo docker logs comfy-queue-manager --tail 30`
-6. Check if `/api/queue/submit` endpoint exists in queue-manager code
-7. Verify job appears in admin panel Queue tab
+### THE STORAGE SITUATION (#103)
 
-If `/api/queue/submit` doesn't exist, check `queue-manager/` source for the correct submit endpoint.
+| Storage | What | Serverless sees? | Instance sees? |
+|---------|------|-----------------|----------------|
+| **REAL SFS** | Verda NFS share (172GB models) | YES at `/mnt/sfs` | NO (NFS mount fails) |
+| **Block storage** | 220GB on CPU instance | NO | YES at `/mnt/models-block-storage` |
+
+Block storage a.k.a. "fake SFS" — created because the REAL SFS won't connect to our Verda CPU instance (Verda bug, they are looking into it). We didn't realise the serverless container CAN still access the REAL SFS. Plan: use REAL SFS for serving models for boss's testing period (next week), even though we can only manage it via Verda API or Serverless console. All our yaml edits were on block storage — irrelevant. Block storage renamed from `/mnt/sfs` to `/mnt/models-block-storage`.
+
+### NEXT STEP
+
+1. Run diagnostic startup command on Verda Serverless console:
+   ```
+   bash -c "cat /mnt/sfs/extra_model_paths.yaml; ls /mnt/sfs/models/shared/ /mnt/sfs/models/shared/latent_upscale_models/ /mnt/sfs/models/shared/upscale_models/"
+   ```
+2. Check container logs — will show actual yaml and directories on REAL SFS
+3. Fix yaml key via one-time startup command (likely `upscale_models` → `latent_upscale_models`)
+4. Revert to normal startup: `python3 /workspace/ComfyUI/main.py --listen 0.0.0.0 --port 8188 --extra-model-paths-config /mnt/sfs/extra_model_paths.yaml`
+5. Test inference
+
+### The bug
+
+Container logs: `Adding extra search path upscale_models /mnt/sfs/models/shared/latent_upscale_models` — wrong folder type. `LatentUpscaleModelLoader` looks up `latent_upscale_models`, finds nothing.
 
 ---
 
-## CONTEXT LOADING
+## GITHUB ISSUES
 
-Please read:
-
-1. **`./CLAUDE.md`** - Project instructions
-2. **`.claude/progress-admin-panel-team-dev.md`** (top ~120 lines) - Priority tasks + recent progress
-3. **`.claude/progress-all-teams.md`** - All-teams commit log
-4. **`git status && git log --oneline -10`** - Pending work
+- **#101** — REAL SFS yaml key mapping issue (full debugging context)
+- **#102** — Explore Verda General Storage (future)
+- **#103** — Architecture decision: REAL SFS vs block storage
 
 ---
 
@@ -45,33 +54,24 @@ Please read:
 
 | File | Purpose |
 |------|---------|
-| `./CLAUDE.md` | Project guide, architecture, gotchas |
-| `.claude/progress-admin-panel-team-dev.md` | Tasks + session progress |
-| `.claude/progress-all-teams.md` | All-teams commit log |
-| `admin/app.py` | Admin backend (~900 lines, 23 endpoints) |
-| `admin/dashboard.html` | Admin frontend SPA (5 tabs, ~2000 lines) |
-| `comfyui-frontend/custom_nodes/queue_redirect/` | Job redirect extension |
-| `queue-manager/` | FastAPI queue service |
+| `comfyui-frontend/custom_nodes/queue_redirect/web/redirect.js` | Job redirect extension (modified this session) |
+| `nginx/nginx.conf` | Reverse proxy config (modified this session) |
+| `queue-manager/main.py` | FastAPI queue service with serverless mode (debug logging added) |
 
 ---
 
-## VERDA STATE (as of session end)
+## VERDA STATE
 
-- 24 containers running (20 frontends + redis + queue-manager + admin + nginx)
-- All 20 frontends mount `/mnt/sfs/models` correctly
-- All 20 frontends have `queue_redirect` custom node installed
-- 22 model files on disk, 138GB used, 67GB free (68%)
-- All 5 workflows at 100% model coverage
-- Download engine (#93) deployed and working
-- SSL certs at `/etc/letsencrypt/live/comfy.ahelme.net/`
-- `.env` has `HF_TOKEN`, `NTFY_TOPIC`, `MODELS_PATH=/mnt/sfs/models`
+- Branch `verda-changes` on Verda (has nginx.conf + favicon changes, not yet committed)
+- Block storage at `/mnt/models-block-storage` (renamed, fstab updated)
+- Old GPU instance can be shut down
+- Verda API credentials available to Claude for serverless management
+- Serverless startup command limit: 255 chars per line
 
 ---
 
 ## SESSION START CHECKLIST
 
-- [ ] Check today's date
-- [ ] `git status` on both repos
 - [ ] Read `.claude/progress-admin-panel-team-dev.md` top section
-- [ ] Check GitHub issues relevant to current tasks in progress files
-- [ ] Discuss priorities with user
+- [ ] Check GitHub issues #101, #103
+- [ ] Run diagnostic startup command (step 1 above)

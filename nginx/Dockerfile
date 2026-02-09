@@ -6,9 +6,10 @@ RUN apk add --no-cache gettext
 # Copy configuration files
 COPY nginx.conf /etc/nginx/nginx.conf
 
-# Copy HTML files
+# Copy HTML files and favicon
 COPY index.html /usr/share/nginx/html/index.html
 COPY health.html /usr/share/nginx/html/health.html
+COPY favicon.ico /usr/share/nginx/html/favicon.ico
 
 # Copy entrypoint script
 COPY docker-entrypoint.sh /docker-entrypoint.sh

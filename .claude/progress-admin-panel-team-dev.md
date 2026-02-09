@@ -68,17 +68,48 @@
     - All 22 models downloaded (172GB), disk cleaned to 68% (removed 3 legacy files ~34GB)
     - Deployed to Verda, all 20 frontends verified with /mnt/sfs/models mount
 
-🔲 **IN PROGRESS - comfyume #88 - Serverless Inference Pipeline**
-    - Created: 2026-02-08 | Updated: 2026-02-08
-    - queue_redirect custom node was MISSING from per-user custom_nodes dirs (volume mount overwrites image)
-    - FIXED: copied queue_redirect to all 20 user dirs, restarted all containers
-    - NEXT: test job submission from user002 → queue-manager → serverless GPU
-    - NEXT: verify job appears in admin Queue tab
-    - NEXT: check /api/queue/submit endpoint exists in queue-manager
+🔲 **IN PROGRESS - comfyume #101, #103 - Serverless Inference: Model Path Fix**
+    - Created: 2026-02-09 | Updated: 2026-02-09
+    - Pipeline works: browser → redirect.js → nginx → queue-manager → serverless `/prompt`
+    - BLOCKED: `LatentUpscaleModelLoader` returns empty list — yaml key aliasing on REAL SFS
+    - REVELATION: serverless container CAN still access the REAL SFS! We created block storage ("fake SFS") because the REAL SFS won't connect to our Verda CPU instance (Verda bug, they are looking into it). We didn't realise the serverless container can still access it. Plan: use REAL SFS for serving models for boss's testing period (next week), even though we can only manage it via Verda API or Serverless console.
+    - Two storage volumes were both at `/mnt/sfs` causing confusion — block storage renamed to `/mnt/models-block-storage`
+    - NEXT: run diagnostic startup command to see REAL SFS yaml content (#103 Option 1)
+    - NEXT: fix yaml key, test inference
+    - See #101 for full debugging context, #103 for architecture decision
 
 ---
 
 # Progress Reports
+
+---
+## Progress Report 8 - 2026-02-09 - Serverless Inference Debugging (#101, #103)
+
+**Date:** 2026-02-09 | **Issues:** #101, #102, #103
+
+**Done:**
+- Fixed redirect.js: `import { app }`, endpoint `/api/jobs`, field `user_id`, priority `1`, `graphToPrompt()`
+- Fixed loader.js: same import fix
+- Fixed nginx.conf: `auth_basic off` on `/api/` and `/favicon.ico`, removed trailing slash, 600s proxy timeouts
+- Added debug logging to queue-manager `submit_to_serverless()` — captures response body on error
+- Added favicon.ico to nginx container
+- Merged PR #100 (testing-scripts-team fixes for redirect.js and nginx)
+- Deployed all fixes to Verda: SCP'd nginx.conf, copied redirect.js/loader.js to all 20 user dirs
+- Investigated old GPU instance OS drive — confirmed serverless was added in commits d53b548, 55337d8 (#62)
+- Discovered two-SFS confusion: REAL SFS (Verda NFS) still connected to serverless container, block storage ("fake SFS") renamed to `/mnt/models-block-storage`
+- Created issues #101 (yaml key mapping), #102 (General Storage), #103 (architecture decision)
+- Updated SSH config: Verda IP 95.216.229.236, User root
+- Verda gateway only routes `/prompt` — cannot query `/system_stats`, `/internal/folder_paths` etc. remotely
+
+**Root cause identified:**
+- Container logs show `Adding extra search path upscale_models /mnt/sfs/models/shared/latent_upscale_models`
+- yaml key maps to `upscale_models` folder type, but `LatentUpscaleModelLoader` needs `latent_upscale_models`
+- Likely the yaml on the REAL SFS has key `upscale_models` (from SERVERLESS_UPDATE.md template)
+
+**Pending:**
+- Run diagnostic startup command to see REAL SFS yaml content (#103 Option 1)
+- Fix yaml key on REAL SFS via one-time startup command
+- Test inference end-to-end
 
 ---
 ## Progress Report 7 - 2026-02-08 - Download Engine Live, Orphan Detection, Inference Fix (#88, #93)
