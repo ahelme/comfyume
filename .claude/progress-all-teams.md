@@ -17,6 +17,11 @@ Newest at top. One line per commit. No fluff. Link issues.
 
 ## 2026-02-09
 
+- [ADMIN] -- feat: SSL certs for 5 subdomains via Mello nginx reverse proxy (#109)
+- [ADMIN] -- fix: Promtail docker group, Loki labels, Verda SDK methods, skill files (#106)
+- [ADMIN] -- docs: verda-skills-guide.md - user-friendly guide to 12 monitoring skills (#106)
+- [ADMIN] 6b70dbe feat: install monitoring stack on Verda + 12 custom skills (#106)
+- [ADMIN] 6e96601 fix: remove non-working favicon from nginx (#101)
 - [TEST] fb51baf feat: add inline SVG favicon to admin and user frontends
 - [TEST] -- feat: bidirectional file sharing on mello (login, upload, mello-share, mac-share) (#111)
 - [ADMIN] -- fix: redirect.js import, endpoint, field name, priority, graphToPrompt() (#101)
