@@ -48,6 +48,12 @@
 - [x] P1 #71 Mello cleanup script + CLAUDE.md updates
   - 2026-02-08 DONE
   - cleanup-mello.sh created, CLAUDE.md updated (Quick Links, architecture, tech stack)
+- [x] P2 #111 Bidirectional file sharing on mello
+  - 2026-02-09 DONE
+  - /mello-share/, /mac-share/, /upload, /login with cookie auth
+- [ ] P2 Favicon deploy to Verda + PR merge
+  - 2026-02-09
+  - fb51baf pushed, PR #112 pending
 - [ ] P2 Run test.sh on Verda app server to validate
   - 2026-02-07
   - Requires services running on production
@@ -60,7 +66,24 @@
 ### Implementation Phase
 **Repository:** comfyume (https://github.com/ahelme/comfyume)
 **Branch:** testing-scripts-team-2
-**Phase:** Restore script updates + maintenance
+**Phase:** Dev tooling + favicon
+
+## Progress Report 8 - 2026-02-09 - File Sharing & Favicon (#111)
+
+**Date:** 2026-02-09
+
+**Done:**
+- Created #111: bidirectional file sharing on mello (host nginx, not in repo)
+  - `/login` — HTML form with cookie-based auth (browser saves password, 30-day cookie)
+  - `/mello-share/` — browse/download files from mello (`/var/www/mello-share/`)
+  - `/mac-share/` — browse uploads from Mac (`/var/www/mac-share/`)
+  - `/upload` — drag & drop upload form (WebDAV PUT, 500MB max)
+  - nginx `map` on `dev_share` cookie skips basic auth; curl still works with `-u`
+  - htpasswd with admin creds from private scripts `.env`
+- Favicon (fb51baf): inline SVG data URI for admin + nginx `return 200` for user frontends
+  - 3 connected dots (green/blue/purple) representing ComfyUI nodes
+
+---
 
 ## Progress Report 7 - 2026-02-08 - Model Download Engine (#93)
 

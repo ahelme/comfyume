@@ -17,6 +17,8 @@ Newest at top. One line per commit. No fluff. Link issues.
 
 ## 2026-02-09
 
+- [TEST] fb51baf feat: add inline SVG favicon to admin and user frontends
+- [TEST] -- feat: bidirectional file sharing on mello (login, upload, mello-share, mac-share) (#111)
 - [ADMIN] -- fix: redirect.js import, endpoint, field name, priority, graphToPrompt() (#101)
 - [ADMIN] -- fix: nginx auth_basic off on /api/, removed trailing slash, 600s timeouts, favicon (#101)
 - [ADMIN] -- fix: queue-manager debug logging for serverless response body (#101)
