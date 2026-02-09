@@ -2,10 +2,10 @@
  * Default Workflow Loader - ComfyUI v0.11.0
  * Auto-loads Flux2 Klein 9B workflow on first visit
  *
- * CRITICAL: Uses v0.11.0 app.registerExtension() API
- * ❌ OLD (v0.8.2): import { app } from "/scripts/app.js" - BROKEN in v0.9.0+
- * ✅ NEW (v0.9.0+): app.registerExtension() - STABLE API
+ * v0.11.0 uses Vite-built frontend — app must be imported via shim.
+ * The shim at /scripts/app.js reads from window.comfyAPI.app.app
  */
+import { app } from "../../scripts/app.js";
 
 app.registerExtension({
     name: "comfy.defaultWorkflowLoader",

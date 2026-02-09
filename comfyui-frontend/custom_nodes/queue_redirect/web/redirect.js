@@ -2,10 +2,10 @@
  * Queue Redirect Extension - ComfyUI v0.11.0
  * Intercepts job submission and redirects to queue-manager
  *
- * CRITICAL: Uses v0.11.0 app.registerExtension() API
- * ❌ OLD (v0.8.2): Standalone script import - BROKEN in v0.9.0+
- * ✅ NEW (v0.9.0+): app.registerExtension() - STABLE API
+ * v0.11.0 uses Vite-built frontend — app must be imported via shim.
+ * The shim at /scripts/app.js reads from window.comfyAPI.app.app
  */
+import { app } from "../../scripts/app.js";
 
 app.registerExtension({
     name: "comfy.queueRedirect",
@@ -29,8 +29,10 @@ app.registerExtension({
             console.log(`[QueueRedirect] Intercepting job submission (${batchCount} jobs)`);
 
             try {
-                // Serialize current workflow graph
-                const workflow = app.graph.serialize();
+                // Convert graph to ComfyUI API prompt format
+                // graphToPrompt() returns { output: {nodeId: config}, workflow: graphData }
+                // ComfyUI /prompt endpoint expects the "output" dict
+                const { output } = await app.graphToPrompt();
 
                 // Submit each batch item as a separate job
                 let lastResult = null;
@@ -42,8 +44,8 @@ app.registerExtension({
                         },
                         body: JSON.stringify({
                             user_id: USER_ID,
-                            workflow: workflow,
-                            priority: 5,
+                            workflow: output,
+                            priority: 1,
                             metadata: { batch_index: i, batch_total: batchCount }
                         })
                     });

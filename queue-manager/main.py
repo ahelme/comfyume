@@ -179,6 +179,7 @@ async def submit_to_serverless(workflow: dict, user_id: str) -> dict:
 
     try:
         # ComfyUI API expects POST /prompt with {"prompt": workflow}
+        logger.info(f"Sending to serverless: {len(workflow)} nodes, keys: {list(workflow.keys())[:10]}")
         response = await serverless_client.post(
             "/prompt",
             json={"prompt": workflow, "client_id": user_id}
@@ -188,6 +189,7 @@ async def submit_to_serverless(workflow: dict, user_id: str) -> dict:
     except httpx.TimeoutException:
         raise HTTPException(status_code=504, detail="Serverless inference timed out")
     except httpx.HTTPStatusError as e:
+        logger.error(f"Serverless response body: {e.response.text[:500]}")
         raise HTTPException(status_code=e.response.status_code, detail=str(e))
     except Exception as e:
         logger.error(f"Serverless submission failed: {e}")

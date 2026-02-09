@@ -15,6 +15,15 @@ Newest at top. One line per commit. No fluff. Link issues.
 
 ---
 
+## 2026-02-09
+
+- [ADMIN] -- fix: redirect.js import, endpoint, field name, priority, graphToPrompt() (#101)
+- [ADMIN] -- fix: nginx auth_basic off on /api/, removed trailing slash, 600s timeouts, favicon (#101)
+- [ADMIN] -- fix: queue-manager debug logging for serverless response body (#101)
+- [ADMIN] -- deployed all inference fixes to Verda (nginx, redirect.js, loader.js to 20 users)
+- [ADMIN] -- discovery: serverless container still accesses REAL SFS; block storage renamed to /mnt/models-block-storage (#103)
+- [ADMIN] -- created #101 (yaml key mapping), #102 (General Storage), #103 (SFS architecture decision)
+
 ## 2026-02-08
 
 - [ADMIN] 9132eaf feat: add delete button for orphaned models (#88)
