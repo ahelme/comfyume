@@ -48,8 +48,8 @@
 Please read:
 
 1. **`./CLAUDE.md`** - Project instructions
-2. **`.claude/progress-testing-scripts-team-dev.md`** (top ~250 lines) - Recent progress
-3. **`.claude/progress-all-teams.md`** - All-teams commit log
+2. **`.claude/agent_docs/progress-testing-scripts-team-dev.md`** (top ~250 lines) - Recent progress
+3. **`.claude/agent_docs/progress-all-teams.md`** - All-teams commit log
 4. **`git status && git log --oneline -10`** - Pending work
 
 ---
@@ -59,8 +59,8 @@ Please read:
 | File | Purpose |
 |------|---------|
 | `./CLAUDE.md` | Project guide, architecture, gotchas |
-| `.claude/progress-testing-scripts-team-dev.md` | Tasks + session progress |
-| `.claude/progress-all-teams.md` | All-teams commit log |
+| `.claude/agent_docs/progress-testing-scripts-team-dev.md` | Tasks + session progress |
+| `.claude/agent_docs/progress-all-teams.md` | All-teams commit log |
 | `scripts/test.sh` | Main integration test suite (10 sections) |
 | `scripts/test-helpers.sh` | Shared test library |
 | `scripts/test-serverless.sh` | Serverless E2E test |
@@ -83,6 +83,6 @@ Please read:
 
 - [ ] Check today's date
 - [ ] `git status` - any uncommitted changes?
-- [ ] Read `.claude/progress-testing-scripts-team-dev.md` top section
+- [ ] Read `.claude/agent_docs/progress-testing-scripts-team-dev.md` top section
 - [ ] Check relevant GitHub issues for updates
 - [ ] Discuss priorities with user

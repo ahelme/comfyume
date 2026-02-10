@@ -9,10 +9,10 @@ user-invocable: true
   - gh issues you are working on
     - + any related gh issues (VERY CONCISE - JUST INFO NEEDED/HELPFUL/RELEVANT)
 
-  - .claude/progress-mello-team-one-dev.md
+  - .claude/agent_docs/progress-mello-team-one-dev.md
     - update this doc so that it references CURRENT PENDING work at the bottom
 
-  - .claude/progress-all-teams.md
+  - .claude/agent_docs/progress-all-teams.md
     - add 1-line commit log entries for work done this session
 
   - .claude/skills/resume-context-mello-team-one/context.md
