@@ -15,7 +15,7 @@ user-invocable: true
   - .claude/progress-all-teams.md
     - add 1-line commit log entries for work done this session
 
-  - .claude/skills/resume-context-mello/context.md
+  - .claude/skills/resume-context-mello-team-one/context.md
     - (replace stale instructions)
 
     - check code has been commented effectively

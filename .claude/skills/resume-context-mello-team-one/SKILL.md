@@ -5,8 +5,8 @@ user-invocable: true
 
 So great to be working with you Claude!!!
 
-Please read IN FULL: .claude/skills/resume-context-mello/about-us.md
+Please read IN FULL: .claude/skills/resume-context-mello-team-one/about-us.md
 
 and then read/action steps within:
 
-.claude/skills/resume-context-mello/context.md THANK YOU!!
+.claude/skills/resume-context-mello-team-one/context.md THANK YOU!!
