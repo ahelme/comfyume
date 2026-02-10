@@ -1,16 +1,16 @@
-**Project:** ComfyUI Multi-User Workshop Platform
+**Project:** ComfyuME Multi-User ComfyUI Workshop Platform
 **Project Started:** 2026-01-02
-**Repository:** github.com/ahelme/comfy-multi
-**Domain:** comfy.ahelme.net
+**Repository:** github.com/ahelme/comfyume
+**Domain:** aiworkshop.art (production) / comfy.ahelme.net (staging)
 **Doc Created:** 2026-01-04
 **Doc Updated:** 2026-02-07 - restore-verda-instance.sh v0.4.0
 
 ---
 # Project Progress Tracker 
-**Target:** Workshop in ~2 weeks (early February 2026)
+**Target:** Workshop Feb 25 2026
 ### Implementation Phase
 **MAIN Repo:** comfyume (https://github.com/ahelme/comfyume)
-**Branch:** mello-track-2 > main
+**Branch:** mello-team-one-*
 **Phase:** Phase 3a - Infrastructure Testing 
 ---
 ## 0. Update Instructions

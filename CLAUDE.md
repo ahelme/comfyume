@@ -1,4 +1,4 @@
-**Project:** ComfyUI Multi-User Workshop Platform
+**Project:** ComfyuME Multi-User ComfyUI Workshop Platform
 **Project Started:** 2026-01-02
 **Repository:** github.com/ahelme/comfyume
 **Domain:** aiworkshop.art (PRODUCTION) + comfy.ahelme.net (staging)
@@ -106,7 +106,7 @@ Master task list: Issue #1.
 | Team | AKA | Resume | Handover | Progress |
 |------|-----|--------|----------|----------|
 | Mello Team One | mello-team-one | [resume](.claude/skills/resume-context-mello-team-one/SKILL.md) | [handover](.claude/skills/handover-mello-team-one/SKILL.md) | [log](.claude/agent_docs/progress-mello-team-one-dev.md) |
-| Verda Team | verda-team | [resume](.claude/skills/resume-context-verda/SKILL.md) | [handover](.claude/skills/handover-verda/SKILL.md) | [log](.claude/agent_docs/progress-verda-dev.md) |
+| Verda Team One | verda-team-one | [resume](.claude/skills/resume-context-verda-team-one/SKILL.md) | [handover](.claude/skills/handover-verda-team-one/SKILL.md) | [log](.claude/agent_docs/progress-verda-team-one-dev.md) |
 | Mello Admin Panel Team | admin-panel-team | [resume](.claude/skills/resume-context-admin-panel-team/SKILL.md) | [handover](.claude/skills/handover-admin-panel-team/SKILL.md) | [log](.claude/agent_docs/progress-admin-panel-team-dev.md) |
 | Mello Testing Scripts Team | testing-scripts-team | [resume](.claude/skills/resume-context-testing-scripts-team/SKILL.md) | [handover](.claude/skills/handover-testing-scripts-team/SKILL.md) | [log](.claude/agent_docs/progress-testing-scripts-dev.md) |
 
@@ -145,8 +145,7 @@ See [project_management.md](.claude/agent_docs/project_management.md) for commit
 All .md files must have this header:
 
 ```
-**Project Name:** ComfyuME
-**Project Desc:** ComfyUI Multi-User Workshop Platform
+**Project:** ComfyuME Multi-User ComfyUI Workshop Platform
 **Project Started:** 2026-01-02
 **Repository:** github.com/ahelme/comfyume
 **Domain:** aiworkshop.art (production) / comfy.ahelme.net (staging)

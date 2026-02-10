@@ -6,7 +6,7 @@ user-invocable: true
 # HANDOVER TASKS TO BE PERFORMED AT 80% CONTEXT
 
 - YOU MUST update following:
-  - gh issues you are working on (#65, #66, #67 or related admin dashboard issues)
+  - gh issues you are working on
     - + any related gh issues (VERY CONCISE - JUST INFO NEEDED/HELPFUL/RELEVANT)
 
   - .claude/agent_docs/progress-admin-panel-team-dev.md

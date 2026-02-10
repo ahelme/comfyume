@@ -1,5 +1,5 @@
 ---
-description: Handover tasks at 80% context for the Verda Team
+description: Handover tasks at 80% context for Verda Team One
 user-invocable: true
 ---
 
@@ -8,7 +8,7 @@ user-invocable: true
 - YOU MUST update following:
     - gh issues you are working on
     - related gh issues (VERY CONCISE - JUST INFO NEEDED/HELPFUL/RELEVANT)
-    - .claude/agent_docs/progress-verda-dev.md
+    - .claude/agent_docs/progress-verda-team-one-dev.md
         - **MANDATORY:** Clean up Task Management section
             - Remove completed/outdated tasks
             - Add current work with correct issue numbers
@@ -16,7 +16,7 @@ user-invocable: true
             - Discuss with user before finalizing
     - .claude/agent_docs/progress-all-teams.md
         - add 1-line commit log entries for work done this session
-    - .claude/skills/resume-context-verda/context.md
+    - .claude/skills/resume-context-verda-team-one/context.md
         - (replace stale instructions)
     - check code has been commented effectively
     - add, commit, push

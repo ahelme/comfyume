@@ -9,7 +9,7 @@ Please update the team progress file and central progress file.
 - `/home/dev/projects/comfyume` → `.claude/agent_docs/progress-mello-team-one-dev.md`
 - `/home/dev/projects/testing-scripts/comfyume` → `.claude/agent_docs/progress-testing-scripts-team-dev.md`
 - `/home/dev/projects/comfyume-admin-panel-team/comfyume` → `.claude/agent_docs/progress-admin-panel-team-dev.md`
-- `/home/dev/comfyume` → `.claude/agent_docs/progress-verda-dev.md`
+- `/home/dev/comfyume` → `.claude/agent_docs/progress-verda-team-one-dev.md`
 
 **Steps:**
 1. Identify which team progress file matches the current working directory

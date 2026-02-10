@@ -1,4 +1,4 @@
-**Project:** ComfyuME | **Repo:** github.com/ahelme/comfyume
+**Project:** ComfyuME Multi-User ComfyUI Workshop Platform | **Repo:** github.com/ahelme/comfyume
 **Doc Updated:** 2026-02-09
 
 # All-Teams Progress (Ultra-Concise Commit Log)
@@ -8,10 +8,10 @@
 Newest at top. One line per commit. No fluff. Link issues.
 
 ## Team Progress Files (FULL DETAIL)
-- **Mello:** [progress-mello-team-one-dev.md](./progress-mello-team-one-dev.md) | Branch: `main`
-- **Verda:** [progress-verda-dev.md](./progress-verda-dev.md) | Branch: `main`
-- **Admin Panel:** [progress-admin-panel-team-dev.md](./progress-admin-panel-team-dev.md) | Branch: `admin-panel-team`
-- **Testing Scripts:** [progress-testing-scripts-team-dev.md](./progress-testing-scripts-team-dev.md) | Branch: `testing-scripts-team`
+- **Mello:** [progress-mello-team-one-dev.md](./progress-mello-team-one-dev.md) | Branch: `mello-team-one-*`
+- **Verda:** [progress-verda-team-one-dev.md](./progress-verda-team-one-dev.md) | Branch: `verda-team-one-*`
+- **Admin Panel:** [progress-admin-panel-team-dev.md](./progress-admin-panel-team-dev.md) | Branch: `admin-panel-team-*`
+- **Testing Scripts:** [progress-testing-scripts-team-dev.md](./progress-testing-scripts-team-dev.md) | Branch: `testing-scripts-team-*`
 
 ---
 
