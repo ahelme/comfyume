@@ -17,7 +17,7 @@
 Please read:
 
 1. **`./CLAUDE.md`** - Project instructions
-2. **`.claude/progress-mello-dev.md`** (top ~120 lines) - Priority tasks + recent progress
+2. **`.claude/progress-mello-team-one-dev.md`** (top ~120 lines) - Priority tasks + recent progress
 3. **`.claude/progress-all-teams.md`** - All-teams commit log
 4. **`git status && git log --oneline -10`** - Pending work
 
@@ -28,7 +28,7 @@ Please read:
 | File | Purpose |
 |------|---------|
 | `./CLAUDE.md` | Project guide, architecture, gotchas |
-| `.claude/progress-mello-dev.md` | Tasks + session progress |
+| `.claude/progress-mello-team-one-dev.md` | Tasks + session progress |
 | `.claude/progress-all-teams.md` | All-teams commit log |
 
 ---
@@ -45,5 +45,5 @@ Please read:
 - [ ] Check today's date
 - [ ] `git status` on both repos
 - [ ] Can you SSH to Verda? `ssh root@95.216.229.236`
-- [ ] Read `.claude/progress-mello-dev.md` top section
+- [ ] Read `.claude/progress-mello-team-one-dev.md` top section
 - [ ] Discuss priorities with user

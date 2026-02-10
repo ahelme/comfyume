@@ -9,7 +9,7 @@ user-invocable: true
   - gh issues you are working on
     - + any related gh issues (VERY CONCISE - JUST INFO NEEDED/HELPFUL/RELEVANT)
 
-  - .claude/progress-mello-dev.md
+  - .claude/progress-mello-team-one-dev.md
     - update this doc so that it references CURRENT PENDING work at the bottom
 
   - .claude/progress-all-teams.md

@@ -6,7 +6,7 @@ user-invocable: true
 Please update the team progress file and central progress file.
 
 **Detect team from project directory:**
-- `/home/dev/projects/comfyume` → `.claude/progress-mello-dev.md`
+- `/home/dev/projects/comfyume` → `.claude/progress-mello-team-one-dev.md`
 - `/home/dev/projects/testing-scripts/comfyume` → `.claude/progress-testing-scripts-team-dev.md`
 - `/home/dev/projects/comfyume-admin-panel-team/comfyume` → `.claude/progress-admin-panel-team-dev.md`
 - `/home/dev/comfyume` → `.claude/progress-verda-dev.md`
