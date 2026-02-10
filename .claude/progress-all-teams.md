@@ -19,6 +19,11 @@ Newest at top. One line per commit. No fluff. Link issues.
 
 - [TEST] 9583dc5 fix: replace favicon with official ComfyUI logo (#111)
 - [TEST] b40ef37 docs: update progress for file sharing and favicon (#111)
+- [ADMIN] -- feat: SSL certs for 5 subdomains via Mello nginx reverse proxy (#109)
+- [ADMIN] -- fix: Promtail docker group, Loki labels, Verda SDK methods, skill files (#106)
+- [ADMIN] -- docs: verda-skills-guide.md - user-friendly guide to 12 monitoring skills (#106)
+- [ADMIN] 6b70dbe feat: install monitoring stack on Verda + 12 custom skills (#106)
+- [ADMIN] 6e96601 fix: remove non-working favicon from nginx (#101)
 - [TEST] fb51baf feat: add inline SVG favicon to admin and user frontends
 - [TEST] -- feat: bidirectional file sharing on mello with cookie auth (#111)
 - [TEST] -- feat: upload.aiworkshop.art subdomain for file exchange (#111)
