@@ -3,7 +3,7 @@
 **Repository:** github.com/ahelme/comfyume
 **Domain:** comfy.ahelme.net (staging) / aiworkshop.art (production)
 **Doc Created:** 2026-02-07
-**Doc Updated:** 2026-02-07 (AEST) - Testing infrastructure rewrite complete
+**Doc Updated:** 2026-02-09 (AEST) - File sharing, favicon, upload.aiworkshop.art
 
 ---
 # Project Progress Tracker
@@ -48,12 +48,17 @@
 - [x] P1 #71 Mello cleanup script + CLAUDE.md updates
   - 2026-02-08 DONE
   - cleanup-mello.sh created, CLAUDE.md updated (Quick Links, architecture, tech stack)
-- [x] P2 #111 Bidirectional file sharing on mello
-  - 2026-02-09 DONE
-  - /mello-share/, /mac-share/, /upload, /login with cookie auth
-- [ ] P2 Favicon deploy to Verda + PR merge
+- [x] P2 #111 Bidirectional file sharing on mello — DONE
   - 2026-02-09
-  - fb51baf pushed, PR #112 pending
+  - /mello-share/, /mac-share/, /upload, /login with cookie auth
+  - upload.aiworkshop.art subdomain live, paste (Cmd+V) support
+- [x] P2 #111 Favicon — official ComfyUI logo — PR #112 MERGED
+  - 2026-02-09 DONE
+  - Yellow C on blue, data URI + nginx inline + static files
+- [ ] P2 #111 Deploy favicon to Verda
+  - 2026-02-09
+  - Steps in GH issue #111 comment
+  - `git pull`, rebuild admin, update host nginx favicon block, reload
 - [ ] P2 Run test.sh on Verda app server to validate
   - 2026-02-07
   - Requires services running on production
@@ -68,7 +73,7 @@
 **Branch:** testing-scripts-team-2
 **Phase:** Dev tooling + favicon
 
-## Progress Report 8 - 2026-02-09 - File Sharing & Favicon (#111)
+## Progress Report 8 - 2026-02-09 - File Sharing, Favicon, upload.aiworkshop.art (#111)
 
 **Date:** 2026-02-09
 
@@ -77,7 +82,22 @@
   - `/login` — HTML form with cookie-based auth (browser saves password, 30-day cookie)
   - `/mello-share/` — browse/download files from mello (`/var/www/mello-share/`)
   - `/mac-share/` — browse uploads from Mac (`/var/www/mac-share/`)
-  - `/upload` — drag & drop upload form (WebDAV PUT, 500MB max)
+  - `/upload` — drag & drop + Cmd+V paste upload form (WebDAV PUT, 500MB max)
+  - nginx `map` on `dev_share` cookie → skips basic auth if valid, curl still works
+  - htpasswd with admin creds from private scripts `.env`
+- Set up `upload.aiworkshop.art` subdomain on mello
+  - nginx server block at `/etc/nginx/sites-enabled/upload.aiworkshop.art`
+  - SSL via SAN cert (portainer.aiworkshop.art covers upload subdomain)
+  - Root (`/`) → upload page directly
+- Favicon: replaced 3-dots design with official ComfyUI logo
+  - Yellow "C" on blue (#172DD7) from Dashboard Icons (CC BY 4.0)
+  - `admin/dashboard.html` — data URI in `<head>`
+  - `nginx/nginx.conf` — inline SVG at `/favicon.ico`
+  - `nginx/static/favicon.svg` + `.png` — static files
+  - PR #112 merged
+
+**Pending:**
+- Deploy favicon to Verda (steps in #111 comment)
   - nginx `map` on `dev_share` cookie skips basic auth; curl still works with `-u`
   - htpasswd with admin creds from private scripts `.env`
 - Favicon (fb51baf): inline SVG data URI for admin + nginx `return 200` for user frontends
