@@ -3,7 +3,7 @@
 **Repository:** github.com/ahelme/comfyume
 **Domain:** comfy.ahelme.net (staging) / aiworkshop.art (production)
 **Doc Created:** 2026-02-06
-**Doc Updated:** 2026-02-08 (AEST)
+**Doc Updated:** 2026-02-10 (AEST)
 
 ---
 # Project Progress Tracker
@@ -69,11 +69,18 @@
     - Deployed to Verda, all 20 frontends verified with /mnt/sfs/models mount
 
 🔲 **IN PROGRESS - comfyume #101, #103 - Serverless Inference: Model Path Fix**
-    - Created: 2026-02-09 | Updated: 2026-02-09
-    - Pipeline works: browser → redirect.js → nginx → queue-manager → serverless `/prompt`
-    - BLOCKED: `LatentUpscaleModelLoader` returns empty list — yaml key aliasing on REAL SFS
-    - NEXT: use new monitoring tools to debug (#106 Phase 7)
-    - See #101 for full debugging context, #103 for architecture decision
+    - Created: 2026-02-09 | Updated: 2026-02-10
+    - ROOT CAUSE CONFIRMED: yaml key `upscale_models` should be `latent_upscale_models` (ComfyUI #12004)
+    - `sed` fix applied via Verda console but FAILED — `^` anchor missed indented yaml key
+    - Flux inference WORKS end-to-end (113s execution), LTX-2 still blocked by yaml key
+    - NEXT: re-run `sed` without `^` anchor, then verify LTX-2 works
+    - NEW ISSUE: no UI feedback — results stay on serverless container, not returned to user
+
+🔲 **NEW - Result delivery from serverless to user frontend**
+    - Created: 2026-02-10
+    - Jobs execute on serverless (confirmed via logs) but user sees nothing in ComfyUI
+    - Need mechanism to return generated images/videos from serverless → user browser
+    - Separate from #101 — this affects ALL workflows including working Flux
 
 ✅ **(COMPLETE) - comfyume #106 - Monitoring & Management Stack**
     - Created: 2026-02-09 | Updated: 2026-02-09

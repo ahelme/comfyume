@@ -15,6 +15,11 @@ Newest at top. One line per commit. No fluff. Link issues.
 
 ---
 
+## 2026-02-10
+
+- [ADMIN] bb1de2a refactor: split CLAUDE.md into progressive disclosure modules (#124)
+- [ADMIN] -- refactor: migrate .claude/commands/ to .claude/skills/ format, remove archive/build_reports, rename mello-team to mello-team-one
+
 ## 2026-02-09
 
 - [TEST] 9583dc5 fix: replace favicon with official ComfyUI logo (#111)

@@ -105,10 +105,10 @@ Master task list: Issue #1.
 
 | Team | AKA | Resume | Handover | Progress |
 |------|-----|--------|----------|----------|
-| Mello Team One | mello-team | [resume](.claude/commands/resume-context-mello.md) | [handover](.claude/commands/CLAUDE-HANDOVER-MELLO.md) | [log](.claude/progress-mello-dev.md) |
-| Verda Team | verda-team | [resume](.claude/commands/resume-context-verda.md) | [handover](.claude/commands/CLAUDE-HANDOVER-VERDA.md) | [log](.claude/progress-verda-dev.md) |
-| Mello Admin Panel Team | admin-panel-team | [resume](.claude/commands/resume-context-admin-panel-team.md) | [handover](.claude/commands/CLAUDE-HANDOVER-ADMIN-PANEL-TEAM.md) | [log](.claude/progress-admin-panel-team-dev.md) |
-| Mello Testing Scripts Team | testing-scripts-team | [resume](.claude/commands/resume-context-testing-scripts-team.md) | [handover](.claude/commands/CLAUDE-HANDOVER-TESTING-SCRIPTS-TEAM.md) | [log](.claude/progress-testing-scripts-dev.md) |
+| Mello Team One | mello-team-one | [resume](.claude/skills/resume-context-mello/SKILL.md) | [handover](.claude/skills/handover-mello/SKILL.md) | [log](.claude/progress-mello-dev.md) |
+| Verda Team | verda-team | [resume](.claude/skills/resume-context-verda/SKILL.md) | [handover](.claude/skills/handover-verda/SKILL.md) | [log](.claude/progress-verda-dev.md) |
+| Mello Admin Panel Team | admin-panel-team | [resume](.claude/skills/resume-context-admin-panel-team/SKILL.md) | [handover](.claude/skills/handover-admin-panel-team/SKILL.md) | [log](.claude/progress-admin-panel-team-dev.md) |
+| Mello Testing Scripts Team | testing-scripts-team | [resume](.claude/skills/resume-context-testing-scripts-team/SKILL.md) | [handover](.claude/skills/handover-testing-scripts-team/SKILL.md) | [log](.claude/progress-testing-scripts-dev.md) |
 
 **Central Log:** [.claude/progress-all-teams.md](.claude/progress-all-teams.md) -- 1-line-per-commit across all teams
 **Update command:** `/update-progress`
