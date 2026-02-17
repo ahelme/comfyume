@@ -1,4 +1,4 @@
-**Project:** ComfyUI Multi-User Workshop Platform
+**Project:** ComfyuME Multi-User ComfyUI Workshop Platform
 **Project Started:** 2026-01-02
 **Repository:** github.com/ahelme/comfyume
 **Domain:** aiworkshop.art (PRODUCTION) + comfy.ahelme.net (staging)
@@ -105,19 +105,19 @@ Master task list: Issue #1.
 
 | Team | AKA | Resume | Handover | Progress |
 |------|-----|--------|----------|----------|
-| Mello Team One | mello-team | [resume](.claude/commands/resume-context-mello.md) | [handover](.claude/commands/CLAUDE-HANDOVER-MELLO.md) | [log](.claude/progress-mello-dev.md) |
-| Verda Team | verda-team | [resume](.claude/commands/resume-context-verda.md) | [handover](.claude/commands/CLAUDE-HANDOVER-VERDA.md) | [log](.claude/progress-verda-dev.md) |
-| Mello Admin Panel Team | admin-panel-team | [resume](.claude/commands/resume-context-admin-panel-team.md) | [handover](.claude/commands/CLAUDE-HANDOVER-ADMIN-PANEL-TEAM.md) | [log](.claude/progress-admin-panel-team-dev.md) |
-| Mello Testing Scripts Team | testing-scripts-team | [resume](.claude/commands/resume-context-testing-scripts-team.md) | [handover](.claude/commands/CLAUDE-HANDOVER-TESTING-SCRIPTS-TEAM.md) | [log](.claude/progress-testing-scripts-dev.md) |
+| Mello Team One | mello-team-one | [resume](.claude/skills/resume-context-mello-team-one/SKILL.md) | [handover](.claude/skills/handover-mello-team-one/SKILL.md) | [log](.claude/agent_docs/progress-mello-team-one-dev.md) |
+| Verda Team One | verda-team-one | [resume](.claude/skills/resume-context-verda-team-one/SKILL.md) | [handover](.claude/skills/handover-verda-team-one/SKILL.md) | [log](.claude/agent_docs/progress-verda-team-one-dev.md) |
+| Mello Admin Panel Team | admin-panel-team | [resume](.claude/skills/resume-context-admin-panel-team/SKILL.md) | [handover](.claude/skills/handover-admin-panel-team/SKILL.md) | [log](.claude/agent_docs/progress-admin-panel-team-dev.md) |
+| Mello Testing Scripts Team | testing-scripts-team | [resume](.claude/skills/resume-context-testing-scripts-team/SKILL.md) | [handover](.claude/skills/handover-testing-scripts-team/SKILL.md) | [log](.claude/agent_docs/progress-testing-scripts-dev.md) |
 
-**Central Log:** [.claude/progress-all-teams.md](.claude/progress-all-teams.md) -- 1-line-per-commit across all teams
+**Central Log:** [.claude/agent_docs/progress-all-teams.md](.claude/agent_docs/progress-all-teams.md) -- 1-line-per-commit across all teams
 **Update command:** `/update-progress`
 
 ### Session Checklist
 
 Before each session ends:
 - [ ] Commit & push code changes to git
-- [ ] Update progress files (`.claude/progress-*.md`)
+- [ ] Update progress files (`.claude/agent_docs/progress-*.md`)
 - [ ] Update admin/dev docs with key changes made
 - [ ] Update current implementation plan when plan changes
 - [ ] Consider any user-facing doc changes
@@ -145,8 +145,7 @@ See [project_management.md](.claude/agent_docs/project_management.md) for commit
 All .md files must have this header:
 
 ```
-**Project Name:** ComfyuME
-**Project Desc:** ComfyUI Multi-User Workshop Platform
+**Project:** ComfyuME Multi-User ComfyUI Workshop Platform
 **Project Started:** 2026-01-02
 **Repository:** github.com/ahelme/comfyume
 **Domain:** aiworkshop.art (production) / comfy.ahelme.net (staging)
@@ -469,19 +468,20 @@ See [Admin Backup & Restore Guide - Troubleshooting](./docs/admin-backup-restore
 
 ## Agent Docs (Progressive Disclosure)
 
-Read these files when their topic is relevant to your current task:
+Read these when their trigger matches your task. TL;DR uses: `·` sep `@` location `!` danger `:` port `→` consequence
+**Maintenance:** When updating an agent_doc, also update its TL;DR here — it's a second source of truth.
 
-| File | Contents |
-|------|----------|
-| [models_and_data.md](.claude/agent_docs/models_and_data.md) | Workshop templates, ML models, LoRAs, model inventory |
-| [project_structure.md](.claude/agent_docs/project_structure.md) | File trees, directory layouts (both repos) |
-| [project_management.md](.claude/agent_docs/project_management.md) | Git workflow, commit conventions, issue tracking |
-| [security.md](.claude/agent_docs/security.md) | Firewall, auth, Tailscale VPN, SSL, R2 buckets |
-| [infrastructure.md](.claude/agent_docs/infrastructure.md) | Servers, backups, Docker, services |
-| [monitoring.md](.claude/agent_docs/monitoring.md) | Portainer, Prometheus, Grafana, Loki, skills |
-| [storage.md](.claude/agent_docs/storage.md) | Verda SFS and block storage options |
-| [gotchas.md](.claude/agent_docs/gotchas.md) | Non-critical known issues and workarounds |
-| [external-references.md](.claude/agent_docs/external-references.md) | Research references and related projects |
+| File | Read when... | TL;DR |
+|------|-------------|-------|
+| [models_and_data.md](.claude/agent_docs/models_and_data.md) | models, templates, downloads | Flux+LTX-2 · 22 models 172GB@/mnt/sfs · yaml key = folder type verbatim |
+| [project_structure.md](.claude/agent_docs/project_structure.md) | finding files, dir layout | data/user_data/userXXX/ · .users.yml auto-gen · scripts/ admin/ nginx/ qm/ |
+| [project_management.md](.claude/agent_docs/project_management.md) | commits, issues, PRs | conventional commits · ref GH# always · `gh issue` needs --json |
+| [security.md](.claude/agent_docs/security.md) | auth, firewall, VPN, SSL, R2 | Redis Tailscale-only:6379 · bcrypt auth · SSL exp 2026-04-10 · !R2 needs .eu |
+| [infrastructure.md](.claude/agent_docs/infrastructure.md) | servers, Docker, services | Verda=prod Mello=staging · 20 frontends+qm+redis+nginx+admin · serverless H200/B300 |
+| [monitoring.md](.claude/agent_docs/monitoring.md) | health, logs, dashboards | Prom:9090 Graf:3001 Loki:3100 cAdv:8081 · 12 /verda-* skills |
+| [storage.md](.claude/agent_docs/storage.md) | SFS, block storage, mounts | SFS=shared NFS@/mnt/sfs · block=single-instance · !WIPED if attached@provisioning |
+| [gotchas.md](.claude/agent_docs/gotchas.md) | unexpected failures, debugging | nginx decodes %2F→#54 · Dockerfile needs curl+libgomp1+requests · large ops fail silent |
+| [external-references.md](.claude/agent_docs/external-references.md) | architecture research | Visionatrix · SaladTech · Modal · 9elements — multi-user patterns |
 
 ---
 
